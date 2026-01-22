@@ -2,4 +2,6 @@ title: Junaid Ahmed Mohammed
 description: Senior Data Engineer | AI Infrastructure Architect
 theme: jekyll-theme-slate
 show_downloads: false
-google_analytics:
+google_analytics: 
+plugins:
+  - jekyll-seo-tag
