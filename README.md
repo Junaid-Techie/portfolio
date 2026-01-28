@@ -1,69 +1,81 @@
 # Junaid Ahmed Mohammed
 
-### Senior Data Engineer | AI Infrastructure Architect
-**Indianapolis, IN**
+**Senior Data Engineer | Cloud Data Platforms | Applied GenAI**  
+Indianapolis, Indiana, United States
 
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-blue?style=for-the-badge&logo=linkedin)](https://www.linkedin.com/in/junaid-ahmed-mohammed-02321a95/)
-[![GitHub](https://img.shields.io/badge/GitHub-View_Profile-181717?style=for-the-badge&logo=github)](https://github.com/Junaid-Techie)
-[![Email](https://img.shields.io/badge/Email-Contact_Me-D14836?style=for-the-badge&logo=gmail)](mailto:mjunaidtechs@gmail.com)
-
----
-
-## ⚡ Executive Summary
-
-I am a **Senior Data Engineer (5+ YOE)** bridging the gap between distributed systems and modern Generative AI workflows. Unlike traditional data engineers, I don't just move data; I engineer the **intelligent infrastructure** that powers it.
-
-Currently, I am focused on the intersection of **Enterprise Data Governance** and **Local LLM Inference**, optimizing billion-parameter models to run efficiently on constrained hardware.
-
-> **Core Philosophy:** *“Future AI isn't about bigger models; it's about cleaner data pipelines and efficient inference.”*
+[LinkedIn](https://www.linkedin.com/in/junaid-ahmed-mohammed-02321a95/) ·
+[GitHub](https://github.com/Junaid-Techie) ·
+[mjunaidtechs@gmail.com](mailto:mjunaidtechs@gmail.com)
 
 ---
 
-## 🛠️ The Technical Arsenal
+## Overview
 
-### **Generative AI & LLMs**
-![LLaMA](https://img.shields.io/badge/Model-LLaMA_3.2-blue?style=flat-square)
-![Qwen](https://img.shields.io/badge/Model-Qwen_2.5-blueviolet?style=flat-square)
-![HuggingFace](https://img.shields.io/badge/Hub-Hugging_Face-FFD21E?style=flat-square&logo=huggingface&logoColor=black)
-![LangChain](https://img.shields.io/badge/Framework-LangChain-1C3C3C?style=flat-square&logo=chainlink&logoColor=white)
-![Unsloth](https://img.shields.io/badge/Optimization-Unsloth-000000?style=flat-square)
+I am a Data Engineer with over five years of industry experience building and operating production-grade data platforms, followed by graduate research focused on real-time data systems, analytics, and applied machine learning.
 
-### **Data Engineering & Lakehouse**
-![Snowflake](https://img.shields.io/badge/Lakehouse-Snowflake-29B5E8?style=flat-square&logo=snowflake&logoColor=white)
-![Databricks](https://img.shields.io/badge/Compute-Databricks-FF3621?style=flat-square&logo=databricks&logoColor=white)
-![Azure](https://img.shields.io/badge/Cloud-Azure_Synapse-0078D4?style=flat-square&logo=microsoftazure&logoColor=white)
-![Kafka](https://img.shields.io/badge/Streaming-Kafka-231F20?style=flat-square&logo=apachekafka&logoColor=white)
-
-### **Core Stack**
-![Python](https://img.shields.io/badge/Code-Python-3776AB?style=flat-square&logo=python&logoColor=white)
-![SQL](https://img.shields.io/badge/Query-SQL-4479A1?style=flat-square&logo=postgresql&logoColor=white)
-![Docker](https://img.shields.io/badge/Container-Docker-2496ED?style=flat-square&logo=docker&logoColor=white)
+Most of my professional work has been in enterprise environments where source code cannot be publicly shared. This GitHub profile serves as a growing portfolio to document selected projects, experiments, and learning efforts that reflect my experience in data engineering, streaming systems, and applied Generative AI.
 
 ---
 
-## 🚀 Deep Dive: Local GenAI Assistant
-**Role:** AI Engineer & Researcher | **Status:** 🟢 Completed
+## Current Public Project
 
-> **The Problem:** Enterprise environments (GxP/Pharma) restrict sending proprietary code to cloud APIs (GPT-4) due to data leakage risks.
->
-> **The Solution:** I engineered a secure, local-first coding assistant capable of running on consumer hardware (8GB VRAM) by fine-tuning SLMs.
+### PythonCodeGen-Repo
+**Focus:** Local-first code generation using small language models
 
-### ⚙️ Architecture & Implementation
+This repository explores building and optimizing a local code generation assistant using fine-tuned language models. The work focuses on practical concerns such as data preprocessing, model efficiency, and inference on limited hardware rather than relying on hosted APIs.
 
-**1. Data Engineering Pipeline**
-* Curated **200,000+ Python code samples** (CodeParrot/StackOverflow).
-* Built a pre-processing pipeline to deduplicate and tokenize data for high density.
+Key areas:
+- Fine-tuning small language models on Python code datasets
+- Applying 4-bit quantization techniques (QLoRA) for efficient inference
+- Exploring reproducible, local inference workflows suitable for enterprise environments
 
-**2. Model Optimization (The "Secret Sauce")**
-I utilized **4-bit Quantization (QLoRA)** and **Unsloth** to fit a 3 Billion parameter model onto a single GPU.
+Repository: `PythonCodeGen-Repo`
 
-```python
-# Sample: Loading LLaMA 3.2 with 4-bit Quantization
-from unsloth import FastLanguageModel
-import torch
+---
 
-model, tokenizer = FastLanguageModel.from_pretrained(
-    model_name = "unsloth/Llama-3.2-3B-Instruct",
-    max_seq_length = 2048,
-    load_in_4bit = True, # Drastically reduces VRAM usage
-)
+## Technical Background
+
+### Data Engineering
+- ETL and ELT pipelines using Azure Data Factory, Databricks, and Snowflake
+- Lakehouse design with Delta Lake and star-schema data modeling
+- Data quality enforcement, alerting, and operational monitoring
+- CI/CD and DataOps practices for long-running production systems
+
+### Streaming and Orchestration
+- Kafka-based ingestion pipelines
+- Apache Airflow for orchestration and scheduling
+- Near real-time analytics and forecasting workflows
+
+### Cloud and Infrastructure
+- Azure cloud services (ADF, Databricks, ADLS, Synapse)
+- Docker-based containerization
+- Kubernetes fundamentals for running data workloads
+- Collaboration with DevOps teams on reliability and incident response
+
+### Applied Machine Learning and GenAI
+- Time series forecasting and predictive analytics
+- NLP pipelines for text classification and sentiment analysis
+- Local LLM fine-tuning and inference optimization
+- Retrieval-Augmented Generation (RAG) concepts and workflows
+
+---
+
+## Planned Additions
+
+Over time, this repository will expand to include:
+- Sample data engineering pipelines and design patterns
+- Streaming and orchestration examples
+- Applied machine learning and analytics workflows
+- Supporting documentation and architectural notes
+
+---
+
+## Contact
+
+I am open to opportunities in:
+- Data Engineering
+- Platform and Infrastructure Engineering
+- Applied Machine Learning and Analytics
+
+📧 mjunaidtechs@gmail.com  
+🔗 [LinkedIn](https://www.linkedin.com/in/junaid-ahmed-mohammed-02321a95/)
