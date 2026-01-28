@@ -10,7 +10,7 @@ Senior Data Engineer with **5+ years of experience** bridging the gap between di
   - *Relevant Coursework:* Applied AI, Machine Learning, Big Data Frameworks, Cloud Computing.
 
 - **Muffakham Jah College of Engineering and Technology**, Hyderabad, India
-  - Bachelor of Engineering in Civil Engineering
+  - Bachelor of Engineering
   - Graduation: 2018
 
 ## PROFESSIONAL EXPERIENCE
