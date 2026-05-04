@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const navbar = document.querySelector('.navbar');
     
     window.addEventListener('scroll', () => {
-        if (window.scrollY > 20) {
+        if (window.scrollY > 50) {
             navbar.classList.add('scrolled');
         } else {
             navbar.classList.remove('scrolled');
@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Scroll Reveal Animation (Intersection Observer)
-    const fadeElements = document.querySelectorAll('.fade-in-up');
+    const fadeElements = document.querySelectorAll('.fade-up');
     
     const revealOptions = {
         threshold: 0.1,
@@ -60,7 +60,7 @@ document.addEventListener('DOMContentLoaded', () => {
         revealOnScroll.observe(element);
     });
 
-    // Handle initial visible elements on load without scrolling
+    // Handle initial visible elements on load
     setTimeout(() => {
         fadeElements.forEach(element => {
             const rect = element.getBoundingClientRect();
