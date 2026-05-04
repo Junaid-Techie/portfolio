@@ -82,10 +82,18 @@ document.addEventListener('DOMContentLoaded', () => {
     canvas.style.pointerEvents = 'none';
     canvas.style.zIndex = '9999';
     document.body.appendChild(canvas);
+    
+    // Change cursor to a tech-themed style
+    document.body.style.cursor = 'crosshair';
+    
+    // Ensure all links and buttons still have a pointer
+    document.querySelectorAll('a, button, .hamburger').forEach(el => {
+        el.style.cursor = 'pointer';
+    });
 
     const ctx = canvas.getContext('2d');
     let pixelsArray = [];
-    const gridSize = 50; // Matches CSS .bg-grid background-size
+    const gridSize = 10; // Smaller pixels that fit inside the 50px background grid
 
     function resizeCanvas() {
         canvas.width = window.innerWidth;
@@ -139,9 +147,8 @@ document.addEventListener('DOMContentLoaded', () => {
             this.y = y;
             this.size = gridSize;
             
-            // Theme colors matching the gradient text
-            const colors = ['rgba(59, 130, 246, 0.4)', 'rgba(139, 92, 246, 0.4)', 'rgba(16, 185, 129, 0.3)'];
-            this.color = colors[Math.floor(Math.random() * colors.length)];
+            // Only using the dark blue color (primary)
+            this.color = 'rgba(59, 130, 246, 0.4)';
             this.life = 100;
         }
         update() {
