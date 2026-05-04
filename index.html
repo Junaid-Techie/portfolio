@@ -1,40 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Junaid Ahmed Mohammed | Senior Data Engineer</title>
-    <meta name="description"
-        content="Portfolio of Junaid Ahmed Mohammed, Data Engineer with 7+ years of experience in Azure, Snowflake, and Generative AI.">
-    <!-- Google Fonts -->
+    <title>Junaid Ahmed Mohammed | Data Engineer</title>
+    <meta name="description" content="Junaid Ahmed Mohammed - Data Engineer specializing in scalable cloud-native systems, Azure, Snowflake, and AI applications.">
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;700&display=swap"
-        rel="stylesheet">
-    <!-- Font Awesome -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
-    <!-- Background animations -->
-    <div class="bg-gradient-1"></div>
-    <div class="bg-gradient-2"></div>
-    <div class="bg-grid"></div>
-
+    <div class="glow-bg"></div>
+    <div class="glow-bg-2"></div>
+    
     <!-- Navigation -->
     <nav class="navbar">
         <div class="nav-container">
-            <a href="#home" class="logo">J<span>A</span>M.</a>
+            <a href="#home" class="logo">Junaid.</a>
             <ul class="nav-links">
                 <li><a href="#about">About</a></li>
                 <li><a href="#skills">Skills</a></li>
                 <li><a href="#experience">Experience</a></li>
                 <li><a href="#projects">Projects</a></li>
-                <li><a href="#contact" class="btn-outline">Contact Me</a></li>
             </ul>
+            <a href="mailto:mjunaidtechs@gmail.com" class="btn-nav">Get in touch</a>
             <div class="hamburger">
                 <i class="fas fa-bars"></i>
             </div>
@@ -42,35 +34,24 @@
     </nav>
 
     <!-- Hero Section -->
-    <section id="home" class="hero">
-        <div class="hero-content">
-            <div class="hero-text fade-up">
-                <p class="greeting">Hi there, I'm</p>
-                <h1>Junaid Ahmed <span class="gradient-text">Mohammed</span></h1>
-                <h2>Data Engineer <span class="amp">&amp;</span> AI Practitioner</h2>
-                <p class="hero-desc">
-                    Designing and scaling cloud-native data systems on Azure & Snowflake.
-                    Merging distributed processing with Generative AI to power modern data platforms.
-                </p>
-                <div class="hero-actions">
-                    <a href="#projects" class="btn-primary">View My Work</a>
-                    <div class="social-links">
-                        <a href="https://www.linkedin.com/in/junaid-ahmed-mohammed-02321a95/" target="_blank"
-                            aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
-                        <a href="https://github.com/Junaid-Techie" target="_blank" aria-label="GitHub"><i
-                                class="fab fa-github"></i></a>
-                        <a href="mailto:mjunaidtechs@gmail.com" aria-label="Email"><i class="fas fa-envelope"></i></a>
-                    </div>
-                </div>
+    <section id="home" class="hero section">
+        <div class="hero-container fade-in-up">
+            <div class="status-badge">
+                <span class="pulse"></span> Open to new opportunities
             </div>
-            <div class="hero-visual fade-up" style="transition-delay: 0.2s">
-                <div class="data-cube">
-                    <div class="face front"><i class="fas fa-database"></i></div>
-                    <div class="face back"><i class="fas fa-brain"></i></div>
-                    <div class="face right"><i class="fas fa-cloud"></i></div>
-                    <div class="face left"><i class="fas fa-code"></i></div>
-                    <div class="face top"><i class="fas fa-network-wired"></i></div>
-                    <div class="face bottom"><i class="fas fa-server"></i></div>
+            <h1 class="hero-title">
+                Building scalable data ecosystems<br>
+                <span class="text-gradient">for the AI era.</span>
+            </h1>
+            <p class="hero-subtitle">
+                Data Engineer with 7+ years of experience designing high-volume analytics platforms and cloud-native pipelines on Azure and Snowflake.
+            </p>
+            <div class="hero-cta">
+                <a href="#projects" class="btn-primary">View Projects</a>
+                <div class="social-links">
+                    <a href="https://www.linkedin.com/in/junaid-ahmed-mohammed-02321a95/" target="_blank" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
+                    <a href="https://github.com/Junaid-Techie" target="_blank" aria-label="GitHub"><i class="fab fa-github"></i></a>
+                    <a href="mailto:mjunaidtechs@gmail.com" aria-label="Email"><i class="fas fa-envelope"></i></a>
                 </div>
             </div>
         </div>
@@ -78,52 +59,34 @@
 
     <!-- About Section -->
     <section id="about" class="about section">
-        <div class="section-container">
-            <h3 class="section-title fade-up">About Me</h3>
-            <div class="about-content fade-up">
+        <div class="container fade-in-up">
+            <div class="section-header">
+                <h2 class="section-title">About Me</h2>
+                <div class="line"></div>
+            </div>
+            
+            <div class="about-grid">
                 <div class="about-text">
-                    <p>
-                        I am a <strong>Data Engineer with 7+ years of experience</strong> specializing in designing and
-                        scaling cloud-native data systems on Azure and Snowflake. I thrive on building high-volume
-                        analytics platforms and production-grade pipelines that deliver trusted, governed data products.
-                    </p>
-                    <p>
-                        My expertise spans across <strong>ETL/ELT orchestration</strong> (Azure Data Factory),
-                        <strong>distributed processing</strong> (PySpark, Databricks), and <strong>enterprise data
-                            modeling</strong> (dimensional, lakehouse). Recently, my focus has grown to encompass
-                        <strong>AI/ML pipeline enablement</strong> and <strong>Generative AI applications</strong>,
-                        combining big data with intelligent automation.
-                    </p>
-
-                    <div class="education-card glass-card">
-                        <h4><i class="fas fa-graduation-cap"></i> Education</h4>
-                        <div class="edu-item">
-                            <div class="edu-header">
-                                <h5>M.S. in Applied Data Science</h5>
-                                <span>Dec 2025</span>
-                            </div>
-                            <p class="institution">Indiana University</p>
-                            <p class="gpa">GPA: 3.96/4.0</p>
-                        </div>
-                    </div>
+                    <p>I am a Data Engineer dedicated to architecting and scaling enterprise-grade data platforms. Over the past 7 years, I have successfully delivered end-to-end data pipelines and data warehouse solutions for complex retail environments, managing everything from raw ingestion to sophisticated analytical models.</p>
+                    <p>My expertise lies in ETL/ELT orchestration using Azure Data Factory, distributed data processing with PySpark and Databricks, and modern data modeling methodologies including dimensional and lakehouse architectures. I thrive at the intersection of infrastructure and business intelligence, ensuring data quality, governance, and operational reliability.</p>
+                    <p>Currently pursuing my M.S. in Applied Data Science at Indiana University, my focus has naturally expanded into AI/ML pipeline enablement and Generative AI applications. I am passionate about bridging the gap between robust data engineering and advanced machine learning to build intelligent, automated data products.</p>
                 </div>
-
-                <div class="stats-grid">
-                    <div class="stat-card glass-card">
-                        <span class="stat-num">7+</span>
-                        <span class="stat-label">Years Experience</span>
+                <div class="about-stats">
+                    <div class="stat-card">
+                        <h3>7+</h3>
+                        <p>Years Experience</p>
                     </div>
-                    <div class="stat-card glass-card">
-                        <span class="stat-num">12<span class="small">TB+</span></span>
-                        <span class="stat-label">Data Migrated</span>
+                    <div class="stat-card">
+                        <h3>12TB+</h3>
+                        <p>Data Migrated</p>
                     </div>
-                    <div class="stat-card glass-card">
-                        <span class="stat-num">100+</span>
-                        <span class="stat-label">Pipelines Built</span>
+                    <div class="stat-card">
+                        <h3>100+</h3>
+                        <p>Pipelines Built</p>
                     </div>
-                    <div class="stat-card glass-card">
-                        <span class="stat-num">25%</span>
-                        <span class="stat-label">Cost Reduction</span>
+                    <div class="stat-card">
+                        <h3>M.S.</h3>
+                        <p>Applied Data Science</p>
                     </div>
                 </div>
             </div>
@@ -132,229 +95,187 @@
 
     <!-- Skills Section -->
     <section id="skills" class="skills section">
-        <div class="section-container">
-            <h3 class="section-title fade-up">Technical Skills</h3>
-            <div class="skills-grid fade-up">
-
-                <div class="skill-category glass-card">
-                    <div class="skill-icon"><i class="fas fa-database"></i></div>
-                    <h4>Data Engineering</h4>
-                    <div class="skill-tags">
-                        <span>ETL/ELT</span>
-                        <span>Data Modeling</span>
-                        <span>Lakehouse</span>
-                        <span>DataOps</span>
-                        <span>CI/CD</span>
-                        <span>Data Quality</span>
-                        <span>Source-to-Target</span>
-                    </div>
+        <div class="container fade-in-up">
+            <div class="section-header">
+                <h2 class="section-title">Technical Expertise</h2>
+                <div class="line"></div>
+            </div>
+            
+            <div class="skills-grid">
+                <div class="skill-group card">
+                    <i class="fas fa-database skill-icon"></i>
+                    <h3>Data Engineering</h3>
+                    <p class="skill-desc">ETL/ELT Orchestration, Dimensional & Lakehouse Modeling, DataOps, CI/CD, SQL Tuning, Data Quality, Lineage, Source-to-Target Mapping.</p>
                 </div>
-
-                <div class="skill-category glass-card">
-                    <div class="skill-icon"><i class="fas fa-cloud"></i></div>
-                    <h4>Cloud & Big Data</h4>
-                    <div class="skill-tags">
-                        <span>Azure (ADF, Databricks)</span>
-                        <span>Snowflake</span>
-                        <span>Apache Spark / PySpark</span>
-                        <span>Delta Lake</span>
-                        <span>Kafka</span>
-                        <span>Airflow</span>
-                    </div>
+                <div class="skill-group card">
+                    <i class="fas fa-cloud skill-icon"></i>
+                    <h3>Cloud & Big Data</h3>
+                    <p class="skill-desc">Azure (ADF, Databricks, ADLS Gen2, Synapse), Snowflake, Apache Spark, PySpark, Delta Lake, Kafka, Airflow, Teradata, Oracle.</p>
                 </div>
-
-                <div class="skill-category glass-card">
-                    <div class="skill-icon"><i class="fas fa-brain"></i></div>
-                    <h4>AI & Machine Learning</h4>
-                    <div class="skill-tags">
-                        <span>LLMs</span>
-                        <span>QLoRA Fine-tuning</span>
-                        <span>NLP</span>
-                        <span>Time Series Forecasting</span>
-                        <span>Vector DBs</span>
-                        <span>scikit-learn</span>
-                    </div>
+                <div class="skill-group card">
+                    <i class="fas fa-brain skill-icon"></i>
+                    <h3>AI & Machine Learning</h3>
+                    <p class="skill-desc">LLMs, QLoRA Fine-tuning, Vector DBs, NLP, Time Series Forecasting (ARIMA), Regression, Classification, scikit-learn.</p>
                 </div>
-
-                <div class="skill-category glass-card">
-                    <div class="skill-icon"><i class="fas fa-code"></i></div>
-                    <h4>Programming & Tools</h4>
-                    <div class="skill-tags">
-                        <span>Python</span>
-                        <span>SQL / T-SQL / PL/SQL</span>
-                        <span>Scala</span>
-                        <span>Power BI</span>
-                        <span>Git / GitHub</span>
-                        <span>REST APIs</span>
-                        <span>MongoDB</span>
-                    </div>
+                <div class="skill-group card">
+                    <i class="fas fa-code skill-icon"></i>
+                    <h3>Programming & Tools</h3>
+                    <p class="skill-desc">Python, SQL, Scala, pandas, NumPy, Power BI, Plotly, Git, GitHub, REST APIs, MongoDB, Jira, Confluence.</p>
                 </div>
-
             </div>
         </div>
     </section>
 
     <!-- Experience Section -->
     <section id="experience" class="experience section">
-        <div class="section-container">
-            <h3 class="section-title fade-up">Professional Experience</h3>
-            <div class="timeline fade-up">
+        <div class="container fade-in-up">
+            <div class="section-header">
+                <h2 class="section-title">Experience</h2>
+                <div class="line"></div>
+            </div>
 
+            <div class="experience-list">
                 <!-- IU -->
-                <div class="timeline-item">
-                    <div class="timeline-dot"></div>
-                    <div class="timeline-content glass-card">
-                        <span class="timeline-date">Jan 2024 - Dec 2025</span>
-                        <div class="timeline-header">
-                            <h4>Graduate Research Assistant</h4>
-                            <h5>Indiana University (COMET Lab)</h5>
+                <div class="exp-card card">
+                    <div class="exp-header">
+                        <div>
+                            <h3 class="role">Graduate Research Assistant</h3>
+                            <h4 class="company">Indiana University (COMET Lab)</h4>
                         </div>
-                        <ul class="experience-list">
-                            <li><strong>LLM Fine-tuning:</strong> Applied QLoRA parameter-efficient fine-tuning to LLaMA
-                                3.2 and Qwen 2.5 to generate domain-specific Python code.</li>
-                            <li><strong>Streaming Platform:</strong> Architected end-to-end ingestion pipelines using
-                                Kafka and Airflow to validate research event data.</li>
-                            <li>Mentored 60+ graduate students in Data Analytics, Python, SQL, and ML.</li>
-                        </ul>
+                        <span class="date">Jan 2024 - Dec 2025</span>
                     </div>
+                    <ul class="exp-bullets">
+                        <li><strong>LLM Fine-tuning for Python Code Generation:</strong> Applied QLoRA parameter-efficient fine-tuning to LLaMA 3.2 and Qwen 2.5 to generate syntactically correct, domain-specific Python code; structured data workflows for training pipelines.</li>
+                        <li><strong>Streaming Analytics Platform:</strong> Architected end-to-end ingestion pipelines using Kafka and Airflow to continuously ingest, route, and validate research event data into downstream analytical stores.</li>
+                        <li>Mentored 60+ graduate students across Data Analytics, Python, SQL, and ML modules.</li>
+                    </ul>
                 </div>
 
                 <!-- Nisum -->
-                <div class="timeline-item">
-                    <div class="timeline-dot"></div>
-                    <div class="timeline-content glass-card">
-                        <span class="timeline-date">Nov 2018 - Dec 2023</span>
-                        <div class="timeline-header">
-                            <h4>Senior Data Engineer</h4>
-                            <h5>Nisum Technologies, Inc. (Client: Williams-Sonoma)</h5>
+                <div class="exp-card card">
+                    <div class="exp-header">
+                        <div>
+                            <h3 class="role">Senior Data Engineer</h3>
+                            <h4 class="company">Nisum Technologies, Inc. (Client: Williams-Sonoma)</h4>
                         </div>
-                        <ul class="experience-list">
-                            <li><strong>Lakehouse Architecture:</strong> Co-architected a unified Snowflake Data
-                                Lakehouse, consolidating 12TB+ of data and reducing infrastructure costs by 25%.</li>
-                            <li><strong>Pipeline Optimization:</strong> Tuned PySpark and Scala jobs in Databricks using
-                                Z-Ordering and partition pruning, reducing execution time by 40%.</li>
-                            <li><strong>Cloud Migration:</strong> Led migration of on-prem systems to Snowflake via
-                                Azure Data Factory.</li>
-                            <li><strong>Data Quality:</strong> Established Bronze/Silver/Gold frameworks with
-                                record-count reconciliation and schema validation.</li>
-                        </ul>
+                        <span class="date">Nov 2018 - Dec 2023</span>
                     </div>
+                    <ul class="exp-bullets">
+                        <li><strong>Lakehouse Architecture:</strong> Co-architected a unified Snowflake Data Lakehouse using dimensional modeling, consolidating 12 TB+ from heterogeneous sources into ADLS Gen2; leveraged Zero-Copy Cloning to cut infrastructure costs by 25%.</li>
+                        <li><strong>Pipeline Optimization:</strong> Tuned PySpark and Scala jobs in Databricks across Bronze-Silver-Gold layers using partition pruning and Z-Ordering, reducing pipeline execution time by 40%.</li>
+                        <li><strong>Warehouse Management System Migration:</strong> Led migration of on-premises Oracle systems to Snowflake via ADF; authored custom Scala scripts and complex SQL analytical functions for metric computation.</li>
+                        <li><strong>Data Governance & DevOps:</strong> Established data quality frameworks with record-count reconciliation and null-propagation detection; managed CI/CD deployment via Azure DevOps.</li>
+                        <li><strong>AI/ML Integration:</strong> Curated high-quality, feature-ready datasets to support data scientists in Azure ML pipeline workflows, ensuring end-to-end lineage.</li>
+                    </ul>
                 </div>
-
             </div>
         </div>
     </section>
 
     <!-- Projects Section -->
     <section id="projects" class="projects section">
-        <div class="section-container">
-            <h3 class="section-title fade-up">Featured Projects</h3>
-            <div class="projects-grid fade-up">
+        <div class="container fade-in-up">
+            <div class="section-header">
+                <h2 class="section-title">Selected Projects</h2>
+                <div class="line"></div>
+            </div>
 
-                <!-- Project 1: Python Code Generator -->
-                <div class="project-card glass-card">
-                    <div class="project-content">
-                        <div class="project-top">
-                            <div class="project-folder"><i class="far fa-folder-open"></i></div>
-                            <div class="project-links">
-                                <a href="https://github.com/Junaid-Techie/PythonCodeGen-Repo" target="_blank"><i class="fab fa-github"></i></a>
-                            </div>
+            <div class="projects-grid">
+                
+                <!-- Project 1 -->
+                <div class="project-card card">
+                    <div class="project-header">
+                        <i class="far fa-folder project-icon"></i>
+                        <div class="project-links">
+                            <a href="https://github.com/Junaid-Techie/PythonCodeGen-Repo" target="_blank" aria-label="GitHub"><i class="fab fa-github"></i></a>
                         </div>
-                        <h4>Python Code Generator</h4>
-                        <p>Developed Python code generation models using lightweight LLMs (LLaMA 3.2, Qwen 2.5) capable of running locally. Implemented continual pretraining, 4-bit quantization, and PEFT techniques.</p>
-                        <ul class="project-tech">
-                            <li>LLaMA 3.2</li>
-                            <li>QLoRA & PEFT</li>
-                            <li>PyTorch</li>
-                            <li>Python</li>
-                        </ul>
                     </div>
+                    <h3 class="project-title">Python Code Generator</h3>
+                    <p class="project-desc">Developed Python code generation models using lightweight LLMs (LLaMA 3.2, Qwen 2.5) capable of running locally. Implemented continual pretraining, 4-bit quantization, and PEFT techniques.</p>
+                    <ul class="project-tech">
+                        <li>LLaMA 3.2</li>
+                        <li>QLoRA</li>
+                        <li>PyTorch</li>
+                        <li>Python</li>
+                    </ul>
                 </div>
 
-                <!-- Project 2: Sales Prediction Pipeline -->
-                <div class="project-card glass-card">
-                    <div class="project-content">
-                        <div class="project-top">
-                            <div class="project-folder"><i class="far fa-folder-open"></i></div>
-                            <div class="project-links">
-                                <a href="https://github.com/Junaid-Techie/sales-prediction-main" target="_blank"><i class="fab fa-github"></i></a>
-                            </div>
+                <!-- Project 2 -->
+                <div class="project-card card">
+                    <div class="project-header">
+                        <i class="far fa-folder project-icon"></i>
+                        <div class="project-links">
+                            <a href="https://github.com/Junaid-Techie/sales-prediction-main" target="_blank" aria-label="GitHub"><i class="fab fa-github"></i></a>
                         </div>
-                        <h4>Sales Prediction Pipeline</h4>
-                        <p>Complete data pipeline and ML model training setup involving streaming data ingestion, validation, storage, and automated model training orchestrated via Apache Airflow.</p>
-                        <ul class="project-tech">
-                            <li>Apache Kafka</li>
-                            <li>Apache Spark</li>
-                            <li>Airflow</li>
-                            <li>PostgreSQL</li>
-                        </ul>
                     </div>
+                    <h3 class="project-title">Sales Prediction Pipeline</h3>
+                    <p class="project-desc">Complete data pipeline and ML model training setup involving streaming data ingestion, validation, storage, and automated model training orchestrated via Apache Airflow.</p>
+                    <ul class="project-tech">
+                        <li>Apache Kafka</li>
+                        <li>Apache Spark</li>
+                        <li>Airflow</li>
+                        <li>PostgreSQL</li>
+                    </ul>
                 </div>
 
-                <!-- Project 3: Job AI Matcher -->
-                <div class="project-card glass-card">
-                    <div class="project-content">
-                        <div class="project-top">
-                            <div class="project-folder"><i class="far fa-folder-open"></i></div>
-                            <div class="project-links">
-                                <a href="https://github.com/Junaid-Techie/job-ai-app" target="_blank"><i class="fab fa-github"></i></a>
-                                <a href="https://job-ai-app-six.vercel.app" target="_blank"><i class="fas fa-external-link-alt"></i></a>
-                            </div>
+                <!-- Project 3 -->
+                <div class="project-card card">
+                    <div class="project-header">
+                        <i class="far fa-folder project-icon"></i>
+                        <div class="project-links">
+                            <a href="https://github.com/Junaid-Techie/job-ai-app" target="_blank" aria-label="GitHub"><i class="fab fa-github"></i></a>
+                            <a href="https://job-ai-app-six.vercel.app" target="_blank" aria-label="Live Demo"><i class="fas fa-external-link-alt"></i></a>
                         </div>
-                        <h4>Job AI Matcher</h4>
-                        <p>AI-Powered Semantic Job Intelligence Platform. Uses vector embeddings (pgvector) and OpenAI for semantic matching to transform job search from manual filtering into intelligent matching.</p>
-                        <ul class="project-tech">
-                            <li>FastAPI</li>
-                            <li>PostgreSQL (pgvector)</li>
-                            <li>OpenAI</li>
-                            <li>Next.js</li>
-                        </ul>
                     </div>
+                    <h3 class="project-title">Job AI Matcher</h3>
+                    <p class="project-desc">AI-Powered Semantic Job Intelligence Platform. Uses vector embeddings (pgvector) and OpenAI for semantic matching to transform job search from manual filtering into intelligent matching.</p>
+                    <ul class="project-tech">
+                        <li>FastAPI</li>
+                        <li>pgvector</li>
+                        <li>OpenAI</li>
+                        <li>Next.js</li>
+                    </ul>
                 </div>
 
-                <!-- Project 4: HR Recruitment Application -->
-                <div class="project-card glass-card">
-                    <div class="project-content">
-                        <div class="project-top">
-                            <div class="project-folder"><i class="far fa-folder-open"></i></div>
-                            <div class="project-links">
-                                <a href="https://github.com/Junaid-Techie/HR-Recruitment-Application" target="_blank"><i class="fab fa-github"></i></a>
-                            </div>
+                <!-- Project 4 -->
+                <div class="project-card card">
+                    <div class="project-header">
+                        <i class="far fa-folder project-icon"></i>
+                        <div class="project-links">
+                            <a href="https://github.com/Junaid-Techie/HR-Recruitment-Application" target="_blank" aria-label="GitHub"><i class="fab fa-github"></i></a>
                         </div>
-                        <h4>HR Recruitment Application</h4>
-                        <p>A full-stack HR Recruitment Management System built with Python and the Falcon framework. Manages the complete hiring lifecycle using a MongoDB database and AJAX frontend.</p>
-                        <ul class="project-tech">
-                            <li>Python (Falcon)</li>
-                            <li>MongoDB</li>
-                            <li>REST APIs</li>
-                            <li>jQuery / AJAX</li>
-                        </ul>
                     </div>
+                    <h3 class="project-title">HR Recruitment App</h3>
+                    <p class="project-desc">A full-stack HR Recruitment Management System built with Python and the Falcon framework. Manages the complete hiring lifecycle using a MongoDB database and AJAX frontend.</p>
+                    <ul class="project-tech">
+                        <li>Python (Falcon)</li>
+                        <li>MongoDB</li>
+                        <li>REST APIs</li>
+                        <li>AJAX</li>
+                    </ul>
                 </div>
 
             </div>
         </div>
     </section>
 
-    <!-- Footer / Contact -->
-    <footer id="contact" class="footer">
-        <div class="section-container text-center fade-up">
-            <h2>Let's Connect</h2>
-            <p class="contact-desc">Currently open to new opportunities. Whether you have a question or just want to say
-                hi, I'll try my best to get back to you!</p>
-            <a href="mailto:mjunaidtechs@gmail.com" class="btn-primary btn-large">Say Hello</a>
-
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container fade-in-up">
+            <h2 class="footer-title">Let's build something great.</h2>
+            <p class="footer-text">I'm currently exploring new opportunities. Feel free to reach out for a chat or to discuss potential collaborations.</p>
+            <a href="mailto:mjunaidtechs@gmail.com" class="btn-primary">Say Hello</a>
+            
             <div class="footer-social">
-                <a href="https://www.linkedin.com/in/junaid-ahmed-mohammed-02321a95/" target="_blank"><i
-                        class="fab fa-linkedin-in"></i></a>
-                <a href="https://github.com/Junaid-Techie" target="_blank"><i class="fab fa-github"></i></a>
+                <a href="https://www.linkedin.com/in/junaid-ahmed-mohammed-02321a95/" target="_blank" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                <a href="https://github.com/Junaid-Techie" target="_blank" aria-label="GitHub"><i class="fab fa-github"></i></a>
+                <a href="mailto:mjunaidtechs@gmail.com" aria-label="Email"><i class="fas fa-envelope"></i></a>
             </div>
-
+            
             <p class="copyright">Designed & Built by Junaid Ahmed Mohammed</p>
         </div>
     </footer>
 
     <script src="script.js"></script>
 </body>
-
 </html>
