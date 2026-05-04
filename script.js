@@ -101,13 +101,19 @@ document.addEventListener('DOMContentLoaded', () => {
     let isMoving = false;
     let timeout;
 
-    window.addEventListener('mousemove', function(event) {
-        mouse.x = event.clientX;
-        mouse.y = event.clientY;
+    function handleInteraction(event) {
+        if (event.touches) {
+            mouse.x = event.touches[0].clientX;
+            mouse.y = event.touches[0].clientY;
+        } else {
+            mouse.x = event.clientX;
+            mouse.y = event.clientY;
+        }
+        
         isMoving = true;
         
-        // Spawn particles
-        for (let i = 0; i < 2; i++) {
+        // Spawn more particles for a denser trail
+        for (let i = 0; i < 4; i++) {
             particlesArray.push(new Particle());
         }
 
@@ -115,33 +121,42 @@ document.addEventListener('DOMContentLoaded', () => {
         timeout = setTimeout(() => {
             isMoving = false;
         }, 100);
-    });
+    }
+
+    window.addEventListener('mousemove', handleInteraction);
+    window.addEventListener('touchmove', handleInteraction);
 
     class Particle {
         constructor() {
-            this.x = mouse.x + (Math.random() * 10 - 5);
-            this.y = mouse.y + (Math.random() * 10 - 5);
-            this.size = Math.random() * 3 + 1; 
+            this.x = mouse.x + (Math.random() * 14 - 7);
+            this.y = mouse.y + (Math.random() * 14 - 7);
+            this.size = Math.random() * 5 + 2; // Made particles larger
             this.speedX = Math.random() * 2 - 1;
             this.speedY = Math.random() * 2 - 1;
             
             // Theme colors: primary, secondary, accent, white
-            const colors = ['#3b82f6', '#8b5cf6', '#10b981', '#e2e8f0'];
+            const colors = ['#3b82f6', '#8b5cf6', '#10b981', '#ffffff'];
             this.color = colors[Math.floor(Math.random() * colors.length)];
             this.life = 100;
         }
         update() {
             this.x += this.speedX;
             this.y += this.speedY;
-            this.life -= 2;
-            if (this.size > 0.1) this.size -= 0.05;
+            this.life -= 1.5; // Slower fade
+            if (this.size > 0.1) this.size -= 0.03; // Slower shrink
         }
         draw() {
             ctx.fillStyle = this.color;
+            // Add glowing effect
+            ctx.shadowBlur = 10;
+            ctx.shadowColor = this.color;
             ctx.globalAlpha = Math.max(0, this.life / 100);
+            
             // Draw pixel (square)
             ctx.fillRect(this.x, this.y, this.size, this.size);
+            
             ctx.globalAlpha = 1;
+            ctx.shadowBlur = 0; // Reset shadow
         }
     }
 
