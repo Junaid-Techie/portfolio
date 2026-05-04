@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Junaid Ahmed Mohammed | Data Engineer</title>
-    <meta name="description" content="Portfolio of Junaid Ahmed Mohammed, Data Engineer with 7+ years of experience in Azure, Snowflake, and Generative AI.">
+    <title>Experience | Junaid Ahmed Mohammed</title>
+    <meta name="description" content="Professional experience of Junaid Ahmed Mohammed.">
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -12,6 +12,11 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
+    <style>
+        .inner-page-section {
+            padding-top: 150px;
+        }
+    </style>
 </head>
 <body>
     <!-- Background animations -->
@@ -36,35 +41,47 @@
         </div>
     </nav>
 
-    <!-- Hero Section -->
-    <section id="home" class="hero">
-        <div class="hero-content">
-            <div class="hero-text fade-up">
-                <p class="greeting">Hi there, I'm</p>
-                <h1>Junaid Ahmed <span class="gradient-text">Mohammed</span></h1>
-                <h2>Data Engineer <span class="amp">&amp;</span> AI Practitioner</h2>
-                <p class="hero-desc">
-                    Designing and scaling cloud-native data systems on Azure & Snowflake. 
-                    Merging distributed processing with Generative AI to power modern data platforms.
-                </p>
-                <div class="hero-actions">
-                    <a href="projects.html" class="btn-primary">View My Work</a>
-                    <div class="social-links">
-                        <a href="https://www.linkedin.com/in/junaid-ahmed-mohammed-02321a95/" target="_blank" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
-                        <a href="https://github.com/Junaid-Techie" target="_blank" aria-label="GitHub"><i class="fab fa-github"></i></a>
-                        <a href="mailto:mjunaidtechs@gmail.com" aria-label="Email"><i class="fas fa-envelope"></i></a>
+    <!-- Experience Section -->
+    <section id="experience" class="experience section inner-page-section">
+        <div class="section-container">
+            <h3 class="section-title fade-up">Professional Experience</h3>
+            <div class="timeline fade-up">
+                
+                <!-- IU -->
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content glass-card">
+                        <span class="timeline-date">Jan 2024 - Dec 2025</span>
+                        <div class="timeline-header">
+                            <h4>Graduate Research Assistant</h4>
+                            <h5>Indiana University (COMET Lab)</h5>
+                        </div>
+                        <ul class="experience-list">
+                            <li><strong>LLM Fine-tuning:</strong> Applied QLoRA parameter-efficient fine-tuning to LLaMA 3.2 and Qwen 2.5 to generate domain-specific Python code.</li>
+                            <li><strong>Streaming Platform:</strong> Architected end-to-end ingestion pipelines using Kafka and Airflow to validate research event data.</li>
+                            <li>Mentored 60+ graduate students in Data Analytics, Python, SQL, and ML.</li>
+                        </ul>
                     </div>
                 </div>
-            </div>
-            <div class="hero-visual fade-up" style="transition-delay: 0.2s">
-                <div class="data-cube">
-                    <div class="face front"><i class="fas fa-database"></i></div>
-                    <div class="face back"><i class="fas fa-brain"></i></div>
-                    <div class="face right"><i class="fas fa-cloud"></i></div>
-                    <div class="face left"><i class="fas fa-code"></i></div>
-                    <div class="face top"><i class="fas fa-network-wired"></i></div>
-                    <div class="face bottom"><i class="fas fa-server"></i></div>
+
+                <!-- Nisum -->
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content glass-card">
+                        <span class="timeline-date">Nov 2018 - Dec 2023</span>
+                        <div class="timeline-header">
+                            <h4>Senior Data Engineer</h4>
+                            <h5>Nisum Technologies, Inc. (Client: Williams-Sonoma)</h5>
+                        </div>
+                        <ul class="experience-list">
+                            <li><strong>Lakehouse Architecture:</strong> Co-architected a unified Snowflake Data Lakehouse, consolidating 12TB+ of data and reducing infrastructure costs by 25%.</li>
+                            <li><strong>Pipeline Optimization:</strong> Tuned PySpark and Scala jobs in Databricks using Z-Ordering and partition pruning, reducing execution time by 40%.</li>
+                            <li><strong>Cloud Migration:</strong> Led migration of on-prem systems to Snowflake via Azure Data Factory.</li>
+                            <li><strong>Data Quality:</strong> Established Bronze/Silver/Gold frameworks with record-count reconciliation and schema validation.</li>
+                        </ul>
+                    </div>
                 </div>
+
             </div>
         </div>
     </section>
