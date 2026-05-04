@@ -71,7 +71,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }, 100);
 
-    // --- Cursor Pixel & Particle Effect ---
+    // --- Cursor Grid Trace Effect ---
     const canvas = document.createElement('canvas');
     canvas.id = 'particle-canvas';
     canvas.style.position = 'fixed';
@@ -84,7 +84,8 @@ document.addEventListener('DOMContentLoaded', () => {
     document.body.appendChild(canvas);
 
     const ctx = canvas.getContext('2d');
-    let particlesArray = [];
+    let pixelsArray = [];
+    const gridSize = 50; // Matches CSS .bg-grid background-size
 
     function resizeCanvas() {
         canvas.width = window.innerWidth;
@@ -93,90 +94,85 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('resize', resizeCanvas);
     resizeCanvas();
 
-    const mouse = {
-        x: undefined,
-        y: undefined,
+    function handleInteraction(event) {
+        let currentX, currentY;
+        if (event.touches) {
+            currentX = event.touches[0].clientX;
+            currentY = event.touches[0].clientY;
+        } else {
+            currentX = event.clientX;
+            currentY = event.clientY;
+        }
+        
+        // Calculate grid cell coordinate
+        let gridX = Math.floor(currentX / gridSize) * gridSize;
+        let gridY = Math.floor(currentY / gridSize) * gridSize;
+        
+        // Add pixel under cursor
+        addPixel(gridX, gridY);
+        
+        // Add random scattered adjacent pixels for a "digital" trail effect
+        for (let i = 0; i < 2; i++) {
+            if (Math.random() > 0.5) {
+                let offsetX = (Math.floor(Math.random() * 3) - 1) * gridSize;
+                let offsetY = (Math.floor(Math.random() * 3) - 1) * gridSize;
+                addPixel(gridX + offsetX, gridY + offsetY);
+            }
+        }
     }
 
-    let isMoving = false;
-    let timeout;
-
-    function handleInteraction(event) {
-        if (event.touches) {
-            mouse.x = event.touches[0].clientX;
-            mouse.y = event.touches[0].clientY;
+    function addPixel(x, y) {
+        let existingPixel = pixelsArray.find(p => p.x === x && p.y === y);
+        if (existingPixel) {
+            existingPixel.life = 100; // Reset life if already active
         } else {
-            mouse.x = event.clientX;
-            mouse.y = event.clientY;
+            pixelsArray.push(new GridPixel(x, y));
         }
-        
-        isMoving = true;
-        
-        // Spawn more particles for a denser trail
-        for (let i = 0; i < 4; i++) {
-            particlesArray.push(new Particle());
-        }
-
-        clearTimeout(timeout);
-        timeout = setTimeout(() => {
-            isMoving = false;
-        }, 100);
     }
 
     window.addEventListener('mousemove', handleInteraction);
     window.addEventListener('touchmove', handleInteraction);
 
-    class Particle {
-        constructor() {
-            this.x = mouse.x + (Math.random() * 14 - 7);
-            this.y = mouse.y + (Math.random() * 14 - 7);
-            this.size = Math.random() * 5 + 2; // Made particles larger
-            this.speedX = Math.random() * 2 - 1;
-            this.speedY = Math.random() * 2 - 1;
+    class GridPixel {
+        constructor(x, y) {
+            this.x = x;
+            this.y = y;
+            this.size = gridSize;
             
-            // Theme colors: primary, secondary, accent, white
-            const colors = ['#3b82f6', '#8b5cf6', '#10b981', '#ffffff'];
+            // Theme colors matching the gradient text
+            const colors = ['rgba(59, 130, 246, 0.4)', 'rgba(139, 92, 246, 0.4)', 'rgba(16, 185, 129, 0.3)'];
             this.color = colors[Math.floor(Math.random() * colors.length)];
             this.life = 100;
         }
         update() {
-            this.x += this.speedX;
-            this.y += this.speedY;
-            this.life -= 1.5; // Slower fade
-            if (this.size > 0.1) this.size -= 0.03; // Slower shrink
+            this.life -= 1.5; // Fade speed
         }
         draw() {
             ctx.fillStyle = this.color;
-            // Add glowing effect
-            ctx.shadowBlur = 10;
-            ctx.shadowColor = this.color;
             ctx.globalAlpha = Math.max(0, this.life / 100);
-            
-            // Draw pixel (square)
-            ctx.fillRect(this.x, this.y, this.size, this.size);
-            
+            // Draw pixel perfectly aligned inside the background grid lines (+1px offset)
+            ctx.fillRect(this.x + 1, this.y + 1, this.size - 1, this.size - 1);
             ctx.globalAlpha = 1;
-            ctx.shadowBlur = 0; // Reset shadow
         }
     }
 
-    function handleParticles() {
-        for (let i = 0; i < particlesArray.length; i++) {
-            particlesArray[i].update();
-            particlesArray[i].draw();
+    function handlePixels() {
+        for (let i = 0; i < pixelsArray.length; i++) {
+            pixelsArray[i].update();
+            pixelsArray[i].draw();
             
-            if (particlesArray[i].life <= 0 || particlesArray[i].size <= 0.1) {
-                particlesArray.splice(i, 1);
+            if (pixelsArray[i].life <= 0) {
+                pixelsArray.splice(i, 1);
                 i--;
             }
         }
     }
 
-    function animateParticles() {
+    function animatePixels() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        handleParticles();
-        requestAnimationFrame(animateParticles);
+        handlePixels();
+        requestAnimationFrame(animatePixels);
     }
 
-    animateParticles();
+    animatePixels();
 });
