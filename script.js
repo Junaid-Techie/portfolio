@@ -95,7 +95,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const ctx = canvas.getContext('2d');
     let pixelsArray = [];
-    const gridSize = 10; // Smaller pixels that fit inside the 50px background grid
+    const gridSize = 25; // Increased pixel size to 25px (exactly 4 fit in the 50px background grid)
 
     function resizeCanvas() {
         canvas.width = window.innerWidth;
@@ -122,11 +122,12 @@ document.addEventListener('DOMContentLoaded', () => {
             lastY = currentY;
         }
 
-        // Calculate distance and interpolate to prevent skipping pixels
+        // Calculate distance and densely interpolate to prevent skipping pixels
         let dx = currentX - lastX;
         let dy = currentY - lastY;
         let distance = Math.sqrt(dx * dx + dy * dy);
-        let steps = Math.max(1, Math.ceil(distance / (gridSize / 2)));
+        // Sample at 1/4th the grid size to ensure we hit every single grid cell along the path
+        let steps = Math.max(1, Math.ceil(distance / (gridSize / 4)));
 
         for (let i = 0; i <= steps; i++) {
             let x = lastX + (dx * i) / steps;
@@ -139,7 +140,7 @@ document.addEventListener('DOMContentLoaded', () => {
             addPixel(gridX, gridY);
             
             // Add random scattered adjacent pixels for a "digital" trail effect
-            if (Math.random() > 0.6) {
+            if (Math.random() > 0.7) { // slightly less scattering since pixels are bigger now
                 let offsetX = (Math.floor(Math.random() * 3) - 1) * gridSize;
                 let offsetY = (Math.floor(Math.random() * 3) - 1) * gridSize;
                 addPixel(gridX + offsetX, gridY + offsetY);
