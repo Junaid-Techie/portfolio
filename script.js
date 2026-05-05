@@ -84,14 +84,15 @@ document.addEventListener('DOMContentLoaded', () => {
     document.body.appendChild(canvas);
     
     // Custom SVG Cursor matching primary color (#3b82f6)
-    const cursorSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%233b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="4" x2="12" y2="20"></line><line x1="4" y1="12" x2="20" y2="12"></line></svg>`;
-    const cursorUrl = `url("data:image/svg+xml;utf8,${cursorSvg}") 12 12, crosshair`;
-    document.body.style.cursor = cursorUrl;
+    const cursorSvg = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="4" x2="12" y2="20"></line><line x1="4" y1="12" x2="20" y2="12"></line></svg>';
+    const cursorUrl = `url("data:image/svg+xml,${encodeURIComponent(cursorSvg)}") 12 12, crosshair`;
     
-    // Ensure all links and buttons still have a pointer
-    document.querySelectorAll('a, button, .hamburger').forEach(el => {
-        el.style.cursor = 'pointer';
-    });
+    const cursorStyle = document.createElement('style');
+    cursorStyle.innerHTML = `
+        body, html { cursor: ${cursorUrl} !important; }
+        a, button, .hamburger, .fab, .fas, a * { cursor: pointer !important; }
+    `;
+    document.head.appendChild(cursorStyle);
 
     const ctx = canvas.getContext('2d');
     let pixelsArray = [];
