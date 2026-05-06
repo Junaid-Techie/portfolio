@@ -279,6 +279,7 @@
                 <button class="filter-btn" data-filter="genai">GenAI</button>
                 <button class="filter-btn" data-filter="data">Data Pipelines</button>
                 <button class="filter-btn" data-filter="fullstack">Full Stack</button>
+                <button class="filter-btn" data-filter="analysis">Data Analysis</button>
             </div>
 
             <div class="projects-grid fade-up">
@@ -365,6 +366,67 @@
                             <li>jQuery / AJAX</li>
                         </ul>
                         <button class="btn-outline case-btn" style="margin-top: 1.5rem; width: 100%; cursor: pointer;" onclick="openModal('HR Recruitment Application', '<strong>Project Architecture & Deep Dive:</strong><br><br>Designed to centralize and streamline the hiring lifecycle, this application is a full-stack applicant tracking system (ATS) built from scratch without relying on heavy enterprise frameworks.<br><br><strong>Technical Implementation:</strong><br><ul><li><strong>Backend Framework:</strong> Built the core RESTful APIs using Falcon, an extremely fast and minimalist Python web framework, ensuring rapid response times.</li><li><strong>Database Layer:</strong> Adopted MongoDB (NoSQL) to handle flexible, schema-less candidate data, allowing resumes, interview notes, and custom fields to be stored dynamically.</li><li><strong>Frontend Integration:</strong> Developed a responsive client-side dashboard utilizing jQuery and AJAX to interact asynchronously with the Falcon APIs, resulting in a single-page application (SPA) feel.</li></ul><br><strong>Business Impact:</strong> Eliminated scattered email and spreadsheet tracking by providing HR teams with a unified, high-speed dashboard, reducing administrative overhead by 30%.')">Read Case Study</button>
+                    </div>
+                </div>
+
+                <!-- COMET Project 1 -->
+                <div class="project-card glass-card" data-category="analysis">
+                    <div class="project-content">
+                        <div class="project-top">
+                            <div class="project-folder"><i class="far fa-folder-open"></i></div>
+                            <div class="project-links">
+                                <a href="https://comet.luddy.indianapolis.iu.edu/cmt23s/ipums-r-neon-stuff/" target="_blank"><i class="fas fa-external-link-alt"></i></a>
+                            </div>
+                        </div>
+                        <h4>IPUMS R. Neon — Income Inequality</h4>
+                        <p>Exploratory analysis of income inequality using the IPUMS USA dataset, investigating how age, gender, education, and occupation shape income distribution.</p>
+                        <ul class="project-tech">
+                            <li>Data Analysis</li>
+                            <li>T-tests & ANOVA</li>
+                            <li>Observable</li>
+                        </ul>
+                        <button class="btn-outline case-btn" style="margin-top: 1.5rem; width: 100%; cursor: pointer;" onclick="openModal('IPUMS R. Neon Analysis', '<strong>Project Architecture & Deep Dive:</strong><br><br>Exploratory analysis of income inequality using the IPUMS USA dataset—a nationally representative sample of U.S. demographic and socioeconomic data.<br><br><strong>Technical Implementation:</strong><br><ul><li><strong>Data Processing:</strong> Loaded and cleaned dataset via API; standardized income, age, gender, education, and occupation variables.</li><li><strong>Statistical Analysis:</strong> Calculated the Gini coefficient to quantify income inequality and ran T-tests/ANOVA to assess socioeconomic impacts.</li><li><strong>Data Visualization:</strong> Built interactive histograms, box plots, and heatmaps on Observable to surface distribution patterns.</li></ul><br><strong>Key Finding:</strong> Gender and education are the strongest drivers of income disparity.')">Read Case Study</button>
+                    </div>
+                </div>
+
+                <!-- COMET Project 2 -->
+                <div class="project-card glass-card" data-category="analysis">
+                    <div class="project-content">
+                        <div class="project-top">
+                            <div class="project-folder"><i class="far fa-folder-open"></i></div>
+                            <div class="project-links">
+                                <a href="https://comet.luddy.indianapolis.iu.edu/cmt23s/bike-share-data-analysis/" target="_blank"><i class="fas fa-external-link-alt"></i></a>
+                            </div>
+                        </div>
+                        <h4>Cyclistic Bike Share — Urban Mobility</h4>
+                        <p>Analysis of Cyclistic Bike-Share trip data from Chicago, examining user behavior, geographic demand patterns, and temporal trends for service optimization.</p>
+                        <ul class="project-tech">
+                            <li>Data Engineering</li>
+                            <li>Geospatial Maps</li>
+                            <li>Plotly</li>
+                            <li>Time-series</li>
+                        </ul>
+                        <button class="btn-outline case-btn" style="margin-top: 1.5rem; width: 100%; cursor: pointer;" onclick="openModal('Cyclistic Bike Share Analysis', '<strong>Project Architecture & Deep Dive:</strong><br><br>Analysis of Cyclistic Bike-Share trip data from Chicago (2018–2022), examining user behavior, geographic demand patterns, and temporal trends to produce actionable recommendations for service optimization.<br><br><strong>Technical Implementation:</strong><br><ul><li><strong>Data Engineering:</strong> Combined multi-year datasets; engineered ride duration, day-of-week, hour-of-day, and duration bin features.</li><li><strong>Pattern Recognition:</strong> Identified that members show consistent short rides while casual users display high duration variability.</li><li><strong>Visualization:</strong> Built geospatial heatmaps, time-series charts, and hourly/weekly breakdowns using Plotly and Observable.</li><li><strong>Optimization:</strong> Pinpointed downtown hotspots as high-demand zones requiring prioritized resource allocation.</li></ul><br><strong>Key Finding:</strong> Commuter patterns dominate weekdays; leisure rides peak on weekends.')">Read Case Study</button>
+                    </div>
+                </div>
+
+                <!-- COMET Project 3 -->
+                <div class="project-card glass-card" data-category="analysis">
+                    <div class="project-content">
+                        <div class="project-top">
+                            <div class="project-folder"><i class="far fa-folder-open"></i></div>
+                            <div class="project-links">
+                                <a href="https://comet.luddy.indianapolis.iu.edu/cmt23s/programs/nhanes-data-analysis/" target="_blank"><i class="fas fa-external-link-alt"></i></a>
+                            </div>
+                        </div>
+                        <h4>NHANES — Health & Nutrition Analysis</h4>
+                        <p>Health and nutrition study using NHANES data to uncover trends in blood pressure, cholesterol, and dietary intake among U.S. adults aged 55+.</p>
+                        <ul class="project-tech">
+                            <li>Data Processing</li>
+                            <li>Weighted Means</li>
+                            <li>Observable</li>
+                        </ul>
+                        <button class="btn-outline case-btn" style="margin-top: 1.5rem; width: 100%; cursor: pointer;" onclick="openModal('NHANES Data Analysis', '<strong>Project Architecture & Deep Dive:</strong><br><br>Health and nutrition study using NHANES data to uncover trends in blood pressure, cholesterol, and dietary intake among U.S. adults aged 55+, segmented by gender, age group, and race/ethnicity.<br><br><strong>Technical Implementation:</strong><br><ul><li><strong>Data Processing:</strong> Processed multiple NHANES files (demographics, laboratory, examination, dietary) with weighted mean calculations.</li><li><strong>Analysis:</strong> Analyzed blood pressure, LDL cholesterol, and macronutrient intake across demographic groups.</li><li><strong>Delivery:</strong> Delivered interactive Observable visualizations for public health researchers and policymakers.</li></ul><br><strong>Key Finding:</strong> LDL peaks at 55–64; protein intake declines steadily with age.')">Read Case Study</button>
                     </div>
                 </div>
 
