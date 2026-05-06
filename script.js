@@ -280,14 +280,29 @@ document.addEventListener('DOMContentLoaded', () => {
                         const response = await fetch(`https://api.mailcheck.ai/email/${val}`);
                         const data = await response.json();
                         
-                        // Reject invalid format, missing mx, or disposable addresses
-                        if (response.status === 400 || data.error || data.mx === false || data.disposable === true) {
-                            errorSpan.textContent = 'This email does not appear to be active.';
+                        // If API is successful (200), strictly check MX and Disposable status
+                        if (response.status === 200) {
+                            if (data.mx === false || data.disposable === true) {
+                                errorSpan.textContent = 'This email does not appear to be active.';
+                                errorSpan.style.color = '#fca5a5';
+                                errorSpan.style.display = 'block';
+                                input.style.borderColor = '#fca5a5';
+                                isEmailAPIValidated = false;
+                            } else {
+                                errorSpan.style.display = 'none';
+                                input.style.borderColor = 'var(--primary)';
+                                isEmailAPIValidated = true;
+                            }
+                        } else if (response.status === 400) {
+                            // 400 means completely impossible domain format (e.g. .asdfg)
+                            errorSpan.textContent = 'This email domain format is invalid.';
                             errorSpan.style.color = '#fca5a5';
                             errorSpan.style.display = 'block';
                             input.style.borderColor = '#fca5a5';
                             isEmailAPIValidated = false;
                         } else {
+                            // 429 Rate Limit or 500 Server Error: Fail Open! 
+                            // Do NOT block valid users just because the free API is overwhelmed.
                             errorSpan.style.display = 'none';
                             input.style.borderColor = 'var(--primary)';
                             isEmailAPIValidated = true;
