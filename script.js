@@ -176,20 +176,20 @@ document.addEventListener('DOMContentLoaded', () => {
             this.y = y;
             this.size = gridSize;
 
-            // Only using the dark blue color (primary)
-            this.color = 'rgba(59, 130, 246, 0.4)';
+            // Subtler dark blue color
+            this.color = 'rgba(59, 130, 246, 0.15)';
             this.life = 100;
         }
         update() {
-            this.life -= 1.5; // Fade speed
+            this.life -= 2; // Slightly faster fade
         }
         draw() {
             ctx.fillStyle = this.color;
             ctx.globalAlpha = Math.max(0, this.life / 100);
 
-            // Add glowing effect
-            ctx.shadowBlur = 8;
-            ctx.shadowColor = '#3b82f6';
+            // Subtle glowing effect
+            ctx.shadowBlur = 3;
+            ctx.shadowColor = 'rgba(59, 130, 246, 0.3)';
 
             // Draw pixel perfectly aligned inside the background grid lines (+1px offset)
             ctx.fillRect(this.x + 1, this.y + 1, this.size - 1, this.size - 1);
