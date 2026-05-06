@@ -218,4 +218,62 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     animatePixels();
+
+    // Contact Form Validation and Submission
+    const contactForm = document.querySelector('.contact-form');
+    if (contactForm) {
+        contactForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const nameInput = document.getElementById('contactName');
+            const emailInput = document.getElementById('contactEmail');
+            const msgInput = document.getElementById('contactMsg');
+            const formMessage = document.getElementById('formMessage');
+            
+            const name = nameInput.value.trim();
+            const email = emailInput.value.trim();
+            const message = msgInput.value.trim();
+            
+            // Clear previous message
+            formMessage.style.display = 'none';
+            formMessage.className = '';
+            
+            // Basic Checks
+            if (!name || !email || !message) {
+                showFormMessage('Please fill out all fields.', 'error');
+                return;
+            }
+            
+            // Email Format Check
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                showFormMessage('Please enter a valid email address.', 'error');
+                return;
+            }
+            
+            // If valid, open default mail client
+            const subject = encodeURIComponent('New Contact from Portfolio: ' + name);
+            const body = encodeURIComponent('Name: ' + name + '\nEmail: ' + email + '\n\nMessage:\n' + message);
+            window.location.href = 'mailto:mjunaidtechs@gmail.com?subject=' + subject + '&body=' + body;
+            
+            // Show success message and reset
+            showFormMessage('Opening your mail client...', 'success');
+            contactForm.reset();
+        });
+        
+        function showFormMessage(text, type) {
+            const formMessage = document.getElementById('formMessage');
+            formMessage.textContent = text;
+            formMessage.style.display = 'block';
+            if (type === 'error') {
+                formMessage.style.backgroundColor = 'rgba(239, 68, 68, 0.2)';
+                formMessage.style.color = '#fca5a5';
+                formMessage.style.border = '1px solid #ef4444';
+            } else {
+                formMessage.style.backgroundColor = 'rgba(16, 185, 129, 0.2)';
+                formMessage.style.color = '#6ee7b7';
+                formMessage.style.border = '1px solid #10b981';
+            }
+        }
+    }
 });

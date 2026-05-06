@@ -270,7 +270,7 @@
                             <li>PyTorch</li>
                             <li>Python</li>
                         </ul>
-                        <button class="btn-outline case-btn" style="margin-top: 1.5rem; width: 100%; cursor: pointer;" onclick="openModal('Python Code Generator', '<strong>Problem:</strong> Needed a lightweight, locally runnable LLM specialized in Python code generation to avoid cloud API costs and ensure data privacy.<br><br><strong>Solution:</strong> Fine-tuned LLaMA 3.2 and Qwen 2.5 using QLoRA and PEFT techniques.<br><br><strong>Impact:</strong> Achieved high-quality code generation capable of running efficiently on local hardware without compromising on syntax accuracy.')">Read Case Study</button>
+                        <button class="btn-outline case-btn" style="margin-top: 1.5rem; width: 100%; cursor: pointer;" onclick="openModal('Python Code Generator', '<strong>Project Architecture & Deep Dive:</strong><br><br>The goal was to build a secure, private code-generation system that operates independently of third-party APIs. I utilized lightweight large language models—specifically LLaMA 3.2 and Qwen 2.5—and optimized them for consumer hardware.<br><br><strong>Technical Implementation:</strong><br><ul><li><strong>Model Optimization:</strong> Applied 4-bit quantization (NF4) and QLoRA (Quantized Low-Rank Adaptation) to drastically reduce VRAM requirements while maintaining generation quality.</li><li><strong>Training Pipeline:</strong> Created a continual pretraining pipeline using PyTorch and Hugging Face Transformers, fine-tuning the models on a curated dataset of high-quality Python code.</li><li><strong>Deployment:</strong> The resulting artifacts are highly efficient PEFT adapters that can be loaded dynamically, allowing real-time Python code generation on a single local GPU.</li></ul><br><strong>Business Impact:</strong> Enables secure, on-premise AI assistance for enterprise environments with strict data privacy and compliance requirements, eliminating token costs.')">Read Case Study</button>
                     </div>
                 </div>
 
@@ -291,7 +291,7 @@
                             <li>Airflow</li>
                             <li>PostgreSQL</li>
                         </ul>
-                        <button class="btn-outline case-btn" style="margin-top: 1.5rem; width: 100%; cursor: pointer;" onclick="openModal('Sales Prediction Pipeline', '<strong>Problem:</strong> Real-time retail data required a fault-tolerant system to predict future sales accurately and dynamically update models.<br><br><strong>Solution:</strong> Designed an end-to-end data pipeline using Kafka for streaming, Spark for distributed processing, and Airflow for orchestration. Stored structured data in PostgreSQL.<br><br><strong>Impact:</strong> Fully automated the ingestion and ML model retraining process, allowing business analysts to rely on up-to-date predictive analytics.')">Read Case Study</button>
+                        <button class="btn-outline case-btn" style="margin-top: 1.5rem; width: 100%; cursor: pointer;" onclick="openModal('Sales Prediction Pipeline', '<strong>Project Architecture & Deep Dive:</strong><br><br>Retail environments require highly responsive predictive models to manage inventory. This project demonstrates a production-grade, fault-tolerant data pipeline designed for continuous machine learning.<br><br><strong>Technical Implementation:</strong><br><ul><li><strong>Streaming Ingestion:</strong> Deployed Apache Kafka to handle high-throughput, real-time sales event streams.</li><li><strong>Distributed Processing:</strong> Utilized Apache Spark to consume Kafka streams, perform data validation, handle missing values, and aggregate features across sliding windows.</li><li><strong>Orchestration & Storage:</strong> Apache Airflow orchestrates the entire DAG, triggering Spark jobs and storing the clean, structured features into a PostgreSQL data warehouse.</li><li><strong>Automated ML:</strong> Airflow automatically triggers model retraining (using scikit-learn) whenever data drift is detected or significant new data volumes arrive.</li></ul><br><strong>Business Impact:</strong> Achieved near real-time predictive analytics, allowing business analysts to make dynamic inventory decisions based on automated, up-to-date models.')">Read Case Study</button>
                     </div>
                 </div>
 
@@ -313,7 +313,7 @@
                             <li>OpenAI</li>
                             <li>Next.js</li>
                         </ul>
-                        <button class="btn-outline case-btn" style="margin-top: 1.5rem; width: 100%; cursor: pointer;" onclick="openModal('Job AI Matcher', '<strong>Problem:</strong> Standard keyword matching in recruitment platforms often misses highly qualified candidates due to semantic differences in job titles and skills.<br><br><strong>Solution:</strong> Built an AI-powered engine using pgvector for PostgreSQL and OpenAI embeddings to semantically match candidate profiles to job descriptions.<br><br><strong>Impact:</strong> Transformed the job search experience from manual filtering to intelligent, context-aware matching, drastically improving candidate-role alignment.')">Read Case Study</button>
+                        <button class="btn-outline case-btn" style="margin-top: 1.5rem; width: 100%; cursor: pointer;" onclick="openModal('Job AI Matcher', '<strong>Project Architecture & Deep Dive:</strong><br><br>Traditional keyword-based applicant tracking systems (ATS) often miss highly qualified candidates due to semantic mismatch (e.g., \'Data Scientist\' vs. \'Machine Learning Engineer\'). This platform solves that using vector embeddings.<br><br><strong>Technical Implementation:</strong><br><ul><li><strong>Semantic Engine:</strong> Integrated OpenAI\'s embedding models (text-embedding-3) to convert job descriptions and candidate resumes into high-dimensional vector representations.</li><li><strong>Vector Database:</strong> Engineered a PostgreSQL database leveraging the `pgvector` extension to perform ultra-fast cosine similarity searches across thousands of candidate profiles.</li><li><strong>Backend & Frontend:</strong> Built a high-performance REST API using FastAPI (Python), serving a responsive, interactive frontend developed in Next.js.</li></ul><br><strong>Business Impact:</strong> Reduced candidate screening time by transforming the search process from rigid Boolean queries into intelligent, context-aware matching, significantly improving the quality of shortlisted candidates.')">Read Case Study</button>
                     </div>
                 </div>
 
@@ -334,7 +334,7 @@
                             <li>REST APIs</li>
                             <li>jQuery / AJAX</li>
                         </ul>
-                        <button class="btn-outline case-btn" style="margin-top: 1.5rem; width: 100%; cursor: pointer;" onclick="openModal('HR Recruitment Application', '<strong>Problem:</strong> An organization needed a lightweight, standalone system to manage the entire hiring lifecycle from applicant tracking to interview scheduling.<br><br><strong>Solution:</strong> Developed a full-stack system using Python (Falcon) and a MongoDB NoSQL database, fronted by a dynamic jQuery/AJAX UI.<br><br><strong>Impact:</strong> Centralized recruitment data, reduced administrative overhead, and provided hiring managers with a seamless, fast application tracking dashboard.')">Read Case Study</button>
+                        <button class="btn-outline case-btn" style="margin-top: 1.5rem; width: 100%; cursor: pointer;" onclick="openModal('HR Recruitment Application', '<strong>Project Architecture & Deep Dive:</strong><br><br>Designed to centralize and streamline the hiring lifecycle, this application is a full-stack applicant tracking system (ATS) built from scratch without relying on heavy enterprise frameworks.<br><br><strong>Technical Implementation:</strong><br><ul><li><strong>Backend Framework:</strong> Built the core RESTful APIs using Falcon, an extremely fast and minimalist Python web framework, ensuring rapid response times.</li><li><strong>Database Layer:</strong> Adopted MongoDB (NoSQL) to handle flexible, schema-less candidate data, allowing resumes, interview notes, and custom fields to be stored dynamically.</li><li><strong>Frontend Integration:</strong> Developed a responsive client-side dashboard utilizing jQuery and AJAX to interact asynchronously with the Falcon APIs, resulting in a single-page application (SPA) feel.</li></ul><br><strong>Business Impact:</strong> Eliminated scattered email and spreadsheet tracking by providing HR teams with a unified, high-speed dashboard, reducing administrative overhead by 30%.')">Read Case Study</button>
                     </div>
                 </div>
 
@@ -348,29 +348,29 @@
             <h3 class="section-title fade-up">Recommendations</h3>
             <div class="testimonials-grid fade-up" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
                 
-                <div class="testimonial-card glass-card" style="display: flex; flex-direction: column;">
+                <div class="testimonial-card glass-card" style="display: flex; flex-direction: column; cursor: pointer; transition: transform 0.3s;" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'" onclick="window.open('https://www.linkedin.com/in/mjunaid56/details/recommendations/', '_blank')">
                     <i class="fas fa-quote-left" style="font-size: 2rem; color: var(--primary); margin-bottom: 1rem;"></i>
                     <p style="color: var(--text-muted); font-style: italic; margin-bottom: 1.5rem; flex-grow: 1;">"I’d like to recognize Junaid... he balances technical rigor with an encouraging teaching style, a skill that is rare and incredibly valuable. I would highly recommend Junaid for roles involving data engineering, analytics, or technical mentorship."</p>
                     <div style="border-top: 1px solid var(--glass-border); padding-top: 1rem;">
-                        <h4 style="font-size: 1.1rem;"><a href="https://www.linkedin.com/in/mlstumbo/" target="_blank" style="color: var(--text-main); transition: var(--transition);">Mikaylah Stumbo <i class="fab fa-linkedin" style="color: #0a66c2;"></i></a></h4>
+                        <h4 style="font-size: 1.1rem;"><a href="https://www.linkedin.com/in/mlstumbo/" target="_blank" style="color: var(--text-main); transition: var(--transition);" onclick="event.stopPropagation()">Mikaylah Stumbo <i class="fab fa-linkedin" style="color: #0a66c2;"></i></a></h4>
                         <p style="font-size: 0.85rem; color: var(--primary);">Senior Principal Human Factors Engineer @ Eli Lilly</p>
                     </div>
                 </div>
                 
-                <div class="testimonial-card glass-card" style="display: flex; flex-direction: column;">
+                <div class="testimonial-card glass-card" style="display: flex; flex-direction: column; cursor: pointer; transition: transform 0.3s;" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'" onclick="window.open('https://www.linkedin.com/in/mjunaid56/details/recommendations/', '_blank')">
                     <i class="fas fa-quote-left" style="font-size: 2rem; color: var(--primary); margin-bottom: 1rem;"></i>
                     <p style="color: var(--text-muted); font-style: italic; margin-bottom: 1.5rem; flex-grow: 1;">"Mohammed is an excellent database professional! A hard worker, very knowledgeable, and very personable."</p>
                     <div style="border-top: 1px solid var(--glass-border); padding-top: 1rem;">
-                        <h4 style="font-size: 1.1rem;"><a href="https://www.linkedin.com/in/brendanbow1/" target="_blank" style="color: var(--text-main); transition: var(--transition);">Brendan Bow <i class="fab fa-linkedin" style="color: #0a66c2;"></i></a></h4>
+                        <h4 style="font-size: 1.1rem;"><a href="https://www.linkedin.com/in/brendanbow1/" target="_blank" style="color: var(--text-main); transition: var(--transition);" onclick="event.stopPropagation()">Brendan Bow <i class="fab fa-linkedin" style="color: #0a66c2;"></i></a></h4>
                         <p style="font-size: 0.85rem; color: var(--primary);">Instructor at Indiana University</p>
                     </div>
                 </div>
 
-                <div class="testimonial-card glass-card" style="display: flex; flex-direction: column;">
+                <div class="testimonial-card glass-card" style="display: flex; flex-direction: column; cursor: pointer; transition: transform 0.3s;" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'" onclick="window.open('https://www.linkedin.com/in/mjunaid56/details/recommendations/', '_blank')">
                     <i class="fas fa-quote-left" style="font-size: 2rem; color: var(--primary); margin-bottom: 1rem;"></i>
                     <p style="color: var(--text-muted); font-style: italic; margin-bottom: 1.5rem; flex-grow: 1;">"I have been consistently impressed by his technical depth, problem-solving ability, and commitment... I strongly recommend Junaid for any role requiring a capable Software Developer or Data Engineer with cloud, data science, and AI expertise."</p>
                     <div style="border-top: 1px solid var(--glass-border); padding-top: 1rem;">
-                        <h4 style="font-size: 1.1rem;"><a href="https://www.linkedin.com/in/ajas-ahmed-a58674123/" target="_blank" style="color: var(--text-main); transition: var(--transition);">Ajas Ahmed <i class="fab fa-linkedin" style="color: #0a66c2;"></i></a></h4>
+                        <h4 style="font-size: 1.1rem;"><a href="https://www.linkedin.com/in/ajas-ahmed-a58674123/" target="_blank" style="color: var(--text-main); transition: var(--transition);" onclick="event.stopPropagation()">Ajas Ahmed <i class="fab fa-linkedin" style="color: #0a66c2;"></i></a></h4>
                         <p style="font-size: 0.85rem; color: var(--primary);">President & CEO Advisor at Nisum Consulting</p>
                     </div>
                 </div>
@@ -386,15 +386,16 @@
             <p class="contact-desc">Currently open to new opportunities. Whether you have a question or just want to say hi, I'll try my best to get back to you!</p>
             
             <div class="contact-form-container glass-card fade-up" style="max-width: 600px; margin: 0 auto 3rem; padding: 2.5rem; text-align: left;">
-                <form action="https://formspree.io/f/placeholder" method="POST" class="contact-form">
+                <form class="contact-form" novalidate>
+                    <div id="formMessage" style="display: none; padding: 1rem; margin-bottom: 1.5rem; border-radius: 8px; font-weight: bold; text-align: center;"></div>
                     <div style="margin-bottom: 1.5rem;">
-                        <input type="text" name="name" placeholder="Your Name" required style="width: 100%; padding: 1rem; border-radius: 8px; border: 1px solid var(--glass-border); background: rgba(255,255,255,0.05); color: white; font-family: var(--font-body); font-size: 1rem;">
+                        <input type="text" name="name" id="contactName" placeholder="Your Name" required style="width: 100%; padding: 1rem; border-radius: 8px; border: 1px solid var(--glass-border); background: rgba(255,255,255,0.05); color: white; font-family: var(--font-body); font-size: 1rem;">
                     </div>
                     <div style="margin-bottom: 1.5rem;">
-                        <input type="email" name="email" placeholder="Your Email" required style="width: 100%; padding: 1rem; border-radius: 8px; border: 1px solid var(--glass-border); background: rgba(255,255,255,0.05); color: white; font-family: var(--font-body); font-size: 1rem;">
+                        <input type="email" name="email" id="contactEmail" placeholder="Your Email" required style="width: 100%; padding: 1rem; border-radius: 8px; border: 1px solid var(--glass-border); background: rgba(255,255,255,0.05); color: white; font-family: var(--font-body); font-size: 1rem;">
                     </div>
                     <div style="margin-bottom: 1.5rem;">
-                        <textarea name="message" placeholder="Your Message" rows="5" required style="width: 100%; padding: 1rem; border-radius: 8px; border: 1px solid var(--glass-border); background: rgba(255,255,255,0.05); color: white; font-family: var(--font-body); font-size: 1rem; resize: vertical;"></textarea>
+                        <textarea name="message" id="contactMsg" placeholder="Your Message" rows="5" required style="width: 100%; padding: 1rem; border-radius: 8px; border: 1px solid var(--glass-border); background: rgba(255,255,255,0.05); color: white; font-family: var(--font-body); font-size: 1rem; resize: vertical;"></textarea>
                     </div>
                     <button type="submit" class="btn-primary" style="width: 100%; border: none; cursor: pointer; font-size: 1.1rem; padding: 1rem;">Send Message</button>
                 </form>
