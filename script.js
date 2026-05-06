@@ -398,4 +398,44 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
     }
+
+    // Scroll Progress Indicator Logic
+    const scrollProgress = document.getElementById('scrollProgress');
+    if (scrollProgress) {
+        window.addEventListener('scroll', () => {
+            const scrollPx = document.documentElement.scrollTop;
+            const winHeightPx = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrollLen = (scrollPx / winHeightPx) * 100;
+            scrollProgress.style.width = scrollLen + '%';
+        });
+    }
+
+    // Project Filtering Logic
+    const filterBtns = document.querySelectorAll('.filter-btn');
+    const projectCards = document.querySelectorAll('.projects-grid .project-card');
+
+    if (filterBtns.length > 0 && projectCards.length > 0) {
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                // Update active state on buttons
+                filterBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+
+                const filterValue = btn.getAttribute('data-filter');
+
+                // Filter cards
+                projectCards.forEach(card => {
+                    if (filterValue === 'all') {
+                        card.classList.remove('hide');
+                    } else {
+                        if (card.getAttribute('data-category') === filterValue) {
+                            card.classList.remove('hide');
+                        } else {
+                            card.classList.add('hide');
+                        }
+                    }
+                });
+            });
+        });
+    }
 });
