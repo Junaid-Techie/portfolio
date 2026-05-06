@@ -201,8 +201,9 @@ ul {
 
 .glass-card:hover {
     background: var(--glass-hover);
-    border-color: rgba(255, 255, 255, 0.15);
+    border-color: rgba(59, 130, 246, 0.3);
     transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(59, 130, 246, 0.15);
 }
 
 /* Navigation */
