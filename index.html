@@ -390,15 +390,15 @@
                     <div id="formMessage" style="display: none; padding: 1rem; margin-bottom: 1.5rem; border-radius: 8px; font-weight: bold; text-align: center;"></div>
                     <div style="margin-bottom: 1.5rem;">
                         <input type="text" name="name" id="contactName" placeholder="Your Name" required style="width: 100%; padding: 1rem; border-radius: 8px; border: 1px solid var(--glass-border); background: rgba(255,255,255,0.05); color: white; font-family: var(--font-body); font-size: 1rem; outline: none; transition: border-color 0.3s;">
-                        <span id="nameError" style="color: #fca5a5; font-size: 0.85rem; display: none; margin-top: 0.5rem;">Name is required</span>
+                        <span id="nameError" style="color: #fca5a5; font-size: 0.85rem; display: none; margin-top: 0.5rem;">Name field should not be empty</span>
                     </div>
                     <div style="margin-bottom: 1.5rem;">
                         <input type="email" name="email" id="contactEmail" placeholder="Your Email" required style="width: 100%; padding: 1rem; border-radius: 8px; border: 1px solid var(--glass-border); background: rgba(255,255,255,0.05); color: white; font-family: var(--font-body); font-size: 1rem; outline: none; transition: border-color 0.3s;">
-                        <span id="emailError" style="color: #fca5a5; font-size: 0.85rem; display: none; margin-top: 0.5rem;">Valid email is required</span>
+                        <span id="emailError" style="color: #fca5a5; font-size: 0.85rem; display: none; margin-top: 0.5rem;">Enter correct email</span>
                     </div>
                     <div style="margin-bottom: 1.5rem;">
                         <textarea name="message" id="contactMsg" placeholder="Your Message" rows="5" required style="width: 100%; padding: 1rem; border-radius: 8px; border: 1px solid var(--glass-border); background: rgba(255,255,255,0.05); color: white; font-family: var(--font-body); font-size: 1rem; resize: vertical; outline: none; transition: border-color 0.3s;"></textarea>
-                        <span id="msgError" style="color: #fca5a5; font-size: 0.85rem; display: none; margin-top: 0.5rem;">Message cannot be empty</span>
+                        <span id="msgError" style="color: #fca5a5; font-size: 0.85rem; display: none; margin-top: 0.5rem;">Message body should not be empty</span>
                     </div>
                     <button type="submit" id="submitBtn" class="btn-primary" style="width: 100%; border: none; cursor: not-allowed; font-size: 1.1rem; padding: 1rem; opacity: 0.5; transition: all 0.3s;" disabled>Send Message</button>
                 </form>

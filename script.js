@@ -260,7 +260,7 @@ document.addEventListener('DOMContentLoaded', () => {
             } else if (isEmail) {
                 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
                 if (!emailRegex.test(val)) {
-                    errorSpan.textContent = 'Please enter a valid email address';
+                    errorSpan.textContent = 'Enter correct email';
                     errorSpan.style.display = 'block';
                     input.style.borderColor = '#fca5a5';
                 } else {
