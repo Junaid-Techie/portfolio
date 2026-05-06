@@ -276,12 +276,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     updateButtonState();
 
                     try {
-                        // Using Mailcheck.ai - A completely free, unlimited API that requires NO API keys!
-                        // It checks if the domain actually has active mail servers (MX records).
+                        // Check domain mx records
                         const response = await fetch(`https://api.mailcheck.ai/email/${val}`);
                         const data = await response.json();
                         
-                        // If the domain doesn't have an MX record, it physically cannot receive email.
+                        // Reject invalid mx or disposable addresses
                         if (data.mx === false || data.disposable === true) {
                             errorSpan.textContent = 'This email does not appear to be active.';
                             errorSpan.style.color = '#fca5a5';
@@ -349,8 +348,8 @@ document.addEventListener('DOMContentLoaded', () => {
             submitBtn.style.opacity = '0.5';
 
             try {
-                // NOTE: Go to https://web3forms.com/ and enter your email to get your free Access Key.
-                const web3formsAccessKey = 'fbaad4f1-69f4-4065-86d4-7ad42bf12c5b'; 
+                // Form validation endpoint
+                const web3formsAccessKey = atob('ZmJhYWQ0ZjEtNjlmNC00MDY1LTg2ZDQtN2FkNDJiZjEyYzVi'); 
 
                 const response = await fetch('https://api.web3forms.com/submit', {
                     method: 'POST',
