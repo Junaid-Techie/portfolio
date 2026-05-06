@@ -172,10 +172,11 @@
                         <span>ETL/ELT</span>
                         <span>Data Modeling</span>
                         <span>Lakehouse</span>
-                        <span>DataOps</span>
-                        <span>CI/CD</span>
+                        <span>SCD Type 1/2</span>
+                        <span>DataOps & CI/CD</span>
                         <span>Data Quality</span>
                         <span>Source-to-Target</span>
+                        <span>Data Lineage</span>
                     </div>
                 </div>
 
@@ -183,12 +184,14 @@
                     <div class="skill-icon"><i class="fas fa-cloud"></i></div>
                     <h4>Cloud & Big Data</h4>
                     <div class="skill-tags">
-                        <span>Azure (ADF, Databricks)</span>
+                        <span>Azure Data Factory</span>
+                        <span>Databricks & Delta Lake</span>
                         <span>Snowflake</span>
-                        <span>Apache Spark / PySpark</span>
-                        <span>Delta Lake</span>
+                        <span>PySpark / Spark SQL</span>
                         <span>Kafka</span>
                         <span>Airflow</span>
+                        <span>ADLS Gen2</span>
+                        <span>ORC / Parquet</span>
                     </div>
                 </div>
 
@@ -198,9 +201,10 @@
                     <div class="skill-tags">
                         <span>LLMs</span>
                         <span>QLoRA Fine-tuning</span>
+                        <span>OpenAI Embeddings</span>
+                        <span>Vector DBs (pgvector)</span>
                         <span>NLP</span>
                         <span>Time Series Forecasting</span>
-                        <span>Vector DBs</span>
                         <span>scikit-learn</span>
                     </div>
                 </div>
@@ -209,13 +213,13 @@
                     <div class="skill-icon"><i class="fas fa-code"></i></div>
                     <h4>Programming & Tools</h4>
                     <div class="skill-tags">
-                        <span>Python</span>
-                        <span>SQL / T-SQL / PL/SQL</span>
+                        <span>Python (pandas)</span>
+                        <span>SQL / PL-SQL / T-SQL</span>
                         <span>Scala</span>
-                        <span>Power BI</span>
-                        <span>Git / GitHub</span>
-                        <span>REST APIs</span>
-                        <span>MongoDB</span>
+                        <span>FastAPI</span>
+                        <span>Next.js & TypeScript</span>
+                        <span>Power BI / Plotly</span>
+                        <span>Git & REST APIs</span>
                     </div>
                 </div>
 
@@ -239,14 +243,14 @@
                             <h5><a href="https://comet.luddy.indianapolis.iu.edu/cmt23s/members/junaid-ahmed-mohammed/" target="_blank" style="text-decoration: underline; color: var(--primary);">Indiana University (COMET Lab) <i class="fas fa-external-link-alt" style="font-size: 0.8rem;"></i></a></h5>
                         </div>
                         <ul class="experience-list">
-                            <li><strong>LLM Fine-tuning:</strong> Applied QLoRA parameter-efficient fine-tuning to LLaMA 3.2 and Qwen 2.5 to generate domain-specific Python code.</li>
-                            <li><strong>Streaming Platform:</strong> Architected end-to-end ingestion pipelines using Kafka and Airflow to validate research event data.</li>
-                            <li>Mentored 60+ graduate students in Data Analytics, Python, SQL, and ML.</li>
+                            <li><strong>LLM Fine-tuning:</strong> Applied QLoRA parameter-efficient fine-tuning to LLaMA 3.2 and Qwen 2.5 to generate syntactically correct, domain-specific Python code; designed prompt templates and evaluation harnesses.</li>
+                            <li><strong>Streaming Platform:</strong> Architected end-to-end ingestion pipelines using Kafka and PySpark Structured Streaming to validate research event data; orchestrated batch workflows via Airflow DAGs.</li>
+                            <li>Mentored 60+ graduate students across Data Analytics, Python, SQL, and ML modules, producing structured learning materials and rubrics.</li>
                         </ul>
                     </div>
                 </div>
 
-                <!-- Nisum -->
+                <!-- Nisum 1 -->
                 <div class="timeline-item">
                     <div class="timeline-dot"></div>
                     <div class="timeline-content glass-card">
@@ -256,10 +260,27 @@
                             <h5>Nisum Technologies, Inc. (Client: Williams-Sonoma)</h5>
                         </div>
                         <ul class="experience-list">
-                            <li><strong>Lakehouse Architecture:</strong> Co-architected a unified Snowflake Data Lakehouse, consolidating 12TB+ of data and reducing infrastructure costs by 25%.</li>
-                            <li><strong>Pipeline Optimization:</strong> Tuned PySpark and Scala jobs in Databricks using Z-Ordering and partition pruning, reducing execution time by 40%.</li>
-                            <li><strong>Cloud Migration:</strong> Led migration of on-prem systems to Snowflake via Azure Data Factory.</li>
-                            <li><strong>Data Quality:</strong> Established Bronze/Silver/Gold frameworks with record-count reconciliation and schema validation.</li>
+                            <li><strong>Lakehouse Architecture:</strong> Co-architected a unified Snowflake Data Lakehouse, consolidating 12TB+ of data from Teradata, Oracle, and Kafka into ADLS Gen2, reducing infrastructure costs by 25%.</li>
+                            <li><strong>Pipeline Optimization:</strong> Built and enhanced 160+ Azure Data Factory pipelines; tuned PySpark and Scala jobs in Databricks using Z-Ordering and partition pruning, reducing execution time by 40%.</li>
+                            <li><strong>Enterprise Migrations:</strong> Led migration of on-prem Oracle warehouse management systems to Snowflake; developed complex SQL analytical functions and source-to-target mapping logic.</li>
+                            <li><strong>Data Governance:</strong> Established Bronze/Silver/Gold frameworks, integrated Azure Key Vault for secrets management, and built SCD Type 2 logic for robust data lineage.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Nisum 2 -->
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content glass-card">
+                        <span class="timeline-date">Early Career & AI/ML</span>
+                        <div class="timeline-header">
+                            <h4>Data Engineer & ML Developer</h4>
+                            <h5>Nisum Technologies, Inc.</h5>
+                        </div>
+                        <ul class="experience-list">
+                            <li><strong>Data Engineering (Macy's):</strong> Monitored 25+ ADF pipelines across daily batch ingestion windows; performed source-to-target reconciliation and complex SQL schema alignment.</li>
+                            <li><strong>Sales & Demand Forecasting:</strong> Built retail demand forecasting models using Holt-Winters and ARIMA across product categories, improving inventory planning accuracy by 20%.</li>
+                            <li><strong>NLP Pipeline:</strong> Built a text classification pipeline using TF-IDF vectorization to categorize customer reviews by sentiment, automating Jira queue assignments.</li>
                         </ul>
                     </div>
                 </div>
