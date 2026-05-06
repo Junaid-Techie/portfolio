@@ -264,6 +264,62 @@ ul {
     box-shadow: 0 10px 30px rgba(59, 130, 246, 0.15);
 }
 
+/* Minimalist List (Side Quests - Inspired by Amyxhsieh) */
+.minimal-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.minimal-list-item {
+    display: flex;
+    align-items: center;
+    padding: 2.5rem 0;
+    border-bottom: 1px solid var(--glass-border);
+    transition: all 0.4s ease;
+    color: var(--text-main);
+    text-decoration: none;
+    position: relative;
+    overflow: hidden;
+}
+
+.minimal-list-item:hover {
+    color: #ffd700;
+    padding-left: 1.5rem;
+    background: linear-gradient(90deg, rgba(255, 215, 0, 0.03) 0%, transparent 100%);
+}
+
+.ml-num {
+    font-family: monospace;
+    font-size: 1.2rem;
+    color: var(--text-muted);
+    margin-right: 3rem;
+    transition: var(--transition);
+}
+
+.minimal-list-item:hover .ml-num {
+    color: #ffd700;
+}
+
+.ml-title {
+    font-size: clamp(1.5rem, 3vw, 2.2rem);
+    font-weight: 300;
+    font-family: var(--font-heading);
+    flex-grow: 1;
+}
+
+.ml-arrow {
+    font-size: 2.5rem;
+    opacity: 0;
+    transform: translateX(-30px);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    color: #ffd700;
+}
+
+.minimal-list-item:hover .ml-arrow {
+    opacity: 1;
+    transform: translateX(0);
+}
+
 /* Navigation */
 .navbar {
     position: fixed;
@@ -345,15 +401,19 @@ ul {
 
 .greeting {
     color: var(--primary);
-    font-family: var(--font-heading);
-    font-weight: 600;
+    font-family: monospace;
+    font-size: 1.1rem;
+    font-weight: 500;
     margin-bottom: 1rem;
     letter-spacing: 1px;
+    opacity: 0.9;
 }
 
 .hero h1 {
-    font-size: clamp(3rem, 5vw, 4.5rem);
+    font-size: clamp(4rem, 8vw, 7rem);
     font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -2px;
     margin-bottom: 0.5rem;
 }
 
@@ -365,10 +425,11 @@ ul {
 }
 
 .hero h2 {
-    font-size: clamp(1.8rem, 3vw, 2.5rem);
+    font-size: clamp(1.8rem, 3.5vw, 3rem);
     color: var(--text-muted);
     font-weight: 600;
-    margin-bottom: 1.5rem;
+    margin-bottom: 2rem;
+    letter-spacing: -1px;
 }
 
 .amp {
