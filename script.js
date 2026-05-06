@@ -222,13 +222,84 @@ document.addEventListener('DOMContentLoaded', () => {
     // Contact Form Validation and Submission
     const contactForm = document.querySelector('.contact-form');
     if (contactForm) {
+        const nameInput = document.getElementById('contactName');
+        const emailInput = document.getElementById('contactEmail');
+        const msgInput = document.getElementById('contactMsg');
+        const submitBtn = document.getElementById('submitBtn');
+        const formMessage = document.getElementById('formMessage');
+        
+        const nameError = document.getElementById('nameError');
+        const emailError = document.getElementById('emailError');
+        const msgError = document.getElementById('msgError');
+
+        function updateButtonState() {
+            const name = nameInput.value.trim();
+            const email = emailInput.value.trim();
+            const message = msgInput.value.trim();
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            
+            const isValid = name.length > 0 && message.length > 0 && emailRegex.test(email);
+            
+            if (isValid) {
+                submitBtn.disabled = false;
+                submitBtn.style.opacity = '1';
+                submitBtn.style.cursor = 'pointer';
+            } else {
+                submitBtn.disabled = true;
+                submitBtn.style.opacity = '0.5';
+                submitBtn.style.cursor = 'not-allowed';
+            }
+            return isValid;
+        }
+
+        function validateField(input, errorSpan, isEmail) {
+            const val = input.value.trim();
+            if (val.length === 0) {
+                errorSpan.style.display = 'block';
+                input.style.borderColor = '#fca5a5';
+            } else if (isEmail) {
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(val)) {
+                    errorSpan.textContent = 'Please enter a valid email address';
+                    errorSpan.style.display = 'block';
+                    input.style.borderColor = '#fca5a5';
+                } else {
+                    errorSpan.style.display = 'none';
+                    input.style.borderColor = 'var(--primary)';
+                }
+            } else {
+                errorSpan.style.display = 'none';
+                input.style.borderColor = 'var(--primary)';
+            }
+            updateButtonState();
+        }
+
+        // Live validation on input
+        nameInput.addEventListener('input', () => {
+            nameError.style.display = 'none';
+            nameInput.style.borderColor = 'var(--glass-border)';
+            updateButtonState();
+        });
+        emailInput.addEventListener('input', () => {
+            emailError.style.display = 'none';
+            emailInput.style.borderColor = 'var(--glass-border)';
+            updateButtonState();
+        });
+        msgInput.addEventListener('input', () => {
+            msgError.style.display = 'none';
+            msgInput.style.borderColor = 'var(--glass-border)';
+            updateButtonState();
+        });
+
+        // Show errors on blur
+        nameInput.addEventListener('blur', () => validateField(nameInput, nameError, false));
+        emailInput.addEventListener('blur', () => validateField(emailInput, emailError, true));
+        msgInput.addEventListener('blur', () => validateField(msgInput, msgError, false));
+
         contactForm.addEventListener('submit', function(e) {
             e.preventDefault();
             
-            const nameInput = document.getElementById('contactName');
-            const emailInput = document.getElementById('contactEmail');
-            const msgInput = document.getElementById('contactMsg');
-            const formMessage = document.getElementById('formMessage');
+            if (!updateButtonState()) return;
             
             const name = nameInput.value.trim();
             const email = emailInput.value.trim();
@@ -238,19 +309,6 @@ document.addEventListener('DOMContentLoaded', () => {
             formMessage.style.display = 'none';
             formMessage.className = '';
             
-            // Basic Checks
-            if (!name || !email || !message) {
-                showFormMessage('Please fill out all fields.', 'error');
-                return;
-            }
-            
-            // Email Format Check
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailRegex.test(email)) {
-                showFormMessage('Please enter a valid email address.', 'error');
-                return;
-            }
-            
             // If valid, open default mail client
             const subject = encodeURIComponent('New Contact from Portfolio: ' + name);
             const body = encodeURIComponent('Name: ' + name + '\nEmail: ' + email + '\n\nMessage:\n' + message);
@@ -259,10 +317,10 @@ document.addEventListener('DOMContentLoaded', () => {
             // Show success message and reset
             showFormMessage('Opening your mail client...', 'success');
             contactForm.reset();
+            updateButtonState(); // Reset button
         });
         
         function showFormMessage(text, type) {
-            const formMessage = document.getElementById('formMessage');
             formMessage.textContent = text;
             formMessage.style.display = 'block';
             if (type === 'error') {

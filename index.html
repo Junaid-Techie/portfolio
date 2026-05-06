@@ -263,7 +263,7 @@
                             </div>
                         </div>
                         <h4>Python Code Generator</h4>
-                        <p>Developed Python code generation models using lightweight LLMs (LLaMA 3.2, Qwen 2.5) capable of running locally. Implemented continual pretraining, 4-bit quantization, and PEFT techniques.</p>
+                        <p>A secure, lightweight Python code-generation system optimized for local execution. Eliminates reliance on external APIs and ensures strict data privacy using state-of-the-art model quantization.</p>
                         <ul class="project-tech">
                             <li>LLaMA 3.2</li>
                             <li>QLoRA & PEFT</li>
@@ -284,7 +284,7 @@
                             </div>
                         </div>
                         <h4>Sales Prediction Pipeline</h4>
-                        <p>Complete data pipeline and ML model training setup involving streaming data ingestion, validation, storage, and automated model training orchestrated via Apache Airflow.</p>
+                        <p>A production-grade, fault-tolerant data pipeline built for real-time retail analytics. Continuously ingests streaming sales data and automatically retrains predictive models to maintain accuracy.</p>
                         <ul class="project-tech">
                             <li>Apache Kafka</li>
                             <li>Apache Spark</li>
@@ -306,7 +306,7 @@
                             </div>
                         </div>
                         <h4>Job AI Matcher</h4>
-                        <p>AI-Powered Semantic Job Intelligence Platform. Uses vector embeddings (pgvector) and OpenAI for semantic matching to transform job search from manual filtering into intelligent matching.</p>
+                        <p>An intelligent recruitment engine that moves beyond traditional keyword filtering. Uses semantic vector embeddings to deeply understand candidate profiles and match them with ideal roles.</p>
                         <ul class="project-tech">
                             <li>FastAPI</li>
                             <li>PostgreSQL (pgvector)</li>
@@ -327,7 +327,7 @@
                             </div>
                         </div>
                         <h4>HR Recruitment Application</h4>
-                        <p>A full-stack HR Recruitment Management System built with Python and the Falcon framework. Manages the complete hiring lifecycle using a MongoDB database and AJAX frontend.</p>
+                        <p>A lightning-fast, full-stack applicant tracking system (ATS) developed from scratch. Centralizes the complete hiring lifecycle from resume submission to interview scheduling in a unified dashboard.</p>
                         <ul class="project-tech">
                             <li>Python (Falcon)</li>
                             <li>MongoDB</li>
@@ -389,15 +389,18 @@
                 <form class="contact-form" novalidate>
                     <div id="formMessage" style="display: none; padding: 1rem; margin-bottom: 1.5rem; border-radius: 8px; font-weight: bold; text-align: center;"></div>
                     <div style="margin-bottom: 1.5rem;">
-                        <input type="text" name="name" id="contactName" placeholder="Your Name" required style="width: 100%; padding: 1rem; border-radius: 8px; border: 1px solid var(--glass-border); background: rgba(255,255,255,0.05); color: white; font-family: var(--font-body); font-size: 1rem;">
+                        <input type="text" name="name" id="contactName" placeholder="Your Name" required style="width: 100%; padding: 1rem; border-radius: 8px; border: 1px solid var(--glass-border); background: rgba(255,255,255,0.05); color: white; font-family: var(--font-body); font-size: 1rem; outline: none; transition: border-color 0.3s;">
+                        <span id="nameError" style="color: #fca5a5; font-size: 0.85rem; display: none; margin-top: 0.5rem;">Name is required</span>
                     </div>
                     <div style="margin-bottom: 1.5rem;">
-                        <input type="email" name="email" id="contactEmail" placeholder="Your Email" required style="width: 100%; padding: 1rem; border-radius: 8px; border: 1px solid var(--glass-border); background: rgba(255,255,255,0.05); color: white; font-family: var(--font-body); font-size: 1rem;">
+                        <input type="email" name="email" id="contactEmail" placeholder="Your Email" required style="width: 100%; padding: 1rem; border-radius: 8px; border: 1px solid var(--glass-border); background: rgba(255,255,255,0.05); color: white; font-family: var(--font-body); font-size: 1rem; outline: none; transition: border-color 0.3s;">
+                        <span id="emailError" style="color: #fca5a5; font-size: 0.85rem; display: none; margin-top: 0.5rem;">Valid email is required</span>
                     </div>
                     <div style="margin-bottom: 1.5rem;">
-                        <textarea name="message" id="contactMsg" placeholder="Your Message" rows="5" required style="width: 100%; padding: 1rem; border-radius: 8px; border: 1px solid var(--glass-border); background: rgba(255,255,255,0.05); color: white; font-family: var(--font-body); font-size: 1rem; resize: vertical;"></textarea>
+                        <textarea name="message" id="contactMsg" placeholder="Your Message" rows="5" required style="width: 100%; padding: 1rem; border-radius: 8px; border: 1px solid var(--glass-border); background: rgba(255,255,255,0.05); color: white; font-family: var(--font-body); font-size: 1rem; resize: vertical; outline: none; transition: border-color 0.3s;"></textarea>
+                        <span id="msgError" style="color: #fca5a5; font-size: 0.85rem; display: none; margin-top: 0.5rem;">Message cannot be empty</span>
                     </div>
-                    <button type="submit" class="btn-primary" style="width: 100%; border: none; cursor: pointer; font-size: 1.1rem; padding: 1rem;">Send Message</button>
+                    <button type="submit" id="submitBtn" class="btn-primary" style="width: 100%; border: none; cursor: not-allowed; font-size: 1.1rem; padding: 1rem; opacity: 0.5; transition: all 0.3s;" disabled>Send Message</button>
                 </form>
             </div>
             
