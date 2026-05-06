@@ -3,8 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Junaid Ahmed Mohammed | Data Engineer</title>
+    <title>Junaid Ahmed Mohammed | Senior Data Engineer</title>
     <meta name="description" content="Portfolio of Junaid Ahmed Mohammed, Data Engineer with 7+ years of experience in Azure, Snowflake, and Generative AI.">
+    <!-- Open Graph SEO Meta Tags -->
+    <meta property="og:title" content="Junaid Ahmed Mohammed | Senior Data Engineer">
+    <meta property="og:description" content="Portfolio of Junaid Ahmed Mohammed, Data Engineer with 7+ years of experience in Azure, Snowflake, and Generative AI.">
+    <meta property="og:image" content="https://mjunaid56.github.io/profile.jpg">
+    <meta property="og:url" content="https://mjunaid56.github.io/">
+    <meta property="og:type" content="website">
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -49,6 +55,7 @@
                 </p>
                 <div class="hero-actions">
                     <a href="#projects" class="btn-primary">View My Work</a>
+                    <a href="Junaid_Ahmed_Mohammed_Resume.pdf" target="_blank" class="btn-outline">Download Resume</a>
                     <div class="social-links">
                         <a href="https://www.linkedin.com/in/junaid-ahmed-mohammed-02321a95/" target="_blank" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
                         <a href="https://github.com/Junaid-Techie" target="_blank" aria-label="GitHub"><i class="fab fa-github"></i></a>
@@ -208,7 +215,7 @@
                         <span class="timeline-date">Jan 2024 - Dec 2025</span>
                         <div class="timeline-header">
                             <h4>Graduate Research Assistant</h4>
-                            <h5>Indiana University (COMET Lab)</h5>
+                            <h5><a href="https://comet.luddy.indianapolis.iu.edu/cmt23s/members/junaid-ahmed-mohammed/" target="_blank" style="text-decoration: underline; color: var(--primary);">Indiana University (COMET Lab) <i class="fas fa-external-link-alt" style="font-size: 0.8rem;"></i></a></h5>
                         </div>
                         <ul class="experience-list">
                             <li><strong>LLM Fine-tuning:</strong> Applied QLoRA parameter-efficient fine-tuning to LLaMA 3.2 and Qwen 2.5 to generate domain-specific Python code.</li>
@@ -263,6 +270,7 @@
                             <li>PyTorch</li>
                             <li>Python</li>
                         </ul>
+                        <button class="btn-outline case-btn" style="margin-top: 1.5rem; width: 100%; cursor: pointer;" onclick="openModal('Python Code Generator', '<strong>Problem:</strong> Needed a lightweight, locally runnable LLM specialized in Python code generation to avoid cloud API costs and ensure data privacy.<br><br><strong>Solution:</strong> Fine-tuned LLaMA 3.2 and Qwen 2.5 using QLoRA and PEFT techniques.<br><br><strong>Impact:</strong> Achieved high-quality code generation capable of running efficiently on local hardware without compromising on syntax accuracy.')">Read Case Study</button>
                     </div>
                 </div>
 
@@ -283,6 +291,7 @@
                             <li>Airflow</li>
                             <li>PostgreSQL</li>
                         </ul>
+                        <button class="btn-outline case-btn" style="margin-top: 1.5rem; width: 100%; cursor: pointer;" onclick="openModal('Sales Prediction Pipeline', '<strong>Problem:</strong> Real-time retail data required a fault-tolerant system to predict future sales accurately and dynamically update models.<br><br><strong>Solution:</strong> Designed an end-to-end data pipeline using Kafka for streaming, Spark for distributed processing, and Airflow for orchestration. Stored structured data in PostgreSQL.<br><br><strong>Impact:</strong> Fully automated the ingestion and ML model retraining process, allowing business analysts to rely on up-to-date predictive analytics.')">Read Case Study</button>
                     </div>
                 </div>
 
@@ -304,6 +313,7 @@
                             <li>OpenAI</li>
                             <li>Next.js</li>
                         </ul>
+                        <button class="btn-outline case-btn" style="margin-top: 1.5rem; width: 100%; cursor: pointer;" onclick="openModal('Job AI Matcher', '<strong>Problem:</strong> Standard keyword matching in recruitment platforms often misses highly qualified candidates due to semantic differences in job titles and skills.<br><br><strong>Solution:</strong> Built an AI-powered engine using pgvector for PostgreSQL and OpenAI embeddings to semantically match candidate profiles to job descriptions.<br><br><strong>Impact:</strong> Transformed the job search experience from manual filtering to intelligent, context-aware matching, drastically improving candidate-role alignment.')">Read Case Study</button>
                     </div>
                 </div>
 
@@ -324,6 +334,44 @@
                             <li>REST APIs</li>
                             <li>jQuery / AJAX</li>
                         </ul>
+                        <button class="btn-outline case-btn" style="margin-top: 1.5rem; width: 100%; cursor: pointer;" onclick="openModal('HR Recruitment Application', '<strong>Problem:</strong> An organization needed a lightweight, standalone system to manage the entire hiring lifecycle from applicant tracking to interview scheduling.<br><br><strong>Solution:</strong> Developed a full-stack system using Python (Falcon) and a MongoDB NoSQL database, fronted by a dynamic jQuery/AJAX UI.<br><br><strong>Impact:</strong> Centralized recruitment data, reduced administrative overhead, and provided hiring managers with a seamless, fast application tracking dashboard.')">Read Case Study</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section id="testimonials" class="testimonials section">
+        <div class="section-container">
+            <h3 class="section-title fade-up">Recommendations</h3>
+            <div class="testimonials-grid fade-up" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
+                
+                <div class="testimonial-card glass-card" style="display: flex; flex-direction: column;">
+                    <i class="fas fa-quote-left" style="font-size: 2rem; color: var(--primary); margin-bottom: 1rem;"></i>
+                    <p style="color: var(--text-muted); font-style: italic; margin-bottom: 1.5rem; flex-grow: 1;">"I’d like to recognize Junaid... he balances technical rigor with an encouraging teaching style, a skill that is rare and incredibly valuable. I would highly recommend Junaid for roles involving data engineering, analytics, or technical mentorship."</p>
+                    <div style="border-top: 1px solid var(--glass-border); padding-top: 1rem;">
+                        <h4 style="font-size: 1.1rem;"><a href="https://www.linkedin.com/in/mlstumbo/" target="_blank" style="color: var(--text-main); transition: var(--transition);">Mikaylah Stumbo <i class="fab fa-linkedin" style="color: #0a66c2;"></i></a></h4>
+                        <p style="font-size: 0.85rem; color: var(--primary);">Senior Principal Human Factors Engineer @ Eli Lilly</p>
+                    </div>
+                </div>
+                
+                <div class="testimonial-card glass-card" style="display: flex; flex-direction: column;">
+                    <i class="fas fa-quote-left" style="font-size: 2rem; color: var(--primary); margin-bottom: 1rem;"></i>
+                    <p style="color: var(--text-muted); font-style: italic; margin-bottom: 1.5rem; flex-grow: 1;">"Mohammed is an excellent database professional! A hard worker, very knowledgeable, and very personable."</p>
+                    <div style="border-top: 1px solid var(--glass-border); padding-top: 1rem;">
+                        <h4 style="font-size: 1.1rem;"><a href="https://www.linkedin.com/in/brendanbow1/" target="_blank" style="color: var(--text-main); transition: var(--transition);">Brendan Bow <i class="fab fa-linkedin" style="color: #0a66c2;"></i></a></h4>
+                        <p style="font-size: 0.85rem; color: var(--primary);">Instructor at Indiana University</p>
+                    </div>
+                </div>
+
+                <div class="testimonial-card glass-card" style="display: flex; flex-direction: column;">
+                    <i class="fas fa-quote-left" style="font-size: 2rem; color: var(--primary); margin-bottom: 1rem;"></i>
+                    <p style="color: var(--text-muted); font-style: italic; margin-bottom: 1.5rem; flex-grow: 1;">"I have been consistently impressed by his technical depth, problem-solving ability, and commitment... I strongly recommend Junaid for any role requiring a capable Software Developer or Data Engineer with cloud, data science, and AI expertise."</p>
+                    <div style="border-top: 1px solid var(--glass-border); padding-top: 1rem;">
+                        <h4 style="font-size: 1.1rem;"><a href="https://www.linkedin.com/in/ajas-ahmed-a58674123/" target="_blank" style="color: var(--text-main); transition: var(--transition);">Ajas Ahmed <i class="fab fa-linkedin" style="color: #0a66c2;"></i></a></h4>
+                        <p style="font-size: 0.85rem; color: var(--primary);">President & CEO Advisor at Nisum Consulting</p>
                     </div>
                 </div>
 
@@ -336,7 +384,21 @@
         <div class="section-container text-center fade-up">
             <h2>Let's Connect</h2>
             <p class="contact-desc">Currently open to new opportunities. Whether you have a question or just want to say hi, I'll try my best to get back to you!</p>
-            <a href="mailto:mjunaidtechs@gmail.com" class="btn-primary btn-large">Say Hello</a>
+            
+            <div class="contact-form-container glass-card fade-up" style="max-width: 600px; margin: 0 auto 3rem; padding: 2.5rem; text-align: left;">
+                <form action="https://formspree.io/f/placeholder" method="POST" class="contact-form">
+                    <div style="margin-bottom: 1.5rem;">
+                        <input type="text" name="name" placeholder="Your Name" required style="width: 100%; padding: 1rem; border-radius: 8px; border: 1px solid var(--glass-border); background: rgba(255,255,255,0.05); color: white; font-family: var(--font-body); font-size: 1rem;">
+                    </div>
+                    <div style="margin-bottom: 1.5rem;">
+                        <input type="email" name="email" placeholder="Your Email" required style="width: 100%; padding: 1rem; border-radius: 8px; border: 1px solid var(--glass-border); background: rgba(255,255,255,0.05); color: white; font-family: var(--font-body); font-size: 1rem;">
+                    </div>
+                    <div style="margin-bottom: 1.5rem;">
+                        <textarea name="message" placeholder="Your Message" rows="5" required style="width: 100%; padding: 1rem; border-radius: 8px; border: 1px solid var(--glass-border); background: rgba(255,255,255,0.05); color: white; font-family: var(--font-body); font-size: 1rem; resize: vertical;"></textarea>
+                    </div>
+                    <button type="submit" class="btn-primary" style="width: 100%; border: none; cursor: pointer; font-size: 1.1rem; padding: 1rem;">Send Message</button>
+                </form>
+            </div>
             
             <div style="display: flex; justify-content: center; margin-top: 2rem;">
                 <div class="badge-base LI-profile-badge" data-locale="en_US" data-size="large" data-theme="dark" data-type="HORIZONTAL" data-vanity="mjunaid56" data-version="v1">
@@ -353,6 +415,55 @@
         </div>
     </footer>
 
+    <!-- Generic Modal Structure -->
+    <div id="projectModal" class="modal" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.8); z-index: 10000; justify-content: center; align-items: center; backdrop-filter: blur(5px);">
+        <div class="modal-content glass-card" style="max-width: 600px; width: 90%; position: relative; padding: 3rem 2.5rem; text-align: left;">
+            <span class="close-modal" style="position: absolute; top: 15px; right: 25px; font-size: 2.5rem; cursor: pointer; color: var(--text-muted); transition: color 0.3s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='var(--text-muted)'">&times;</span>
+            <h3 id="modalTitle" style="color: var(--primary); margin-bottom: 1.5rem; font-size: 1.8rem; font-family: var(--font-heading);">Project Title</h3>
+            <p id="modalDesc" style="color: var(--text-main); line-height: 1.8; font-size: 1.05rem;">Project details...</p>
+        </div>
+    </div>
+
+    <!-- Scroll to Top Button -->
+    <a href="#home" id="scrollTopBtn" style="position: fixed; bottom: 30px; right: 30px; background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; width: 50px; height: 50px; border-radius: 50%; display: flex; justify-content: center; align-items: center; text-decoration: none; font-size: 1.2rem; opacity: 0; visibility: hidden; transition: var(--transition); z-index: 9000; box-shadow: 0 4px 15px var(--primary-glow);">
+        <i class="fas fa-arrow-up"></i>
+    </a>
+
+    <script>
+        // Modal Logic
+        const modal = document.getElementById('projectModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalDesc = document.getElementById('modalDesc');
+        const closeBtn = document.querySelector('.close-modal');
+
+        window.openModal = function(title, desc) {
+            modalTitle.textContent = title;
+            modalDesc.innerHTML = desc; 
+            modal.style.display = 'flex';
+        };
+
+        closeBtn.onclick = function() {
+            modal.style.display = 'none';
+        };
+
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        };
+
+        // Scroll to Top Logic
+        const scrollTopBtn = document.getElementById('scrollTopBtn');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 500) {
+                scrollTopBtn.style.opacity = '1';
+                scrollTopBtn.style.visibility = 'visible';
+            } else {
+                scrollTopBtn.style.opacity = '0';
+                scrollTopBtn.style.visibility = 'hidden';
+            }
+        });
+    </script>
     <script src="script.js"></script>
     <script src="https://platform.linkedin.com/badges/js/profile.js" async defer type="text/javascript"></script>
 </body>
