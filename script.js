@@ -339,7 +339,7 @@ document.addEventListener('DOMContentLoaded', () => {
         emailInput.addEventListener('blur', () => validateField(emailInput, emailError, true));
         msgInput.addEventListener('blur', () => validateField(msgInput, msgError, false));
 
-        contactForm.addEventListener('submit', function (e) {
+        contactForm.addEventListener('submit', async function (e) {
             e.preventDefault();
 
             if (!updateButtonState()) return;
@@ -352,14 +352,34 @@ document.addEventListener('DOMContentLoaded', () => {
             formMessage.style.display = 'none';
             formMessage.className = '';
 
-            // If valid, open default mail client
-            const subject = encodeURIComponent('New Contact from Portfolio: ' + name);
-            const body = encodeURIComponent('Name: ' + name + '\nEmail: ' + email + '\n\nMessage:\n' + message);
-            window.location.href = 'mailto:mjunaidtechs@gmail.com?subject=' + subject + '&body=' + body;
+            // Show loading state
+            submitBtn.textContent = 'Sending...';
+            submitBtn.disabled = true;
+            submitBtn.style.opacity = '0.5';
 
-            // Show success message and reset
-            showFormMessage('Opening your mail client...', 'success');
-            contactForm.reset();
+            try {
+                // NOTE: Replace this with your Google Apps Script Web App URL
+                const googleAppScriptURL = 'YOUR_GOOGLE_SCRIPT_URL_HERE'; 
+
+                await fetch(googleAppScriptURL, {
+                    method: 'POST',
+                    mode: 'no-cors', // Bypasses strict CORS policies for Google Scripts
+                    body: new URLSearchParams({
+                        name: name,
+                        email: email,
+                        message: message
+                    })
+                });
+
+                // Since we use no-cors, we assume success if no network crash occurred
+                showFormMessage('Message sent successfully!', 'success');
+                contactForm.reset();
+            } catch (error) {
+                console.error('Submission error:', error);
+                showFormMessage('Network error. Please try again later.', 'error');
+            }
+
+            submitBtn.textContent = 'Send Message';
             updateButtonState(); // Reset button
         });
 
