@@ -232,13 +232,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const emailError = document.getElementById('emailError');
         const msgError = document.getElementById('msgError');
 
+        let isEmailAPIValidated = false;
+
         function updateButtonState() {
             const name = nameInput.value.trim();
-            const email = emailInput.value.trim();
             const message = msgInput.value.trim();
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             
-            const isValid = name.length > 0 && message.length > 0 && emailRegex.test(email);
+            const isValid = name.length > 0 && message.length > 0 && isEmailAPIValidated;
             
             if (isValid) {
                 submitBtn.disabled = false;
@@ -252,20 +252,62 @@ document.addEventListener('DOMContentLoaded', () => {
             return isValid;
         }
 
-        function validateField(input, errorSpan, isEmail) {
+        async function validateField(input, errorSpan, isEmail) {
             const val = input.value.trim();
             if (val.length === 0) {
                 errorSpan.style.display = 'block';
                 input.style.borderColor = '#fca5a5';
+                if (isEmail) isEmailAPIValidated = false;
             } else if (isEmail) {
                 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
                 if (!emailRegex.test(val)) {
                     errorSpan.textContent = 'Enter correct email';
+                    errorSpan.style.color = '#fca5a5';
                     errorSpan.style.display = 'block';
                     input.style.borderColor = '#fca5a5';
+                    isEmailAPIValidated = false;
                 } else {
-                    errorSpan.style.display = 'none';
-                    input.style.borderColor = 'var(--primary)';
+                    // Start API Validation
+                    errorSpan.textContent = 'Verifying active email...';
+                    errorSpan.style.color = '#94a3b8';
+                    errorSpan.style.display = 'block';
+                    input.style.borderColor = '#94a3b8';
+                    isEmailAPIValidated = false;
+                    updateButtonState();
+
+                    try {
+                        // NOTE: You will need a free API key from https://app.abstractapi.com/api/email-validation/pricing
+                        const apiKey = 'YOUR_API_KEY_HERE'; 
+                        
+                        const response = await fetch(`https://emailvalidation.abstractapi.com/v1/?api_key=${apiKey}&email=${val}`);
+                        
+                        if (response.status === 401) {
+                            // If API key is missing or invalid, bypass strict checking so the form still works
+                            console.warn("Abstract API Key missing. Bypassing active email verification.");
+                            errorSpan.style.display = 'none';
+                            input.style.borderColor = 'var(--primary)';
+                            isEmailAPIValidated = true;
+                        } else {
+                            const data = await response.json();
+                            
+                            if (data.deliverability === "UNDELIVERABLE") {
+                                errorSpan.textContent = 'This email does not appear to be active.';
+                                errorSpan.style.color = '#fca5a5';
+                                errorSpan.style.display = 'block';
+                                input.style.borderColor = '#fca5a5';
+                                isEmailAPIValidated = false;
+                            } else {
+                                errorSpan.style.display = 'none';
+                                input.style.borderColor = 'var(--primary)';
+                                isEmailAPIValidated = true;
+                            }
+                        }
+                    } catch (err) {
+                        console.error("Email API failed, falling back to regex", err);
+                        errorSpan.style.display = 'none';
+                        input.style.borderColor = 'var(--primary)';
+                        isEmailAPIValidated = true;
+                    }
                 }
             } else {
                 errorSpan.style.display = 'none';
@@ -283,6 +325,7 @@ document.addEventListener('DOMContentLoaded', () => {
         emailInput.addEventListener('input', () => {
             emailError.style.display = 'none';
             emailInput.style.borderColor = 'var(--glass-border)';
+            isEmailAPIValidated = false; // Reset until they blur and we check again
             updateButtonState();
         });
         msgInput.addEventListener('input', () => {
