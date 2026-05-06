@@ -359,22 +359,19 @@ ul {
     color: var(--primary);
 }
 
-.firefly-logo {
-    width: 26px;
-    height: 26px;
-    color: #eab308; /* Yellow/Gold */
-    margin-left: 0.8rem;
-    animation: flickerGlow 4s infinite alternate;
-    filter: drop-shadow(0 0 5px rgba(234, 179, 8, 0.6));
+.tlou-moth {
+    width: 28px;
+    height: 28px;
+    color: var(--text-muted);
+    margin-right: 0.8rem;
+    animation: mothFloat 6s ease-in-out infinite;
+    transform-origin: center;
 }
 
-@keyframes flickerGlow {
-    0%, 100% { opacity: 1; filter: drop-shadow(0 0 8px rgba(234, 179, 8, 0.8)); }
-    5% { opacity: 0.8; }
-    10% { opacity: 1; filter: drop-shadow(0 0 12px rgba(234, 179, 8, 1)); }
-    15% { opacity: 0.9; }
-    50% { opacity: 0.4; filter: drop-shadow(0 0 2px rgba(234, 179, 8, 0.2)); }
-    75% { opacity: 0.8; filter: drop-shadow(0 0 5px rgba(234, 179, 8, 0.5)); }
+@keyframes mothFloat {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    25% { transform: translateY(-3px) rotate(3deg); color: var(--primary); }
+    75% { transform: translateY(2px) rotate(-3deg); color: var(--text-main); }
 }
 
 .nav-links {
