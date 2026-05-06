@@ -280,8 +280,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         const response = await fetch(`https://api.mailcheck.ai/email/${val}`);
                         const data = await response.json();
                         
-                        // Reject invalid mx or disposable addresses
-                        if (data.mx === false || data.disposable === true) {
+                        // Reject invalid format, missing mx, or disposable addresses
+                        if (response.status === 400 || data.error || data.mx === false || data.disposable === true) {
                             errorSpan.textContent = 'This email does not appear to be active.';
                             errorSpan.style.color = '#fca5a5';
                             errorSpan.style.display = 'block';
