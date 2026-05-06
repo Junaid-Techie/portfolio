@@ -60,7 +60,7 @@
                 </p>
                 <div class="hero-actions">
                     <a href="#projects" class="btn-primary">View My Work</a>
-                    <a href="Junaid_Ahmed_Mohammed_Resume.docx" target="_blank" class="btn-outline">Download Resume</a>
+                    <button onclick="openResumeModal()" class="btn-outline" style="cursor: pointer;">View Resume</button>
                     <div class="social-links">
                         <a href="https://www.linkedin.com/in/mjunaid56" target="_blank" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
                         <a href="https://github.com/Junaid-Techie" target="_blank" aria-label="GitHub"><i class="fab fa-github"></i></a>
@@ -531,7 +531,7 @@
             </div>
 
             <div class="footer-social">
-                <a href="https://www.linkedin.com/in/junaid-ahmed-mohammed-02321a95/" target="_blank"><i class="fab fa-linkedin-in"></i></a>
+                <a href="https://www.linkedin.com/in/mjunaid56" target="_blank"><i class="fab fa-linkedin-in"></i></a>
                 <a href="https://github.com/Junaid-Techie" target="_blank"><i class="fab fa-github"></i></a>
             </div>
             
@@ -545,6 +545,18 @@
             <span class="close-modal" style="position: absolute; top: 15px; right: 25px; font-size: 2.5rem; cursor: pointer; color: var(--text-muted); transition: color 0.3s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='var(--text-muted)'">&times;</span>
             <h3 id="modalTitle" style="color: var(--primary); margin-bottom: 1.5rem; font-size: 1.8rem; font-family: var(--font-heading);">Project Title</h3>
             <p id="modalDesc" style="color: var(--text-main); line-height: 1.8; font-size: 1.05rem;">Project details...</p>
+        </div>
+    </div>
+
+    <!-- Resume Modal -->
+    <div id="resumeModal" class="modal" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.8); z-index: 10000; justify-content: center; align-items: center; backdrop-filter: blur(5px);">
+        <div class="modal-content glass-card" style="max-width: 900px; width: 95%; height: 90vh; position: relative; padding: 2rem; display: flex; flex-direction: column;">
+            <span class="close-resume-modal" style="position: absolute; top: 10px; right: 20px; font-size: 2.5rem; cursor: pointer; color: var(--text-muted); transition: color 0.3s; z-index: 10001;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='var(--text-muted)'">&times;</span>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; padding-right: 2rem;">
+                <h3 style="color: var(--text-main); font-family: var(--font-heading); margin: 0;">Junaid_Ahmed_Mohammed_Resume.pdf</h3>
+                <a href="Junaid_Ahmed_Mohammed_Resume.pdf" download class="btn-primary" style="padding: 0.5rem 1.5rem; font-size: 0.9rem;"><i class="fas fa-download"></i> Download</a>
+            </div>
+            <iframe src="Junaid_Ahmed_Mohammed_Resume.pdf" style="width: 100%; flex-grow: 1; border: 1px solid var(--glass-border); border-radius: 8px; background: white;"></iframe>
         </div>
     </div>
 
@@ -574,6 +586,21 @@
             if (event.target == modal) {
                 modal.style.display = 'none';
             }
+            if (event.target == resumeModal) {
+                resumeModal.style.display = 'none';
+            }
+        };
+
+        // Resume Modal Logic
+        const resumeModal = document.getElementById('resumeModal');
+        const closeResumeBtn = document.querySelector('.close-resume-modal');
+
+        window.openResumeModal = function() {
+            resumeModal.style.display = 'flex';
+        };
+
+        closeResumeBtn.onclick = function() {
+            resumeModal.style.display = 'none';
         };
 
         // Scroll to Top Logic
