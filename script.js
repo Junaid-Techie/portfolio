@@ -276,31 +276,22 @@ document.addEventListener('DOMContentLoaded', () => {
                     updateButtonState();
 
                     try {
-                        // NOTE: You will need a free API key from https://app.abstractapi.com/api/email-validation/pricing
-                        const apiKey = 'YOUR_API_KEY_HERE';
-
-                        const response = await fetch(`https://emailvalidation.abstractapi.com/v1/?api_key=${apiKey}&email=${val}`);
-
-                        if (response.status === 401) {
-                            // If API key is missing or invalid, bypass strict checking so the form still works
-                            console.warn("Abstract API Key missing. Bypassing active email verification.");
+                        // Using Mailcheck.ai - A completely free, unlimited API that requires NO API keys!
+                        // It checks if the domain actually has active mail servers (MX records).
+                        const response = await fetch(`https://api.mailcheck.ai/email/${val}`);
+                        const data = await response.json();
+                        
+                        // If the domain doesn't have an MX record, it physically cannot receive email.
+                        if (data.mx === false || data.disposable === true) {
+                            errorSpan.textContent = 'This email does not appear to be active.';
+                            errorSpan.style.color = '#fca5a5';
+                            errorSpan.style.display = 'block';
+                            input.style.borderColor = '#fca5a5';
+                            isEmailAPIValidated = false;
+                        } else {
                             errorSpan.style.display = 'none';
                             input.style.borderColor = 'var(--primary)';
                             isEmailAPIValidated = true;
-                        } else {
-                            const data = await response.json();
-
-                            if (data.deliverability === "UNDELIVERABLE") {
-                                errorSpan.textContent = 'This email does not appear to be active.';
-                                errorSpan.style.color = '#fca5a5';
-                                errorSpan.style.display = 'block';
-                                input.style.borderColor = '#fca5a5';
-                                isEmailAPIValidated = false;
-                            } else {
-                                errorSpan.style.display = 'none';
-                                input.style.borderColor = 'var(--primary)';
-                                isEmailAPIValidated = true;
-                            }
                         }
                     } catch (err) {
                         console.error("Email API failed, falling back to regex", err);
