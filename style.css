@@ -377,8 +377,7 @@ ul {
 .firefly-logo {
     width: 26px;
     height: 26px;
-    color: #eab308; /* Yellow/Gold */
-    margin-right: 0.8rem;
+    color: #eab308 !important; /* Yellow/Gold */
     animation: flickerGlow 4s infinite alternate;
     filter: drop-shadow(0 0 5px rgba(234, 179, 8, 0.6));
 }
