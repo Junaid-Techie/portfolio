@@ -111,6 +111,9 @@ ul {
     border-radius: 8px;
     font-weight: 600;
     font-family: var(--font-heading);
+    font-size: 1rem;
+    border: none;
+    cursor: pointer;
     position: relative;
     overflow: hidden;
     z-index: 1;
@@ -138,12 +141,15 @@ ul {
 
 .btn-outline {
     display: inline-block;
-    padding: 0.7rem 1.6rem;
+    padding: 0.8rem 1.8rem;
+    background: transparent;
     border: 1px solid var(--primary);
     color: var(--primary);
     border-radius: 8px;
     font-weight: 600;
     font-family: var(--font-heading);
+    font-size: 1rem;
+    cursor: pointer;
 }
 
 .btn-outline:hover {
