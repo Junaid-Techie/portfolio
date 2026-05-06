@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     // Navigation Scroll Effect
     const navbar = document.querySelector('.navbar');
-    
+
     window.addEventListener('scroll', () => {
         if (window.scrollY > 50) {
             navbar.classList.add('scrolled');
@@ -39,13 +39,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Scroll Reveal Animation (Intersection Observer)
     const fadeElements = document.querySelectorAll('.fade-up');
-    
+
     const revealOptions = {
         threshold: 0.1,
         rootMargin: "0px 0px -50px 0px"
     };
 
-    const revealOnScroll = new IntersectionObserver(function(entries, observer) {
+    const revealOnScroll = new IntersectionObserver(function (entries, observer) {
         entries.forEach(entry => {
             if (!entry.isIntersecting) {
                 return;
@@ -82,11 +82,11 @@ document.addEventListener('DOMContentLoaded', () => {
     canvas.style.pointerEvents = 'none';
     canvas.style.zIndex = '9999';
     document.body.appendChild(canvas);
-    
+
     // Custom SVG Cursor matching primary color (#3b82f6)
     const cursorSvg = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="4" x2="12" y2="20"></line><line x1="4" y1="12" x2="20" y2="12"></line></svg>';
     const cursorUrl = `url("data:image/svg+xml,${encodeURIComponent(cursorSvg)}") 12 12, crosshair`;
-    
+
     const cursorStyle = document.createElement('style');
     cursorStyle.innerHTML = `
         body, html { cursor: ${cursorUrl} !important; }
@@ -117,7 +117,7 @@ document.addEventListener('DOMContentLoaded', () => {
             currentX = event.clientX;
             currentY = event.clientY;
         }
-        
+
         if (lastX === null || lastY === null) {
             lastX = currentX;
             lastY = currentY;
@@ -133,13 +133,13 @@ document.addEventListener('DOMContentLoaded', () => {
         for (let i = 0; i <= steps; i++) {
             let x = lastX + (dx * i) / steps;
             let y = lastY + (dy * i) / steps;
-            
+
             let gridX = Math.floor(x / gridSize) * gridSize;
             let gridY = Math.floor(y / gridSize) * gridSize;
-            
+
             // Add pixel under calculated position
             addPixel(gridX, gridY);
-            
+
             // Add random scattered adjacent pixels for a "digital" trail effect
             if (Math.random() > 0.7) { // slightly less scattering since pixels are bigger now
                 let offsetX = (Math.floor(Math.random() * 3) - 1) * gridSize;
@@ -175,7 +175,7 @@ document.addEventListener('DOMContentLoaded', () => {
             this.x = x;
             this.y = y;
             this.size = gridSize;
-            
+
             // Only using the dark blue color (primary)
             this.color = 'rgba(59, 130, 246, 0.4)';
             this.life = 100;
@@ -186,14 +186,14 @@ document.addEventListener('DOMContentLoaded', () => {
         draw() {
             ctx.fillStyle = this.color;
             ctx.globalAlpha = Math.max(0, this.life / 100);
-            
+
             // Add glowing effect
             ctx.shadowBlur = 8;
             ctx.shadowColor = '#3b82f6';
-            
+
             // Draw pixel perfectly aligned inside the background grid lines (+1px offset)
             ctx.fillRect(this.x + 1, this.y + 1, this.size - 1, this.size - 1);
-            
+
             ctx.globalAlpha = 1;
             ctx.shadowBlur = 0; // Reset shadow
         }
@@ -203,7 +203,7 @@ document.addEventListener('DOMContentLoaded', () => {
         for (let i = 0; i < pixelsArray.length; i++) {
             pixelsArray[i].update();
             pixelsArray[i].draw();
-            
+
             if (pixelsArray[i].life <= 0) {
                 pixelsArray.splice(i, 1);
                 i--;
@@ -227,7 +227,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const msgInput = document.getElementById('contactMsg');
         const submitBtn = document.getElementById('submitBtn');
         const formMessage = document.getElementById('formMessage');
-        
+
         const nameError = document.getElementById('nameError');
         const emailError = document.getElementById('emailError');
         const msgError = document.getElementById('msgError');
@@ -237,9 +237,9 @@ document.addEventListener('DOMContentLoaded', () => {
         function updateButtonState() {
             const name = nameInput.value.trim();
             const message = msgInput.value.trim();
-            
+
             const isValid = name.length > 0 && message.length > 0 && isEmailAPIValidated;
-            
+
             if (isValid) {
                 submitBtn.disabled = false;
                 submitBtn.style.opacity = '1';
@@ -277,10 +277,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     try {
                         // NOTE: You will need a free API key from https://app.abstractapi.com/api/email-validation/pricing
-                        const apiKey = 'YOUR_API_KEY_HERE'; 
-                        
+                        const apiKey = 'YOUR_API_KEY_HERE';
+
                         const response = await fetch(`https://emailvalidation.abstractapi.com/v1/?api_key=${apiKey}&email=${val}`);
-                        
+
                         if (response.status === 401) {
                             // If API key is missing or invalid, bypass strict checking so the form still works
                             console.warn("Abstract API Key missing. Bypassing active email verification.");
@@ -289,7 +289,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             isEmailAPIValidated = true;
                         } else {
                             const data = await response.json();
-                            
+
                             if (data.deliverability === "UNDELIVERABLE") {
                                 errorSpan.textContent = 'This email does not appear to be active.';
                                 errorSpan.style.color = '#fca5a5';
@@ -339,30 +339,30 @@ document.addEventListener('DOMContentLoaded', () => {
         emailInput.addEventListener('blur', () => validateField(emailInput, emailError, true));
         msgInput.addEventListener('blur', () => validateField(msgInput, msgError, false));
 
-        contactForm.addEventListener('submit', function(e) {
+        contactForm.addEventListener('submit', function (e) {
             e.preventDefault();
-            
+
             if (!updateButtonState()) return;
-            
+
             const name = nameInput.value.trim();
             const email = emailInput.value.trim();
             const message = msgInput.value.trim();
-            
+
             // Clear previous message
             formMessage.style.display = 'none';
             formMessage.className = '';
-            
+
             // If valid, open default mail client
             const subject = encodeURIComponent('New Contact from Portfolio: ' + name);
             const body = encodeURIComponent('Name: ' + name + '\nEmail: ' + email + '\n\nMessage:\n' + message);
             window.location.href = 'mailto:mjunaidtechs@gmail.com?subject=' + subject + '&body=' + body;
-            
+
             // Show success message and reset
             showFormMessage('Opening your mail client...', 'success');
             contactForm.reset();
             updateButtonState(); // Reset button
         });
-        
+
         function showFormMessage(text, type) {
             formMessage.textContent = text;
             formMessage.style.display = 'block';
