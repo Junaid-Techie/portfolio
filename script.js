@@ -358,22 +358,33 @@ document.addEventListener('DOMContentLoaded', () => {
             submitBtn.style.opacity = '0.5';
 
             try {
-                // NOTE: Replace this with your Google Apps Script Web App URL
-                const googleAppScriptURL = 'YOUR_GOOGLE_SCRIPT_URL_HERE'; 
+                // NOTE: Go to https://web3forms.com/ and enter your email to get your free Access Key.
+                const web3formsAccessKey = 'fbaad4f1-69f4-4065-86d4-7ad42bf12c5b'; 
 
-                await fetch(googleAppScriptURL, {
+                const response = await fetch('https://api.web3forms.com/submit', {
                     method: 'POST',
-                    mode: 'no-cors', // Bypasses strict CORS policies for Google Scripts
-                    body: new URLSearchParams({
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        access_key: web3formsAccessKey,
                         name: name,
                         email: email,
-                        message: message
+                        message: message,
+                        subject: 'New Portfolio Contact from ' + name
                     })
                 });
 
-                // Since we use no-cors, we assume success if no network crash occurred
-                showFormMessage('Message sent successfully!', 'success');
-                contactForm.reset();
+                const result = await response.json();
+
+                if (response.status === 200) {
+                    showFormMessage('Message sent successfully!', 'success');
+                    contactForm.reset();
+                } else {
+                    console.error(result);
+                    showFormMessage('Oops! Make sure your Web3Forms Access Key is set.', 'error');
+                }
             } catch (error) {
                 console.error('Submission error:', error);
                 showFormMessage('Network error. Please try again later.', 'error');
