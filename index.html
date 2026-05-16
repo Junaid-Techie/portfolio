@@ -596,9 +596,20 @@
             <span class="close-modal">&times;</span>
             <h3 id="modalTitle">Project Title</h3>
             <div id="modalDesc">Project details...</div>
-            <button class="btn-outline close-modal" style="margin-top: 2rem; width: 100%; cursor: pointer;">Close Case Study</button>
+            <button class="btn-outline modal-close-btn" style="margin-top: 2rem; width: 100%; cursor: pointer;">Close Case Study</button>
         </div>
     </div>
+
+    <!--/* Responsive Modals */
+@media (max-width: 768px) {
+    .modal {
+        padding: 1rem;
+        background: #050505; /* Fully solid background on mobile to prevent animation bleed-through */
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+    }
+}
+-->
 
     <!-- Resume Modal -->
     <div id="resumeModal" class="modal">
@@ -634,10 +645,11 @@
             document.body.style.overflow = 'hidden';
         };
 
-        document.querySelectorAll('.close-modal').forEach(btn => {
+        // Close logic for all elements (X and Bottom Button)
+        document.querySelectorAll('.close-modal, .modal-close-btn').forEach(btn => {
             btn.onclick = function() {
                 modal.style.display = 'none';
-                document.body.style.overflow = '';
+                document.body.style.overflow = ''; // Restore scroll
             };
         });
 
