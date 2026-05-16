@@ -655,8 +655,13 @@
         const closeResumeBtn = document.querySelector('.close-resume-modal');
 
         window.openResumeModal = function() {
-            resumeModal.style.display = 'flex';
-            document.body.style.overflow = 'hidden';
+            // Mobile Detection: Directly open PDF on mobile for better native experience
+            if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+                window.open('Junaid_Ahmed_Mohammed_Resume.pdf', '_blank');
+            } else {
+                resumeModal.style.display = 'flex';
+                document.body.style.overflow = 'hidden';
+            }
         };
 
         closeResumeBtn.onclick = function() {

@@ -47,7 +47,7 @@ body::after {
     top: 0; left: 0; right: 0; bottom: 0;
     box-shadow: inset 0 0 150px rgba(0, 0, 0, 0.9);
     pointer-events: none;
-    z-index: 9999;
+    z-index: 50; /* Lowered from 9999 to stay below modals and nav mobile menus */
 }
 
 /* Custom Scrollbar */
@@ -1091,11 +1091,11 @@ ul {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.85);
-    z-index: 10000;
+    background: rgba(5, 5, 5, 0.98); /* Increased opacity to hide background 'oval' gradients */
+    z-index: 100001; /* Extremely high to ensure it stays above EVERYTHING */
     justify-content: center;
-    align-items: flex-start; /* Changed from center to allow scrolling from top */
-    backdrop-filter: blur(10px);
+    align-items: flex-start;
+    backdrop-filter: blur(15px);
     -webkit-backdrop-filter: blur(10px);
     overflow-y: auto; /* Enable scroll on the backdrop */
     padding: 2rem 1rem;
@@ -1112,6 +1112,14 @@ ul {
     margin: auto; /* Centers in the flex container */
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
     animation: modalAppear 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.modal-content h3 {
+    color: var(--primary);
+    margin-bottom: 1.5rem;
+    font-size: 1.8rem;
+    font-family: var(--font-heading);
+    padding-right: 3rem; /* Prevents overlap with close button on small screens */
 }
 
 @keyframes modalAppear {
