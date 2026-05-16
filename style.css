@@ -1155,6 +1155,9 @@ ul {
 @media (max-width: 768px) {
     .modal {
         padding: 1rem;
+        background: #050505 !important; /* Solid background on mobile to prevent animation bleed-through */
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
     }
     .modal-content {
         padding: 3rem 1.5rem 2rem;
