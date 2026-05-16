@@ -94,7 +94,6 @@
                     <div class="social-links">
                         <a href="https://www.linkedin.com/in/mjunaid56" target="_blank" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
                         <a href="https://github.com/Junaid-Techie" target="_blank" aria-label="GitHub"><i class="fab fa-github"></i></a>
-                        <a href="#" class="email-obf" data-user="mjunaidtechs" data-domain="gmail.com" aria-label="Email"><i class="fas fa-envelope"></i></a>
                     </div>
                 </div>
             </div>
@@ -680,21 +679,6 @@
                 scrollTopBtn.style.opacity = '0';
                 scrollTopBtn.style.visibility = 'hidden';
             }
-        });
-
-        // Email Obfuscation Logic
-        document.querySelectorAll('.email-obf').forEach(link => {
-            link.addEventListener('click', (e) => {
-                e.preventDefault();
-                const user = link.getAttribute('data-user');
-                const domain = link.getAttribute('data-domain');
-                window.location.href = `mailto:${user}@${domain}`;
-            });
-            link.addEventListener('mouseenter', () => {
-                const user = link.getAttribute('data-user');
-                const domain = link.getAttribute('data-domain');
-                link.setAttribute('href', `mailto:${user}@${domain}`);
-            });
         });
     </script>
     <script src="script.js"></script>
