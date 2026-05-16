@@ -433,6 +433,27 @@
                     </div>
                 </div>
 
+                <!-- Project 5: GitHub Dev Card Generator -->
+                <div class="project-card glass-card" data-category="genai">
+                    <div class="project-content">
+                        <div class="project-top">
+                            <div class="project-folder"><i class="far fa-folder-open"></i></div>
+                            <div class="project-links">
+                                <a href="https://github.com/Junaid-Techie/github-dev-card-generator" target="_blank"><i class="fab fa-github"></i></a>
+                            </div>
+                        </div>
+                        <h4>GitHub Dev Card Generator</h4>
+                        <p>AI-powered developer identity generator deployed on Google Cloud Run. Leverages GitHub APIs and custom prompt engineering to generate professional profile cards based on contribution patterns.</p>
+                        <ul class="project-tech">
+                            <li>Cloud Run</li>
+                            <li>Python</li>
+                            <li>GitHub API</li>
+                            <li>Prompt Engineering</li>
+                        </ul>
+                        <button class="btn-outline case-btn" style="margin-top: 1.5rem; width: 100%; cursor: pointer;" onclick="openModal('GitHub Dev Card Generator', '<strong>Project Architecture & Deep Dive:</strong><br><br>Developed a high-performance backend to generate personalized developer identity assets. The system analyzes GitHub activity to synthesize a visual and textual representation of a developer\'s impact.<br><br><strong>Technical Implementation:</strong><br><ul><li><strong>Cloud Native:</strong> Containerized and deployed via Google Cloud Run for elastic scaling and zero-downtime updates.</li><li><strong>Data Ingestion:</strong> Built a robust integration with GitHub\'s REST and GraphQL APIs to fetch multi-year contribution data.</li><li><strong>Secret Management:</strong> Implemented secure handling of API tokens and environment variables using production-grade standards.</li><li><strong>Workshop Credit:</strong> Inspired by the GeeksforGeeks workshop series on AI-driven developer productivity tools.</li></ul><br><strong>Business Impact:</strong> Provides a streamlined way for developers to showcase their technical narrative visually, improving personal branding and recruiter engagement.')">Read Case Study</button>
+                    </div>
+                </div>
+
                 <!-- COMET Project 1 -->
                 <div class="project-card glass-card" data-category="analysis">
                     <div class="project-content">
@@ -571,21 +592,22 @@
     </footer>
 
     <!-- Generic Modal Structure -->
-    <div id="projectModal" class="modal" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.8); z-index: 10000; justify-content: center; align-items: center; backdrop-filter: blur(5px);">
-        <div class="modal-content glass-card" style="max-width: 600px; width: 90%; position: relative; padding: 3rem 2.5rem; text-align: left;">
-            <span class="close-modal" style="position: absolute; top: 15px; right: 25px; font-size: 2.5rem; cursor: pointer; color: var(--text-muted); transition: color 0.3s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='var(--text-muted)'">&times;</span>
-            <h3 id="modalTitle" style="color: var(--primary); margin-bottom: 1.5rem; font-size: 1.8rem; font-family: var(--font-heading);">Project Title</h3>
-            <p id="modalDesc" style="color: var(--text-main); line-height: 1.8; font-size: 1.05rem;">Project details...</p>
+    <div id="projectModal" class="modal">
+        <div class="modal-content glass-card">
+            <span class="close-modal">&times;</span>
+            <h3 id="modalTitle">Project Title</h3>
+            <div id="modalDesc">Project details...</div>
+            <button class="btn-outline close-modal" style="margin-top: 2rem; width: 100%; cursor: pointer;">Close Case Study</button>
         </div>
     </div>
 
     <!-- Resume Modal -->
-    <div id="resumeModal" class="modal" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.8); z-index: 10000; justify-content: center; align-items: center; backdrop-filter: blur(5px);">
-        <div class="modal-content glass-card" style="max-width: 900px; width: 95%; height: 90vh; position: relative; padding: 2rem; display: flex; flex-direction: column;">
-            <span class="close-resume-modal" style="position: absolute; top: 10px; right: 20px; font-size: 2.5rem; cursor: pointer; color: var(--text-muted); transition: color 0.3s; z-index: 10001;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='var(--text-muted)'">&times;</span>
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; padding-right: 2rem;">
-                <h3 style="color: var(--text-main); font-family: var(--font-heading); margin: 0;">Junaid_Ahmed_Mohammed_Resume.pdf</h3>
-                <a href="Junaid_Ahmed_Mohammed_Resume.pdf" download class="btn-primary" style="padding: 0.5rem 1.5rem; font-size: 0.9rem;"><i class="fas fa-download"></i> Download</a>
+    <div id="resumeModal" class="modal">
+        <div class="modal-content glass-card" style="max-width: 1000px; height: 90vh; display: flex; flex-direction: column;">
+            <span class="close-resume-modal">&times;</span>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; padding-right: 2.5rem;">
+                <h3 style="color: var(--text-main); font-family: var(--font-heading); margin: 0; font-size: 1.1rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Junaid_Ahmed_Mohammed_Resume.pdf</h3>
+                <a href="Junaid_Ahmed_Mohammed_Resume.pdf" download class="btn-primary" style="padding: 0.5rem 1.2rem; font-size: 0.8rem;"><i class="fas fa-download"></i> Download</a>
             </div>
             <iframe src="Junaid_Ahmed_Mohammed_Resume.pdf" style="width: 100%; flex-grow: 1; border: 1px solid var(--glass-border); border-radius: 8px; background: white;"></iframe>
         </div>
@@ -601,24 +623,30 @@
         const modal = document.getElementById('projectModal');
         const modalTitle = document.getElementById('modalTitle');
         const modalDesc = document.getElementById('modalDesc');
-        const closeBtn = document.querySelector('.close-modal');
-
+        
         window.openModal = function(title, desc) {
             modalTitle.textContent = title;
             modalDesc.innerHTML = desc; 
             modal.style.display = 'flex';
+            document.body.style.overflow = 'hidden'; // Prevent background scroll
         };
 
-        closeBtn.onclick = function() {
-            modal.style.display = 'none';
-        };
+        // Close logic for all elements with .close-modal (X and Bottom Button)
+        document.querySelectorAll('.close-modal').forEach(btn => {
+            btn.onclick = function() {
+                modal.style.display = 'none';
+                document.body.style.overflow = ''; // Restore scroll
+            };
+        });
 
         window.onclick = function(event) {
             if (event.target == modal) {
                 modal.style.display = 'none';
+                document.body.style.overflow = '';
             }
             if (event.target == resumeModal) {
                 resumeModal.style.display = 'none';
+                document.body.style.overflow = '';
             }
         };
 
@@ -628,10 +656,12 @@
 
         window.openResumeModal = function() {
             resumeModal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
         };
 
         closeResumeBtn.onclick = function() {
             resumeModal.style.display = 'none';
+            document.body.style.overflow = '';
         };
 
         // Scroll to Top Logic
