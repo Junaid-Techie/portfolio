@@ -607,9 +607,9 @@
             <span class="close-resume-modal">&times;</span>
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; padding-right: 2.5rem;">
                 <h3 style="color: var(--text-main); font-family: var(--font-heading); margin: 0; font-size: 1.1rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Junaid_Ahmed_Mohammed_Resume.pdf</h3>
-                <a href="Junaid_Ahmed_Mohammed_Resume.pdf" download class="btn-primary" style="padding: 0.5rem 1.2rem; font-size: 0.8rem;"><i class="fas fa-download"></i> Download</a>
+                <a href="Junaid_Ahmed_Mohammed_Resume.pdf?v=20260516" download class="btn-primary" style="padding: 0.5rem 1.2rem; font-size: 0.8rem;"><i class="fas fa-download"></i> Download</a>
             </div>
-            <iframe src="Junaid_Ahmed_Mohammed_Resume.pdf" style="width: 100%; flex-grow: 1; border: 1px solid var(--glass-border); border-radius: 8px; background: white;"></iframe>
+            <iframe src="Junaid_Ahmed_Mohammed_Resume.pdf?v=20260516" style="width: 100%; flex-grow: 1; border: 1px solid var(--glass-border); border-radius: 8px; background: white;"></iframe>
         </div>
     </div>
 
@@ -657,7 +657,8 @@
         window.openResumeModal = function() {
             // Mobile Detection: Directly open PDF on mobile for better native experience
             if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
-                window.open('Junaid_Ahmed_Mohammed_Resume.pdf', '_blank');
+                // Added cache-buster ?v= to force mobile browsers to fetch the latest version
+                window.open('Junaid_Ahmed_Mohammed_Resume.pdf?v=' + new Date().getTime(), '_blank');
             } else {
                 resumeModal.style.display = 'flex';
                 document.body.style.overflow = 'hidden';
