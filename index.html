@@ -619,26 +619,47 @@
     </a>
 
     <script>
-        // Modal Logic
+        // Modal & Global Selectors
         const modal = document.getElementById('projectModal');
+        const resumeModal = document.getElementById('resumeModal');
         const modalTitle = document.getElementById('modalTitle');
         const modalDesc = document.getElementById('modalDesc');
+        const closeResumeBtn = document.querySelector('.close-resume-modal');
+        const scrollTopBtn = document.getElementById('scrollTopBtn');
         
+        // Project Modal Logic
         window.openModal = function(title, desc) {
             modalTitle.textContent = title;
             modalDesc.innerHTML = desc; 
             modal.style.display = 'flex';
-            document.body.style.overflow = 'hidden'; // Prevent background scroll
+            document.body.style.overflow = 'hidden';
         };
 
-        // Close logic for all elements with .close-modal (X and Bottom Button)
         document.querySelectorAll('.close-modal').forEach(btn => {
             btn.onclick = function() {
                 modal.style.display = 'none';
-                document.body.style.overflow = ''; // Restore scroll
+                document.body.style.overflow = '';
             };
         });
 
+        // Resume Modal Logic
+        window.openResumeModal = function() {
+            if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+                window.open('Junaid_Ahmed_Mohammed_Resume.pdf?v=' + new Date().getTime(), '_blank');
+            } else {
+                resumeModal.style.display = 'flex';
+                document.body.style.overflow = 'hidden';
+            }
+        };
+
+        if (closeResumeBtn) {
+            closeResumeBtn.onclick = function() {
+                resumeModal.style.display = 'none';
+                document.body.style.overflow = '';
+            };
+        }
+
+        // Global Click logic (Close on backdrop click)
         window.onclick = function(event) {
             if (event.target == modal) {
                 modal.style.display = 'none';
@@ -650,28 +671,7 @@
             }
         };
 
-        // Resume Modal Logic
-        const resumeModal = document.getElementById('resumeModal');
-        const closeResumeBtn = document.querySelector('.close-resume-modal');
-
-        window.openResumeModal = function() {
-            // Mobile Detection: Directly open PDF on mobile for better native experience
-            if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
-                // Added cache-buster ?v= to force mobile browsers to fetch the latest version
-                window.open('Junaid_Ahmed_Mohammed_Resume.pdf?v=' + new Date().getTime(), '_blank');
-            } else {
-                resumeModal.style.display = 'flex';
-                document.body.style.overflow = 'hidden';
-            }
-        };
-
-        closeResumeBtn.onclick = function() {
-            resumeModal.style.display = 'none';
-            document.body.style.overflow = '';
-        };
-
         // Scroll to Top Logic
-        const scrollTopBtn = document.getElementById('scrollTopBtn');
         window.addEventListener('scroll', () => {
             if (window.scrollY > 500) {
                 scrollTopBtn.style.opacity = '1';
@@ -680,7 +680,9 @@
                 scrollTopBtn.style.opacity = '0';
                 scrollTopBtn.style.visibility = 'hidden';
             }
-        // Email Obfuscation Logic - Prevents simple scrapers from finding the email in source code
+        });
+
+        // Email Obfuscation Logic
         document.querySelectorAll('.email-obf').forEach(link => {
             link.addEventListener('click', (e) => {
                 e.preventDefault();
@@ -688,7 +690,6 @@
                 const domain = link.getAttribute('data-domain');
                 window.location.href = `mailto:${user}@${domain}`;
             });
-            // Also set href on hover for better UX (so it looks like a real link)
             link.addEventListener('mouseenter', () => {
                 const user = link.getAttribute('data-user');
                 const domain = link.getAttribute('data-domain');
