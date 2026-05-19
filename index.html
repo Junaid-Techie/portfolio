@@ -90,7 +90,6 @@
                 </p>
                 <div class="hero-actions">
                     <a href="#projects" class="btn-primary">View My Work</a>
-                    <button onclick="openResumeModal()" class="btn-outline" style="cursor: pointer;">View Resume</button>
                     <div class="social-links">
                         <a href="https://www.linkedin.com/in/mjunaid56" target="_blank" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
                         <a href="https://github.com/Junaid-Techie" target="_blank" aria-label="GitHub"><i class="fab fa-github"></i></a>
@@ -600,17 +599,7 @@
         </div>
     </div>
 
-    <!-- Resume Modal -->
-    <div id="resumeModal" class="modal">
-        <div class="modal-content glass-card" style="max-width: 1000px; height: 90vh; display: flex; flex-direction: column;">
-            <span class="close-resume-modal">&times;</span>
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; padding-right: 2.5rem;">
-                <h3 style="color: var(--text-main); font-family: var(--font-heading); margin: 0; font-size: 1.1rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Junaid_Ahmed_Mohammed_Resume.pdf</h3>
-                <a href="Junaid_Ahmed_Mohammed_Resume.pdf?v=20260516" download class="btn-primary" style="padding: 0.5rem 1.2rem; font-size: 0.8rem;"><i class="fas fa-download"></i> Download</a>
-            </div>
-            <iframe src="Junaid_Ahmed_Mohammed_Resume.pdf?v=20260516" style="width: 100%; flex-grow: 1; border: 1px solid var(--glass-border); border-radius: 8px; background: white;"></iframe>
-        </div>
-    </div>
+
 
     <!-- Scroll to Top Button -->
     <a href="#home" id="scrollTopBtn" style="position: fixed; bottom: 30px; right: 30px; background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; width: 50px; height: 50px; border-radius: 50%; display: flex; justify-content: center; align-items: center; text-decoration: none; font-size: 1.2rem; opacity: 0; visibility: hidden; transition: var(--transition); z-index: 9000; box-shadow: 0 4px 15px var(--primary-glow);">
@@ -620,10 +609,8 @@
     <script>
         // Modal & Global Selectors
         const modal = document.getElementById('projectModal');
-        const resumeModal = document.getElementById('resumeModal');
         const modalTitle = document.getElementById('modalTitle');
         const modalDesc = document.getElementById('modalDesc');
-        const closeResumeBtn = document.querySelector('.close-resume-modal');
         const scrollTopBtn = document.getElementById('scrollTopBtn');
         
         // Project Modal Logic
@@ -642,22 +629,7 @@
             };
         });
 
-        // Resume Modal Logic
-        window.openResumeModal = function() {
-            if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
-                window.open('Junaid_Ahmed_Mohammed_Resume.pdf?v=' + new Date().getTime(), '_blank');
-            } else {
-                resumeModal.style.display = 'flex';
-                document.body.style.overflow = 'hidden';
-            }
-        };
 
-        if (closeResumeBtn) {
-            closeResumeBtn.onclick = function() {
-                resumeModal.style.display = 'none';
-                document.body.style.overflow = '';
-            };
-        }
 
         // Global Click logic (Close on backdrop click)
         window.onclick = function(event) {
@@ -665,10 +637,7 @@
                 modal.style.display = 'none';
                 document.body.style.overflow = '';
             }
-            if (event.target == resumeModal) {
-                resumeModal.style.display = 'none';
-                document.body.style.overflow = '';
-            }
+
         };
 
         // Scroll to Top Logic

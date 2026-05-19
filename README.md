@@ -12,7 +12,6 @@ Welcome to the source code of my personal portfolio website. This repository con
 ## ✨ Key Features
 
 - **Premium UI/UX:** A custom dark-mode "glassmorphic" aesthetic with sleek glowing hover interactions and pure CSS 3D animations (such as the rotating data cube).
-- **Native Document Rendering:** Custom modal integration for viewing PDF resumes natively within the browser without triggering jarring downloads.
 - **Dynamic Integrations:** Pulls live GitHub contribution calendar data to display real-time open-source activity directly on the page.
 - **Serverless Contact Form:** Fully functional contact form powered by Web3Forms, including local fallback mechanisms to handle rate-limiting.
 - **Fully Responsive:** Uses modern CSS Grid and Flexbox to ensure a flawless experience across all devices and screen sizes.
