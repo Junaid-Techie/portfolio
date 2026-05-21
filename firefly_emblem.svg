@@ -1,27 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100" fill="none">
-    <!-- Firefly Emblem (Authentic Segmented Design) -->
-    
-    <!-- Central Spine / segmented body -->
-    <rect x="47.5" y="20" width="5" height="54" rx="2.5" fill="currentColor"/>
-    <circle cx="50" cy="15" r="4.5" fill="currentColor"/>
-    
-    <!-- Antennae -->
-    <path d="M 48 12 C 45 7 40 6 40 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/>
-    <path d="M 52 12 C 55 7 60 6 60 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/>
-    
-    <!-- Upper Wings (Sweeping outwards & upwards) -->
-    <path d="M 46 32 C 26 14 12 36 15 46 C 18 53 35 48 46 40 Z" fill="currentColor"/>
-    <path d="M 54 32 C 74 14 88 36 85 46 C 82 53 65 48 54 40 Z" fill="currentColor"/>
-    
-    <!-- Middle Wings (Sweeping outwards) -->
-    <path d="M 46 44 C 20 40 10 52 13 62 C 16 69 34 62 46 54 Z" fill="currentColor"/>
-    <path d="M 54 44 C 80 40 90 52 87 62 C 84 69 66 62 54 54 Z" fill="currentColor"/>
-    
-    <!-- Lower Wings (Small, sweeping downwards) -->
-    <path d="M 46 56 C 20 60 14 74 18 82 C 21 86 36 78 46 66 Z" fill="currentColor"/>
-    <path d="M 54 56 C 80 60 86 74 82 82 C 79 86 64 78 54 66 Z" fill="currentColor"/>
-    
-    <!-- Lower Stencil Horizontal Ticks -->
-    <rect x="40" y="78" width="20" height="3" rx="1.5" fill="currentColor"/>
-    <rect x="44" y="84" width="12" height="3" rx="1.5" fill="currentColor"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 358 262" width="100%" height="100%" fill="currentColor">
+    <!-- Naughty Dog Game-Accurate Segmented Firefly Emblem -->
+    <g transform="translate(-209.21148,-267.27262)">
+        <path fill-rule="evenodd" d="M 357.85714,268.79075 23.39286,18.57143 0,35.71429 -56.96429,59.64285 -6.42857,0 -42.67857,-20.35714 0,-6.42857 92.14286,-35.35714 0,-8.21429 -110.89286,25 -7.5,0 -38.21428,-38.92857 3.57142,-8.92857 157.14286,0 z M 363.57143,357.00504 -40.35715,49.28571 40.00001,-27.85714 -18.92857,56.42857 22.41071,-30.71428 0,98.39285 13.83929,25.17857 0,-147.67857 c -9.31467,-3.10369 -15.26628,-10.4112 -16.96429,-23.03571 z M 418.58929,268.79075 -23.39286,18.57143 0,35.71429 56.96429,59.64285 6.42857,0 42.67857,-20.35714 0,-6.42857 -92.14286,-35.35714 0,-8.21429 110.89286,25 7.5,0 38.21428,-38.92857 -3.57142,-8.92857 -157.14286,0 z M 412.875,357.00504 40.35715,49.28571 -40.00001,-27.85714 18.92857,56.42857 -22.41071,-30.71428 0,98.39285 -13.83929,25.17857 0,-147.67857 c 9.31467,-3.10369 15.26628,-10.4112 16.96429,-23.03571 z" />
+    </g>
 </svg>

@@ -89,25 +89,13 @@ document.addEventListener('DOMContentLoaded', () => {
     document.body.appendChild(canvas);
 
     // Custom SVG Cursor: Iconic Fireflies Emblem from The Last of Us, styled and colored in gold (#cfab3a) with a soft backing glow
-    const cursorSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" fill="none">
+    const cursorSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="24" viewBox="0 0 1024 763" fill="none">
         <!-- Glow Backing -->
-        <line x1="16" y1="6" x2="16" y2="26" stroke="rgba(207, 171, 58, 0.25)" stroke-width="3.5" stroke-linecap="round"></line>
-        <path d="M16,10 C23,5 29,9 28,15 C27,18 22,19 16,16" stroke="rgba(207, 171, 58, 0.25)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></path>
-        <path d="M16,10 C9,5 3,9 4,15 C5,18 10,19 16,16" stroke="rgba(207, 171, 58, 0.25)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></path>
-        
-        <!-- Sharp Foreground lines -->
-        <line x1="16" y1="6" x2="16" y2="26" stroke="%23cfab3a" stroke-width="1.8" stroke-linecap="round"></line>
-        <!-- Antennae -->
-        <path d="M16,6 C14.5,3.5 13,3 13,2" stroke="%23cfab3a" stroke-width="1.2" stroke-linecap="round"></path>
-        <path d="M16,6 C17.5,3.5 19,3 19,2" stroke="%23cfab3a" stroke-width="1.2" stroke-linecap="round"></path>
-        <!-- Upper Wings -->
-        <path d="M16,10 C22,6 27,9 26,14 C25,16.5 21,17.5 16,15.5" stroke="%23cfab3a" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path>
-        <path d="M16,10 C10,6 5,9 6,14 C7,16.5 11,17.5 16,15.5" stroke="%23cfab3a" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path>
-        <!-- Lower Wings -->
-        <path d="M16,16.5 C20.5,18 24,19.5 24,22 C24,24 20,23.5 16,21.5" stroke="%23cfab3a" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"></path>
-        <path d="M16,16.5 C11.5,18 8,19.5 8,22 C8,24 12,23.5 16,21.5" stroke="%23cfab3a" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"></path>
+        <path fill="rgba(207, 171, 58, 0.22)" fill-rule="evenodd" d="M 584.0,259.0 L 582.0,260.0 L 581.0,270.0 L 577.0,284.0 L 571.0,297.0 L 567.0,303.0 L 554.0,316.0 L 548.0,320.0 L 536.0,325.0 L 535.0,752.0 L 537.0,752.0 L 546.0,736.0 L 546.0,734.0 L 554.0,721.0 L 576.0,679.0 L 577.0,402.0 L 583.0,409.0 L 632.0,479.0 L 637.0,485.0 L 639.0,485.0 L 611.0,397.0 L 608.0,391.0 L 589.0,333.0 L 590.0,327.0 L 696.0,403.0 L 698.0,403.0 L 698.0,401.0 Z M 445.0,259.0 L 440.0,264.0 L 332.0,399.0 L 331.0,403.0 L 333.0,403.0 L 433.0,331.0 L 440.0,330.0 L 390.0,482.0 L 390.0,485.0 L 393.0,484.0 L 450.0,403.0 L 453.0,403.0 L 453.0,680.0 L 473.0,716.0 L 473.0,718.0 L 481.0,731.0 L 487.0,744.0 L 489.0,746.0 L 491.0,751.0 L 494.0,752.0 L 493.0,325.0 L 484.0,322.0 L 476.0,317.0 L 461.0,302.0 L 452.0,285.0 L 448.0,272.0 L 447.0,262.0 Z M 533.0,164.0 L 693.0,335.0 L 714.0,335.0 L 832.0,277.0 L 832.0,256.0 L 575.0,155.0 L 575.0,134.0 L 692.0,160.0 L 696.0,162.0 L 709.0,164.0 L 878.0,204.0 L 906.0,205.0 L 1013.0,94.0 L 1014.0,90.0 L 1004.0,66.0 L 565.0,63.0 L 601.0,7.0 L 598.0,6.0 L 533.0,59.0 Z M 496.0,163.0 L 496.0,60.0 L 429.0,5.0 L 428.0,8.0 L 461.0,58.0 L 463.0,65.0 L 25.0,65.0 L 15.0,90.0 L 15.0,93.0 L 123.0,205.0 L 151.0,204.0 L 450.0,134.0 L 454.0,135.0 L 454.0,154.0 L 452.0,156.0 L 196.0,256.0 L 196.0,276.0 L 198.0,278.0 L 315.0,335.0 L 336.0,335.0 Z" />
+        <!-- Sharp Foreground -->
+        <path fill="%23cfab3a" fill-rule="evenodd" d="M 584.0,259.0 L 582.0,260.0 L 581.0,270.0 L 577.0,284.0 L 571.0,297.0 L 567.0,303.0 L 554.0,316.0 L 548.0,320.0 L 536.0,325.0 L 535.0,752.0 L 537.0,752.0 L 546.0,736.0 L 546.0,734.0 L 554.0,721.0 L 576.0,679.0 L 577.0,402.0 L 583.0,409.0 L 632.0,479.0 L 637.0,485.0 L 639.0,485.0 L 611.0,397.0 L 608.0,391.0 L 589.0,333.0 L 590.0,327.0 L 696.0,403.0 L 698.0,403.0 L 698.0,401.0 Z M 445.0,259.0 L 440.0,264.0 L 332.0,399.0 L 331.0,403.0 L 333.0,403.0 L 433.0,331.0 L 440.0,330.0 L 390.0,482.0 L 390.0,485.0 L 393.0,484.0 L 450.0,403.0 L 453.0,403.0 L 453.0,680.0 L 473.0,716.0 L 473.0,718.0 L 481.0,731.0 L 487.0,744.0 L 489.0,746.0 L 491.0,751.0 L 494.0,752.0 L 493.0,325.0 L 484.0,322.0 L 476.0,317.0 L 461.0,302.0 L 452.0,285.0 L 448.0,272.0 L 447.0,262.0 Z M 533.0,164.0 L 693.0,335.0 L 714.0,335.0 L 832.0,277.0 L 832.0,256.0 L 575.0,155.0 L 575.0,134.0 L 692.0,160.0 L 696.0,162.0 L 709.0,164.0 L 878.0,204.0 L 906.0,205.0 L 1013.0,94.0 L 1014.0,90.0 L 1004.0,66.0 L 565.0,63.0 L 601.0,7.0 L 598.0,6.0 L 533.0,59.0 Z M 496.0,163.0 L 496.0,60.0 L 429.0,5.0 L 428.0,8.0 L 461.0,58.0 L 463.0,65.0 L 25.0,65.0 L 15.0,90.0 L 15.0,93.0 L 123.0,205.0 L 151.0,204.0 L 450.0,134.0 L 454.0,135.0 L 454.0,154.0 L 452.0,156.0 L 196.0,256.0 L 196.0,276.0 L 198.0,278.0 L 315.0,335.0 L 336.0,335.0 Z" />
     </svg>`;
-    const cursorUrl = `url("data:image/svg+xml,${cursorSvg.replace(/\n\s*/g, '')}") 16 2, crosshair`;
+    const cursorUrl = `url("data:image/svg+xml,${cursorSvg.replace(/\n\s*/g, '')}") 16 1, crosshair`;
 
     const cursorStyle = document.createElement('style');
     cursorStyle.innerHTML = `
@@ -208,49 +196,50 @@ document.addEventListener('DOMContentLoaded', () => {
     function drawTrail() {
         if (points.length < 2) return;
 
-        // Draw a dense, continuous stream of tiny square pixels along the cursor movement path
+        // Draw seamless continuous flowing filament of glowing fireflies trail
         for (let i = 1; i < points.length; i++) {
             const p1 = points[i - 1];
             const p2 = points[i];
 
-            const dx = p2.x - p1.x;
-            const dy = p2.y - p1.y;
-            const dist = Math.sqrt(dx * dx + dy * dy);
+            // Compute combined life/age factor (0 = tail, 1 = head)
+            const relativePos = i / (points.length - 1);
+            const age = relativePos * ((p1.life + p2.life) / 2);
 
-            // Interpolate at very small steps (e.g. 2px to 3px) to ensure no gaps (breaking) in the trail
-            // A small step size ensures perfect continuity regardless of mouse swipe speed
-            const stepSize = 2.5;
-            const steps = Math.max(1, Math.ceil(dist / stepSize));
+            if (age <= 0.02) continue;
 
-            for (let j = 0; j <= steps; j++) {
-                const t = j / steps;
-                const x = p1.x + dx * t;
-                const y = p1.y + dy * t;
+            // Taper filament width: 4.5px at the head down to 1.0px at the tail
+            const size = 1.0 + age * 3.5;
 
-                // Relative position in the points array (0 = tail, 1 = head)
-                const relativePos = (i - 1 + t) / (points.length - 1);
-                // Compute combined life/age factor
-                const age = relativePos * ((p1.life + p2.life) / 2);
+            // 1. Soft atmospheric gold glow (wide, low opacity)
+            ctx.beginPath();
+            ctx.moveTo(p1.x, p1.y);
+            ctx.lineTo(p2.x, p2.y);
+            ctx.strokeStyle = `rgba(207, 171, 58, ${age * 0.18})`;
+            ctx.lineWidth = size * 2.8;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            ctx.stroke();
 
-                if (age <= 0.02) continue;
+            // 2. Core golden line (glowing filament)
+            ctx.beginPath();
+            ctx.moveTo(p1.x, p1.y);
+            ctx.lineTo(p2.x, p2.y);
+            ctx.strokeStyle = `rgba(207, 171, 58, ${age * 0.85})`;
+            ctx.lineWidth = size;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            ctx.stroke();
 
-                // Taper pixel size: 4px at the head down to 1.2px at the tail
-                const size = 1.2 + age * 2.8;
-
-                // 1. Soft atmospheric gold glow around the pixels
-                ctx.fillStyle = `rgba(207, 171, 58, ${age * 0.1})`;
-                ctx.fillRect(x - size, y - size, size * 2, size * 2);
-
-                // 2. Continuous golden pixel core (distinct small pixel blocks)
-                ctx.fillStyle = `rgba(207, 171, 58, ${age * 0.8})`;
-                ctx.fillRect(x - size / 2, y - size / 2, size, size);
-
-                // 3. Ultra-bright hot core inside the pixel at the front (head) of the trail
-                if (age > 0.6) {
-                    const coreSize = size * 0.45;
-                    ctx.fillStyle = `rgba(255, 255, 255, ${age * 0.95})`;
-                    ctx.fillRect(x - coreSize / 2, y - coreSize / 2, coreSize, coreSize);
-                }
+            // 3. Ultra-bright hot center core for the front (head) of the trail
+            if (age > 0.55) {
+                ctx.beginPath();
+                ctx.moveTo(p1.x, p1.y);
+                ctx.lineTo(p2.x, p2.y);
+                ctx.strokeStyle = `rgba(255, 255, 255, ${age * 0.95})`;
+                ctx.lineWidth = size * 0.4;
+                ctx.lineCap = 'round';
+                ctx.lineJoin = 'round';
+                ctx.stroke();
             }
         }
     }

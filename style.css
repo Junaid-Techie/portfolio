@@ -409,8 +409,8 @@ ul {
 }
 
 .tlou-moth {
-    width: 28px;
-    height: 28px;
+    width: 38px;
+    height: 19px;
     color: var(--text-muted);
     margin-right: 0.8rem;
     animation: mothFloat 6s ease-in-out infinite;
@@ -424,8 +424,8 @@ ul {
 }
 
 .firefly-logo {
-    width: 26px;
-    height: 26px;
+    width: 32px;
+    height: 24px;
     color: #eab308 !important; /* Yellow/Gold */
     animation: flickerGlow 4s infinite alternate;
     filter: drop-shadow(0 0 6px rgba(234, 179, 8, 0.65));
