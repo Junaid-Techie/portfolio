@@ -533,5 +533,54 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
             });
         });
+    // Retro Terminal Logging Simulation
+    const terminalFeed = document.getElementById('terminalFeed');
+    if (terminalFeed) {
+        const logTemplates = [
+            "[SPARK_ENG] Running Z-Ordering on catalog.sales_reconciliation... SUCCESS",
+            "[SPARK_ENG] Broadcast join optimized for williams_sonoma.store_inventory [shaved 40m]",
+            "[SNOWFLAKE] Running SCD Type 2 merge into core.dim_customer... SUCCESS",
+            "[SNOWFLAKE] Offloaded stored procedure execution to warehouse 'XS_AUTO_SUSPEND'",
+            "[KAFKA] Consumer group 'order_ingest_v2' offsets synchronized. Lag: 0.",
+            "[AIRFLOW] DAG 'netsuite_to_delta' task 'aggregate_reconciliation' status: SUCCESS",
+            "[VECTOR_DB] Upserted 1,240 documents into JobMatch AI pgvector collection.",
+            "[VECTOR_DB] Querying semantic matching index for 'data platform architect'... 140ms",
+            "[QLoRA] Epoch 3/5 complete. Loss: 0.142. Validation accuracy: 94.2%",
+            "[SYS_MONITOR] Pipeline health: 100% | SLA Target: OPTIMAL | Throughput: 14.8 MB/s",
+            "[SURVIVOR] QZ Perimeter check complete. Infection vectors: 0% | Status: UNINFECTED",
+            "[SYS_SYNC] Syncing local survival repository nodes with Remote Git... SUCCESS",
+            "[SNOWFLAKE] Extracted NetSuite billing streams. Transferred 42,000 records. Integrity checks OK."
+        ];
+        
+        let logIndex = 0;
+        
+        function appendTerminalLine() {
+            const prompt = terminalFeed.querySelector('.term-prompt');
+            
+            // Create new line element
+            const newLine = document.createElement('div');
+            newLine.className = 'term-line';
+            newLine.textContent = logTemplates[logIndex];
+            
+            // Insert line before the prompt
+            if (prompt) {
+                terminalFeed.insertBefore(newLine, prompt);
+            } else {
+                terminalFeed.appendChild(newLine);
+            }
+            
+            // Scroll to bottom
+            terminalFeed.scrollTop = terminalFeed.scrollHeight;
+            
+            // Advance index
+            logIndex = (logIndex + 1) % logTemplates.length;
+            
+            // Schedule next log line at random intervals between 2s and 4.5s
+            const delay = 2000 + Math.random() * 2500;
+            setTimeout(appendTerminalLine, delay);
+        }
+        
+        // Start the loop after a 3s initial delay
+        setTimeout(appendTerminalLine, 3000);
     }
 });
