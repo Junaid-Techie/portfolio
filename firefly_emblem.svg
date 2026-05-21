@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100" fill="none">
+    <!-- Firefly Emblem (Authentic Segmented Design) -->
+    
+    <!-- Central Spine / segmented body -->
+    <rect x="47.5" y="20" width="5" height="54" rx="2.5" fill="currentColor"/>
+    <circle cx="50" cy="15" r="4.5" fill="currentColor"/>
+    
+    <!-- Antennae -->
+    <path d="M 48 12 C 45 7 40 6 40 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+    <path d="M 52 12 C 55 7 60 6 60 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+    
+    <!-- Upper Wings (Sweeping outwards & upwards) -->
+    <path d="M 46 32 C 26 14 12 36 15 46 C 18 53 35 48 46 40 Z" fill="currentColor"/>
+    <path d="M 54 32 C 74 14 88 36 85 46 C 82 53 65 48 54 40 Z" fill="currentColor"/>
+    
+    <!-- Middle Wings (Sweeping outwards) -->
+    <path d="M 46 44 C 20 40 10 52 13 62 C 16 69 34 62 46 54 Z" fill="currentColor"/>
+    <path d="M 54 44 C 80 40 90 52 87 62 C 84 69 66 62 54 54 Z" fill="currentColor"/>
+    
+    <!-- Lower Wings (Small, sweeping downwards) -->
+    <path d="M 46 56 C 20 60 14 74 18 82 C 21 86 36 78 46 66 Z" fill="currentColor"/>
+    <path d="M 54 56 C 80 60 86 74 82 82 C 79 86 64 78 54 66 Z" fill="currentColor"/>
+    
+    <!-- Lower Stencil Horizontal Ticks -->
+    <rect x="40" y="78" width="20" height="3" rx="1.5" fill="currentColor"/>
+    <rect x="44" y="84" width="12" height="3" rx="1.5" fill="currentColor"/>
+</svg>
