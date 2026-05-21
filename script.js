@@ -110,69 +110,52 @@ document.addEventListener('DOMContentLoaded', () => {
     const ctx = canvas.getContext('2d');
     let pixelsMap = new Map(); // O(1) Map lookup instead of O(N) Array scan
     const gridSize = 25; // Pixel grid size matching layout grid units
+    let isAnimating = false;
 
     function resizeCanvas() {
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
+        if (!isAnimating) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
     }
     window.addEventListener('resize', resizeCanvas);
     resizeCanvas();
 
     let lastX = null;
     let lastY = null;
+    let targetX = null;
+    let targetY = null;
+    let hasNewPosition = false;
 
-    function handleInteraction(event) {
-        let currentX, currentY;
-        if (event.touches) {
-            currentX = event.touches[0].clientX;
-            currentY = event.touches[0].clientY;
-        } else {
-            currentX = event.clientX;
-            currentY = event.clientY;
+    function updateTargetPosition(clientX, clientY) {
+        targetX = clientX;
+        targetY = clientY;
+        hasNewPosition = true;
+
+        if (!isAnimating) {
+            isAnimating = true;
+            requestAnimationFrame(animatePixels);
         }
-
-        if (lastX === null || lastY === null) {
-            lastX = currentX;
-            lastY = currentY;
-        }
-
-        // Interpolate along the cursor movement path to create a continuous, gap-free tracer
-        let dx = currentX - lastX;
-        let dy = currentY - lastY;
-        let distance = Math.sqrt(dx * dx + dy * dy);
-        
-        // Sample at 1/2 of grid size (12.5px steps) to ensure perfect contiguous trail coverage
-        let steps = Math.max(1, Math.ceil(distance / (gridSize / 2)));
-
-        for (let i = 0; i <= steps; i++) {
-            let x = lastX + (dx * i) / steps;
-            let y = lastY + (dy * i) / steps;
-
-            let gridX = Math.floor(x / gridSize) * gridSize;
-            let gridY = Math.floor(y / gridSize) * gridSize;
-
-            addPixel(gridX, gridY);
-        }
-
-        // Add random scattered adjacent pixels once per active frame for a digital survival overlay
-        if (Math.random() > 0.6) {
-            let gridX = Math.floor(currentX / gridSize) * gridSize;
-            let gridY = Math.floor(currentY / gridSize) * gridSize;
-            let offsetX = (Math.floor(Math.random() * 3) - 1) * gridSize;
-            let offsetY = (Math.floor(Math.random() * 3) - 1) * gridSize;
-            if (offsetX !== 0 || offsetY !== 0) {
-                addPixel(gridX + offsetX, gridY + offsetY);
-            }
-        }
-
-        lastX = currentX;
-        lastY = currentY;
     }
+
+    window.addEventListener('mousemove', (e) => {
+        updateTargetPosition(e.clientX, e.clientY);
+    });
+
+    window.addEventListener('touchmove', (e) => {
+        if (e.touches && e.touches.length > 0) {
+            updateTargetPosition(e.touches[0].clientX, e.touches[0].clientY);
+        }
+    }, { passive: true });
 
     // Reset last position when mouse leaves window viewport
     window.addEventListener('mouseout', () => {
         lastX = null;
         lastY = null;
+        targetX = null;
+        targetY = null;
+        hasNewPosition = false;
     });
 
     function addPixel(x, y) {
@@ -183,40 +166,84 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             pixelsMap.set(key, new GridPixel(x, y));
         }
-    }
 
-    window.addEventListener('mousemove', handleInteraction);
-    window.addEventListener('touchmove', handleInteraction, { passive: true });
+        if (!isAnimating) {
+            isAnimating = true;
+            requestAnimationFrame(animatePixels);
+        }
+    }
 
     class GridPixel {
         constructor(x, y) {
             this.x = x;
             this.y = y;
             this.size = gridSize;
-
-            // Ochre gold colors matching the survival aesthetic
-            this.color = 'rgba(207, 171, 58, 0.16)';
-            this.glowColor = 'rgba(207, 171, 58, 0.04)';
             this.life = 100;
         }
         update() {
             // Slower decay for a smooth continuous glowing trail
-            this.life -= 1.25;
+            this.life -= 2.0;
         }
         draw() {
             const alpha = Math.max(0, this.life / 100);
             
-            // 1. Draw outer glow (3px offset, very faint opacity, bypassed CPU-heavy blur filters)
-            ctx.fillStyle = this.glowColor;
-            ctx.globalAlpha = alpha;
+            // 1. Draw outer glow (using pre-multiplied alpha to avoid context state changes)
+            ctx.fillStyle = `rgba(207, 171, 58, ${alpha * 0.04})`;
             ctx.fillRect(this.x - 3, this.y - 3, this.size + 6, this.size + 6);
 
-            // 2. Draw perfectly aligned inner grid block (+1px offset)
-            ctx.fillStyle = this.color;
+            // 2. Draw perfectly aligned inner grid block
+            ctx.fillStyle = `rgba(207, 171, 58, ${alpha * 0.16})`;
             ctx.fillRect(this.x + 1, this.y + 1, this.size - 1, this.size - 1);
-
-            ctx.globalAlpha = 1;
         }
+    }
+
+    function processMouseMovement() {
+        if (!hasNewPosition || targetX === null || targetY === null) return;
+
+        if (lastX === null || lastY === null) {
+            lastX = targetX;
+            lastY = targetY;
+        }
+
+        let dx = targetX - lastX;
+        let dy = targetY - lastY;
+        let distance = Math.sqrt(dx * dx + dy * dy);
+        
+        if (distance > 2) {
+            // Avoid drawing long trail jumps if cursor re-enters the viewport
+            if (distance < 300) {
+                let steps = Math.max(1, Math.ceil(distance / (gridSize / 2)));
+                for (let i = 0; i <= steps; i++) {
+                    let x = lastX + (dx * i) / steps;
+                    let y = lastY + (dy * i) / steps;
+
+                    let gridX = Math.floor(x / gridSize) * gridSize;
+                    let gridY = Math.floor(y / gridSize) * gridSize;
+
+                    addPixel(gridX, gridY);
+                }
+            } else {
+                let gridX = Math.floor(targetX / gridSize) * gridSize;
+                let gridY = Math.floor(targetY / gridSize) * gridSize;
+                addPixel(gridX, gridY);
+            }
+
+            // Scatter logic
+            if (Math.random() > 0.6) {
+                let gridX = Math.floor(targetX / gridSize) * gridSize;
+                let gridY = Math.floor(targetY / gridSize) * gridSize;
+                let offsetX = (Math.floor(Math.random() * 3) - 1) * gridSize;
+                let offsetY = (Math.floor(Math.random() * 3) - 1) * gridSize;
+                if (offsetX !== 0 || offsetY !== 0) {
+                    addPixel(gridX + offsetX, gridY + offsetY);
+                }
+            }
+
+            lastX = targetX;
+            lastY = targetY;
+        }
+        
+        hasNewPosition = false;
     }
 
     function handlePixels() {
@@ -231,9 +258,17 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function animatePixels() {
+        processMouseMovement();
+
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         handlePixels();
-        requestAnimationFrame(animatePixels);
+        
+        if (pixelsMap.size > 0) {
+            requestAnimationFrame(animatePixels);
+        } else {
+            isAnimating = false;
+            ctx.clearRect(0, 0, canvas.width, canvas.height); // Final clear
+        }
     }
 
     animatePixels();
