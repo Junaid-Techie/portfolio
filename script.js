@@ -88,17 +88,26 @@ document.addEventListener('DOMContentLoaded', () => {
     canvas.style.zIndex = '9999';
     document.body.appendChild(canvas);
 
-    // Custom SVG Cursor matching the iconic Fireflies emblem from The Last of Us
-    const cursorSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" fill="none" stroke="%23cfab3a" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-        <line x1="16" y1="8" x2="16" y2="24"></line>
-        <path d="M16,8 C14.5,5 13,5 13,4"></path>
-        <path d="M16,8 C17.5,5 19,5 19,4"></path>
-        <path d="M16,11 C21,7 28,10 27,15 C26.5,17.5 22,18.5 16,16"></path>
-        <path d="M16,11 C11,7 4,10 5,15 C5.5,17.5 10,18.5 16,16"></path>
-        <path d="M16,17 C21,19 25,20.5 25,23 C25,25 21,24.5 16,22.5"></path>
-        <path d="M16,17 C11,19 7,20.5 7,23 C7,25 11,24.5 16,22.5"></path>
+    // Custom SVG Cursor: Iconic Fireflies Emblem from The Last of Us, styled and colored in gold (#cfab3a) with a soft backing glow
+    const cursorSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" fill="none">
+        <!-- Glow Backing -->
+        <line x1="16" y1="6" x2="16" y2="26" stroke="rgba(207, 171, 58, 0.25)" stroke-width="3.5" stroke-linecap="round"></line>
+        <path d="M16,10 C23,5 29,9 28,15 C27,18 22,19 16,16" stroke="rgba(207, 171, 58, 0.25)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></path>
+        <path d="M16,10 C9,5 3,9 4,15 C5,18 10,19 16,16" stroke="rgba(207, 171, 58, 0.25)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></path>
+        
+        <!-- Sharp Foreground lines -->
+        <line x1="16" y1="6" x2="16" y2="26" stroke="%23cfab3a" stroke-width="1.8" stroke-linecap="round"></line>
+        <!-- Antennae -->
+        <path d="M16,6 C14.5,3.5 13,3 13,2" stroke="%23cfab3a" stroke-width="1.2" stroke-linecap="round"></path>
+        <path d="M16,6 C17.5,3.5 19,3 19,2" stroke="%23cfab3a" stroke-width="1.2" stroke-linecap="round"></path>
+        <!-- Upper Wings -->
+        <path d="M16,10 C22,6 27,9 26,14 C25,16.5 21,17.5 16,15.5" stroke="%23cfab3a" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path>
+        <path d="M16,10 C10,6 5,9 6,14 C7,16.5 11,17.5 16,15.5" stroke="%23cfab3a" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path>
+        <!-- Lower Wings -->
+        <path d="M16,16.5 C20.5,18 24,19.5 24,22 C24,24 20,23.5 16,21.5" stroke="%23cfab3a" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"></path>
+        <path d="M16,16.5 C11.5,18 8,19.5 8,22 C8,24 12,23.5 16,21.5" stroke="%23cfab3a" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"></path>
     </svg>`;
-    const cursorUrl = `url("data:image/svg+xml,${cursorSvg.replace(/\n\s*/g, '')}") 16 8, crosshair`;
+    const cursorUrl = `url("data:image/svg+xml,${cursorSvg.replace(/\n\s*/g, '')}") 16 2, crosshair`;
 
     const cursorStyle = document.createElement('style');
     cursorStyle.innerHTML = `
@@ -108,8 +117,8 @@ document.addEventListener('DOMContentLoaded', () => {
     document.head.appendChild(cursorStyle);
 
     const ctx = canvas.getContext('2d');
-    let pixelsMap = new Map(); // O(1) Map lookup instead of O(N) Array scan
-    const gridSize = 25; // Pixel grid size matching layout grid units
+    let points = [];  // Array of { x, y, life }
+    let spores = [];  // Drifting Firefly spore particles
     let isAnimating = false;
 
     function resizeCanvas() {
@@ -122,8 +131,6 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('resize', resizeCanvas);
     resizeCanvas();
 
-    let lastX = null;
-    let lastY = null;
     let targetX = null;
     let targetY = null;
     let hasNewPosition = false;
@@ -149,111 +156,139 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }, { passive: true });
 
-    // Reset last position when mouse leaves window viewport
+    // Reset target positions when mouse leaves viewport
     window.addEventListener('mouseout', () => {
-        lastX = null;
-        lastY = null;
         targetX = null;
         targetY = null;
         hasNewPosition = false;
     });
 
-    function addPixel(x, y) {
-        const key = `${x},${y}`;
-        const existingPixel = pixelsMap.get(key);
-        if (existingPixel) {
-            existingPixel.life = 100; // Reset life if already active to keep glowing
-        } else {
-            pixelsMap.set(key, new GridPixel(x, y));
-        }
-
-        if (!isAnimating) {
-            isAnimating = true;
-            requestAnimationFrame(animatePixels);
-        }
-    }
-
-    class GridPixel {
-        constructor(x, y) {
-            this.x = x;
-            this.y = y;
-            this.size = gridSize;
-            this.life = 100;
-        }
-        update() {
-            // Slower decay for a smooth continuous glowing trail
-            this.life -= 2.0;
-        }
-        draw() {
-            const alpha = Math.max(0, this.life / 100);
-            
-            // 1. Draw outer glow (using pre-multiplied alpha to avoid context state changes)
-            ctx.fillStyle = `rgba(207, 171, 58, ${alpha * 0.04})`;
-            ctx.fillRect(this.x - 3, this.y - 3, this.size + 6, this.size + 6);
-
-            // 2. Draw perfectly aligned inner grid block
-            ctx.fillStyle = `rgba(207, 171, 58, ${alpha * 0.16})`;
-            ctx.fillRect(this.x + 1, this.y + 1, this.size - 1, this.size - 1);
-        }
-    }
-
     function processMouseMovement() {
         if (!hasNewPosition || targetX === null || targetY === null) return;
 
-        if (lastX === null || lastY === null) {
-            lastX = targetX;
-            lastY = targetY;
+        let shouldAdd = false;
+        if (points.length === 0) {
+            shouldAdd = true;
+        } else {
+            let lastPoint = points[points.length - 1];
+            let dx = targetX - lastPoint.x;
+            let dy = targetY - lastPoint.y;
+            let dist = Math.sqrt(dx * dx + dy * dy);
+
+            // Append coordinate if the cursor has moved sufficiently
+            if (dist > 1.5) {
+                // If the coordinate jump is massive (e.g. window re-entry), clear points to prevent visual trail cuts
+                if (dist > 250) {
+                    points = [];
+                }
+                shouldAdd = true;
+            }
         }
 
-        let dx = targetX - lastX;
-        let dy = targetY - lastY;
-        let distance = Math.sqrt(dx * dx + dy * dy);
-        
-        if (distance > 2) {
-            // Avoid drawing long trail jumps if cursor re-enters the viewport
-            if (distance < 300) {
-                let steps = Math.max(1, Math.ceil(distance / (gridSize / 2)));
-                for (let i = 0; i <= steps; i++) {
-                    let x = lastX + (dx * i) / steps;
-                    let y = lastY + (dy * i) / steps;
+        if (shouldAdd) {
+            points.push({ x: targetX, y: targetY, life: 1.0 });
 
-                    let gridX = Math.floor(x / gridSize) * gridSize;
-                    let gridY = Math.floor(y / gridSize) * gridSize;
-
-                    addPixel(gridX, gridY);
-                }
-            } else {
-                let gridX = Math.floor(targetX / gridSize) * gridSize;
-                let gridY = Math.floor(targetY / gridSize) * gridSize;
-                addPixel(gridX, gridY);
+            // Firefly Spore Sparkle: Spawn a floating spore that drifts upwards like warm sparks
+            if (Math.random() > 0.55) {
+                spores.push({
+                    x: targetX,
+                    y: targetY,
+                    vx: (Math.random() - 0.5) * 1.6,
+                    vy: (Math.random() - 0.4) * 1.5 - 0.8, // Upward floating bias
+                    size: Math.random() * 2 + 1.2,
+                    life: 1.0,
+                    decay: Math.random() * 0.02 + 0.015
+                });
             }
-
-            // Scatter logic
-            if (Math.random() > 0.6) {
-                let gridX = Math.floor(targetX / gridSize) * gridSize;
-                let gridY = Math.floor(targetY / gridSize) * gridSize;
-                let offsetX = (Math.floor(Math.random() * 3) - 1) * gridSize;
-                let offsetY = (Math.floor(Math.random() * 3) - 1) * gridSize;
-                if (offsetX !== 0 || offsetY !== 0) {
-                    addPixel(gridX + offsetX, gridY + offsetY);
-                }
-            }
-
-            lastX = targetX;
-            lastY = targetY;
         }
-        
+
         hasNewPosition = false;
     }
 
-    function handlePixels() {
-        for (let [key, pixel] of pixelsMap.entries()) {
-            pixel.update();
-            pixel.draw();
+    function drawTrail() {
+        if (points.length < 2) return;
 
-            if (pixel.life <= 0) {
-                pixelsMap.delete(key);
+        // Draw a dense, continuous stream of tiny square pixels along the cursor movement path
+        for (let i = 1; i < points.length; i++) {
+            const p1 = points[i - 1];
+            const p2 = points[i];
+
+            const dx = p2.x - p1.x;
+            const dy = p2.y - p1.y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+
+            // Interpolate at very small steps (e.g. 2px to 3px) to ensure no gaps (breaking) in the trail
+            // A small step size ensures perfect continuity regardless of mouse swipe speed
+            const stepSize = 2.5;
+            const steps = Math.max(1, Math.ceil(dist / stepSize));
+
+            for (let j = 0; j <= steps; j++) {
+                const t = j / steps;
+                const x = p1.x + dx * t;
+                const y = p1.y + dy * t;
+
+                // Relative position in the points array (0 = tail, 1 = head)
+                const relativePos = (i - 1 + t) / (points.length - 1);
+                // Compute combined life/age factor
+                const age = relativePos * ((p1.life + p2.life) / 2);
+
+                if (age <= 0.02) continue;
+
+                // Taper pixel size: 4px at the head down to 1.2px at the tail
+                const size = 1.2 + age * 2.8;
+
+                // 1. Soft atmospheric gold glow around the pixels
+                ctx.fillStyle = `rgba(207, 171, 58, ${age * 0.1})`;
+                ctx.fillRect(x - size, y - size, size * 2, size * 2);
+
+                // 2. Continuous golden pixel core (distinct small pixel blocks)
+                ctx.fillStyle = `rgba(207, 171, 58, ${age * 0.8})`;
+                ctx.fillRect(x - size / 2, y - size / 2, size, size);
+
+                // 3. Ultra-bright hot core inside the pixel at the front (head) of the trail
+                if (age > 0.6) {
+                    const coreSize = size * 0.45;
+                    ctx.fillStyle = `rgba(255, 255, 255, ${age * 0.95})`;
+                    ctx.fillRect(x - coreSize / 2, y - coreSize / 2, coreSize, coreSize);
+                }
             }
+        }
+    }
+
+    function updatePointsAndSpores() {
+        // Decay active path coordinates
+        for (let i = 0; i < points.length; i++) {
+            points[i].life -= 0.035; 
+        }
+
+        // Shift out decayed coordinates from the tail
+        while (points.length > 0 && points[0].life <= 0) {
+            points.shift();
+        }
+
+        // Draw and update active firefly spores
+        for (let i = spores.length - 1; i >= 0; i--) {
+            const s = spores[i];
+            s.x += s.vx;
+            s.y += s.vy;
+            s.life -= s.decay;
+
+            if (s.life <= 0) {
+                spores.splice(i, 1);
+                continue;
+            }
+
+            // Central glowing spore circle
+            ctx.beginPath();
+            ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(207, 171, 58, ${s.life * 0.75})`;
+            ctx.fill();
+
+            // Soft atmospheric spore glow
+            ctx.beginPath();
+            ctx.arc(s.x, s.y, s.size * 2, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(207, 171, 58, ${s.life * 0.15})`;
+            ctx.fill();
         }
     }
 
@@ -261,9 +296,12 @@ document.addEventListener('DOMContentLoaded', () => {
         processMouseMovement();
 
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        handlePixels();
-        
-        if (pixelsMap.size > 0) {
+
+        drawTrail();
+        updatePointsAndSpores();
+
+        // Keep loop running if points or spores are still active and decaying
+        if (points.length > 0 || spores.length > 0) {
             requestAnimationFrame(animatePixels);
         } else {
             isAnimating = false;
