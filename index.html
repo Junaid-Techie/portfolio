@@ -729,20 +729,6 @@
                 scrollTopBtn.style.visibility = 'hidden';
             }
         });
-
-        // Copy to Clipboard Tooltip Logic
-        window.showTooltip = function(button) {
-            const pill = button.parentElement;
-            const tooltip = pill.querySelector('.tooltip');
-            if (tooltip) {
-                tooltip.style.opacity = '1';
-                tooltip.style.transform = 'translateX(-50%) translateY(0)';
-                setTimeout(() => {
-                    tooltip.style.opacity = '0';
-                    tooltip.style.transform = 'translateX(-50%) translateY(5px)';
-                }, 2000);
-            }
-        };
     </script>
     <script src="script.js"></script>
 </body>
