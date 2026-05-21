@@ -89,6 +89,8 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
     border-radius: 50%;
     z-index: -1;
     animation: float 20s ease-in-out infinite alternate;
+    will-change: transform;
+    backface-visibility: hidden;
 }
 
 .bg-gradient-2 {
@@ -101,21 +103,12 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
     border-radius: 50%;
     z-index: -1;
     animation: float 25s ease-in-out infinite alternate-reverse;
+    will-change: transform;
+    backface-visibility: hidden;
 }
 
 .bg-grid {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background-image: 
-        linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
-    background-size: 50px 50px;
-    z-index: -2;
-    mask-image: radial-gradient(ellipse at center, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 80%);
-    -webkit-mask-image: radial-gradient(ellipse at center, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 80%);
+    display: none; /* Fully disabled to prevent scroll recalculations and layout paints */
 }
 
 @keyframes float {
@@ -155,6 +148,8 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
     background-size: 350px 350px;
     animation: drift 45s linear infinite;
     opacity: 0.65;
+    will-change: transform;
+    backface-visibility: hidden;
 }
 
 .bg-spores::after {
@@ -167,6 +162,8 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
     background-size: 280px 280px;
     animation: drift-reverse 55s linear infinite;
     opacity: 0.6;
+    will-change: transform;
+    backface-visibility: hidden;
 }
 
 @keyframes drift {
@@ -1050,12 +1047,15 @@ ul {
     position: fixed;
     top: 0;
     left: 0;
+    width: 100%;
     height: 4px;
     background: linear-gradient(90deg, var(--primary), var(--secondary));
-    width: 0%;
+    transform: scaleX(0);
+    transform-origin: left;
+    will-change: transform;
     z-index: 10000;
     box-shadow: 0 0 10px var(--primary);
-    transition: width 0.1s ease-out;
+    transition: transform 0.1s cubic-bezier(0.1, 0.47, 0.25, 1);
 }
 
 /* Pipeline Animation */

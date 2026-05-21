@@ -1,14 +1,19 @@
 document.addEventListener('DOMContentLoaded', () => {
     // Navigation Scroll Effect
     const navbar = document.querySelector('.navbar');
+    let scrolled = false;
 
     window.addEventListener('scroll', () => {
-        if (window.scrollY > 50) {
-            navbar.classList.add('scrolled');
-        } else {
-            navbar.classList.remove('scrolled');
+        const isScrolled = window.scrollY > 50;
+        if (isScrolled !== scrolled) {
+            scrolled = isScrolled;
+            if (scrolled) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
         }
-    });
+    }, { passive: true });
 
     // Mobile Menu Toggle
     const hamburger = document.querySelector('.hamburger');
@@ -83,9 +88,17 @@ document.addEventListener('DOMContentLoaded', () => {
     canvas.style.zIndex = '9999';
     document.body.appendChild(canvas);
 
-    // Custom SVG Cursor matching primary color (#cfab3a)
-    const cursorSvg = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#cfab3a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="4" x2="12" y2="20"></line><line x1="4" y1="12" x2="20" y2="12"></line></svg>';
-    const cursorUrl = `url("data:image/svg+xml,${encodeURIComponent(cursorSvg)}") 12 12, crosshair`;
+    // Custom SVG Cursor matching the iconic Fireflies emblem from The Last of Us
+    const cursorSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" fill="none" stroke="%23cfab3a" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="16" y1="8" x2="16" y2="24"></line>
+        <path d="M16,8 C14.5,5 13,5 13,4"></path>
+        <path d="M16,8 C17.5,5 19,5 19,4"></path>
+        <path d="M16,11 C21,7 28,10 27,15 C26.5,17.5 22,18.5 16,16"></path>
+        <path d="M16,11 C11,7 4,10 5,15 C5.5,17.5 10,18.5 16,16"></path>
+        <path d="M16,17 C21,19 25,20.5 25,23 C25,25 21,24.5 16,22.5"></path>
+        <path d="M16,17 C11,19 7,20.5 7,23 C7,25 11,24.5 16,22.5"></path>
+    </svg>`;
+    const cursorUrl = `url("data:image/svg+xml,${cursorSvg.replace(/\n\s*/g, '')}") 16 8, crosshair`;
 
     const cursorStyle = document.createElement('style');
     cursorStyle.innerHTML = `
@@ -95,8 +108,8 @@ document.addEventListener('DOMContentLoaded', () => {
     document.head.appendChild(cursorStyle);
 
     const ctx = canvas.getContext('2d');
-    let pixelsArray = [];
-    const gridSize = 25; // Increased pixel size to 25px (exactly 4 fit in the 50px background grid)
+    let pixelsMap = new Map(); // O(1) Map lookup instead of O(N) Array scan
+    const gridSize = 25; // Pixel grid size matching layout grid units
 
     function resizeCanvas() {
         canvas.width = window.innerWidth;
@@ -123,12 +136,13 @@ document.addEventListener('DOMContentLoaded', () => {
             lastY = currentY;
         }
 
-        // Calculate distance and densely interpolate to prevent skipping pixels
+        // Interpolate along the cursor movement path to create a continuous, gap-free tracer
         let dx = currentX - lastX;
         let dy = currentY - lastY;
         let distance = Math.sqrt(dx * dx + dy * dy);
-        // Sample at 1/4th the grid size to ensure we hit every single grid cell along the path
-        let steps = Math.max(1, Math.ceil(distance / (gridSize / 4)));
+        
+        // Sample at 1/2 of grid size (12.5px steps) to ensure perfect contiguous trail coverage
+        let steps = Math.max(1, Math.ceil(distance / (gridSize / 2)));
 
         for (let i = 0; i <= steps; i++) {
             let x = lastX + (dx * i) / steps;
@@ -137,13 +151,16 @@ document.addEventListener('DOMContentLoaded', () => {
             let gridX = Math.floor(x / gridSize) * gridSize;
             let gridY = Math.floor(y / gridSize) * gridSize;
 
-            // Add pixel under calculated position
             addPixel(gridX, gridY);
+        }
 
-            // Add random scattered adjacent pixels for a "digital" trail effect
-            if (Math.random() > 0.7) { // slightly less scattering since pixels are bigger now
-                let offsetX = (Math.floor(Math.random() * 3) - 1) * gridSize;
-                let offsetY = (Math.floor(Math.random() * 3) - 1) * gridSize;
+        // Add random scattered adjacent pixels once per active frame for a digital survival overlay
+        if (Math.random() > 0.6) {
+            let gridX = Math.floor(currentX / gridSize) * gridSize;
+            let gridY = Math.floor(currentY / gridSize) * gridSize;
+            let offsetX = (Math.floor(Math.random() * 3) - 1) * gridSize;
+            let offsetY = (Math.floor(Math.random() * 3) - 1) * gridSize;
+            if (offsetX !== 0 || offsetY !== 0) {
                 addPixel(gridX + offsetX, gridY + offsetY);
             }
         }
@@ -152,23 +169,24 @@ document.addEventListener('DOMContentLoaded', () => {
         lastY = currentY;
     }
 
-    // Reset last position when mouse leaves
+    // Reset last position when mouse leaves window viewport
     window.addEventListener('mouseout', () => {
         lastX = null;
         lastY = null;
     });
 
     function addPixel(x, y) {
-        let existingPixel = pixelsArray.find(p => p.x === x && p.y === y);
+        const key = `${x},${y}`;
+        const existingPixel = pixelsMap.get(key);
         if (existingPixel) {
-            existingPixel.life = 100; // Reset life if already active
+            existingPixel.life = 100; // Reset life if already active to keep glowing
         } else {
-            pixelsArray.push(new GridPixel(x, y));
+            pixelsMap.set(key, new GridPixel(x, y));
         }
     }
 
     window.addEventListener('mousemove', handleInteraction);
-    window.addEventListener('touchmove', handleInteraction);
+    window.addEventListener('touchmove', handleInteraction, { passive: true });
 
     class GridPixel {
         constructor(x, y) {
@@ -176,37 +194,38 @@ document.addEventListener('DOMContentLoaded', () => {
             this.y = y;
             this.size = gridSize;
 
-            // Subtler ochre gold color
-            this.color = 'rgba(207, 171, 58, 0.15)';
+            // Ochre gold colors matching the survival aesthetic
+            this.color = 'rgba(207, 171, 58, 0.16)';
+            this.glowColor = 'rgba(207, 171, 58, 0.04)';
             this.life = 100;
         }
         update() {
-            this.life -= 2; // Slightly faster fade
+            // Slower decay for a smooth continuous glowing trail
+            this.life -= 1.25;
         }
         draw() {
+            const alpha = Math.max(0, this.life / 100);
+            
+            // 1. Draw outer glow (3px offset, very faint opacity, bypassed CPU-heavy blur filters)
+            ctx.fillStyle = this.glowColor;
+            ctx.globalAlpha = alpha;
+            ctx.fillRect(this.x - 3, this.y - 3, this.size + 6, this.size + 6);
+
+            // 2. Draw perfectly aligned inner grid block (+1px offset)
             ctx.fillStyle = this.color;
-            ctx.globalAlpha = Math.max(0, this.life / 100);
-
-            // Subtle glowing effect
-            ctx.shadowBlur = 3;
-            ctx.shadowColor = 'rgba(207, 171, 58, 0.3)';
-
-            // Draw pixel perfectly aligned inside the background grid lines (+1px offset)
             ctx.fillRect(this.x + 1, this.y + 1, this.size - 1, this.size - 1);
 
             ctx.globalAlpha = 1;
-            ctx.shadowBlur = 0; // Reset shadow
         }
     }
 
     function handlePixels() {
-        for (let i = 0; i < pixelsArray.length; i++) {
-            pixelsArray[i].update();
-            pixelsArray[i].draw();
+        for (let [key, pixel] of pixelsMap.entries()) {
+            pixel.update();
+            pixel.draw();
 
-            if (pixelsArray[i].life <= 0) {
-                pixelsArray.splice(i, 1);
-                i--;
+            if (pixel.life <= 0) {
+                pixelsMap.delete(key);
             }
         }
     }
@@ -414,15 +433,15 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Scroll Progress Indicator Logic
+    // Scroll Progress Indicator Logic (GPU-Accelerated scaleX)
     const scrollProgress = document.getElementById('scrollProgress');
     if (scrollProgress) {
         window.addEventListener('scroll', () => {
-            const scrollPx = document.documentElement.scrollTop;
+            const scrollPx = window.scrollY || document.documentElement.scrollTop;
             const winHeightPx = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-            const scrollLen = (scrollPx / winHeightPx) * 100;
-            scrollProgress.style.width = scrollLen + '%';
-        });
+            const scrollLen = winHeightPx > 0 ? (scrollPx / winHeightPx) : 0;
+            scrollProgress.style.transform = `scaleX(${scrollLen})`;
+        }, { passive: true });
     }
 
     // Project Filtering Logic
