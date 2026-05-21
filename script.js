@@ -83,8 +83,8 @@ document.addEventListener('DOMContentLoaded', () => {
     canvas.style.zIndex = '9999';
     document.body.appendChild(canvas);
 
-    // Custom SVG Cursor matching primary color (#3b82f6)
-    const cursorSvg = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="4" x2="12" y2="20"></line><line x1="4" y1="12" x2="20" y2="12"></line></svg>';
+    // Custom SVG Cursor matching primary color (#cfab3a)
+    const cursorSvg = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#cfab3a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="4" x2="12" y2="20"></line><line x1="4" y1="12" x2="20" y2="12"></line></svg>';
     const cursorUrl = `url("data:image/svg+xml,${encodeURIComponent(cursorSvg)}") 12 12, crosshair`;
 
     const cursorStyle = document.createElement('style');
@@ -176,8 +176,8 @@ document.addEventListener('DOMContentLoaded', () => {
             this.y = y;
             this.size = gridSize;
 
-            // Subtler dark blue color
-            this.color = 'rgba(59, 130, 246, 0.15)';
+            // Subtler ochre gold color
+            this.color = 'rgba(207, 171, 58, 0.15)';
             this.life = 100;
         }
         update() {
@@ -189,7 +189,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Subtle glowing effect
             ctx.shadowBlur = 3;
-            ctx.shadowColor = 'rgba(59, 130, 246, 0.3)';
+            ctx.shadowColor = 'rgba(207, 171, 58, 0.3)';
 
             // Draw pixel perfectly aligned inside the background grid lines (+1px offset)
             ctx.fillRect(this.x + 1, this.y + 1, this.size - 1, this.size - 1);
