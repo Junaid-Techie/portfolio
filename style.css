@@ -9,7 +9,7 @@
     --secondary: #4a5a41;       /* Post-apocalyptic Overgrown Moss Green */
     --accent: #d97706;          /* Tactical Flare Orange */
     
-    --glass-bg: rgba(18, 22, 17, 0.65); /* Rich forest-dark semi-transparent overlay */
+    --glass-bg: rgba(14, 16, 13, 0.92); /* Rich, highly-optimized moss-charcoal for maximum readability and zero-lag rendering */
     --glass-border: rgba(207, 171, 58, 0.15); /* Weathered brass outline */
     --glass-hover: rgba(207, 171, 58, 0.28);
     
@@ -300,8 +300,6 @@ ul {
 /* Glassmorphism utility */
 .glass-card {
     background: var(--glass-bg);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
     border: 1px solid var(--glass-border);
     border-radius: 16px;
     padding: 2rem;
@@ -430,16 +428,16 @@ ul {
     height: 26px;
     color: #eab308 !important; /* Yellow/Gold */
     animation: flickerGlow 4s infinite alternate;
-    filter: drop-shadow(0 0 5px rgba(234, 179, 8, 0.6));
+    filter: drop-shadow(0 0 6px rgba(234, 179, 8, 0.65));
 }
 
 @keyframes flickerGlow {
-    0%, 100% { opacity: 1; filter: drop-shadow(0 0 8px rgba(234, 179, 8, 0.8)); }
+    0%, 100% { opacity: 1; }
     5% { opacity: 0.8; }
-    10% { opacity: 1; filter: drop-shadow(0 0 12px rgba(234, 179, 8, 1)); }
-    15% { opacity: 0.9; }
-    50% { opacity: 0.4; filter: drop-shadow(0 0 2px rgba(234, 179, 8, 0.2)); }
-    75% { opacity: 0.8; filter: drop-shadow(0 0 5px rgba(234, 179, 8, 0.5)); }
+    10% { opacity: 1; }
+    15% { opacity: 0.95; }
+    50% { opacity: 0.4; }
+    75% { opacity: 0.85; }
 }
 
 .nav-links {
