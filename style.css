@@ -889,6 +889,19 @@ ul {
     transform: translateY(0);
 }
 
+/* Pulse animation for Active Dev badge */
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+}
+
+/* Project tech list items border */
+.project-tech li {
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
+}
+
 /* Responsive */
 @media (max-width: 992px) {
     .about-content {
