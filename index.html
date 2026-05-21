@@ -98,13 +98,41 @@
                 </div>
             </div>
             <div class="hero-visual fade-up" style="transition-delay: 0.2s">
-                <div class="data-cube">
-                    <div class="face front"><i class="fas fa-database"></i></div>
-                    <div class="face back"><i class="fas fa-brain"></i></div>
-                    <div class="face right"><i class="fas fa-cloud"></i></div>
-                    <div class="face left"><i class="fas fa-code"></i></div>
-                    <div class="face top"><i class="fas fa-network-wired"></i></div>
-                    <div class="face bottom"><i class="fas fa-server"></i></div>
+                <div class="radar-container">
+                    <div class="radar-sweep"></div>
+                    <div class="radar-ring ring-1"></div>
+                    <div class="radar-ring ring-2"></div>
+                    <div class="radar-ring ring-3"></div>
+                    <div class="radar-crosshair-h"></div>
+                    <div class="radar-crosshair-v"></div>
+                    
+                    <!-- Pulse delays synchronized with the 6s clockwise sweep starting at 12 o'clock -->
+                    <div class="radar-node" style="--delay: 0.5s; top: 20%; left: 65%;">
+                        <span class="node-dot"></span>
+                        <span class="node-label">Vector AI</span>
+                    </div>
+                    <div class="radar-node" style="--delay: 1.5s; top: 40%; left: 80%;">
+                        <span class="node-dot"></span>
+                        <span class="node-label">PySpark</span>
+                    </div>
+                    <div class="radar-node" style="--delay: 2.5s; top: 80%; left: 75%;">
+                        <span class="node-dot"></span>
+                        <span class="node-label">Airflow</span>
+                    </div>
+                    <div class="radar-node" style="--delay: 3.5s; top: 72%; left: 45%;">
+                        <span class="node-dot"></span>
+                        <span class="node-label">Snowflake</span>
+                    </div>
+                    <div class="radar-node" style="--delay: 4.5s; top: 55%; left: 15%;">
+                        <span class="node-dot"></span>
+                        <span class="node-label">Kafka</span>
+                    </div>
+                    <div class="radar-node" style="--delay: 5.0s; top: 25%; left: 30%;">
+                        <span class="node-dot"></span>
+                        <span class="node-label">Databricks</span>
+                    </div>
+                    
+                    <div class="radar-center-dot"></div>
                 </div>
             </div>
         </div>
@@ -205,11 +233,11 @@
 
             <!-- Interactive Pipeline Animation -->
             <div class="pipeline-animation glass-card fade-up">
-                <div class="node source"><i class="fas fa-database"></i> Source DB</div>
-                <div class="flow-line"><div class="packet"></div></div>
-                <div class="node processing" style="color: var(--secondary); border-color: var(--secondary);"><i class="fas fa-bolt"></i> Apache Spark</div>
-                <div class="flow-line"><div class="packet" style="animation-delay: 0.5s;"></div></div>
-                <div class="node warehouse" style="color: #6ee7b7; border-color: #6ee7b7;"><i class="fas fa-snowflake"></i> Snowflake</div>
+                <div class="node ingest"><i class="fas fa-stream"></i> Kafka &amp; ADLS Gen2</div>
+                <div class="flow-line"><div class="packet packet-ingest"></div></div>
+                <div class="node compute"><i class="fas fa-bolt"></i> Azure Databricks (PySpark)</div>
+                <div class="flow-line"><div class="packet packet-warehouse" style="animation-delay: 0.5s;"></div></div>
+                <div class="node warehouse"><i class="fas fa-snowflake"></i> Snowflake Lakehouse</div>
             </div>
 
             <div class="skills-grid fade-up">
@@ -412,12 +440,12 @@
             <div class="projects-grid fade-up">
 
                 <!-- Project 0: JobMatch AI (Active Development) -->
-                <div class="project-card glass-card" data-category="genai" style="border-color: rgba(139, 92, 246, 0.4); background: rgba(139, 92, 246, 0.05);">
+                <div class="project-card glass-card active-dev" data-category="genai">
                     <div class="project-content">
                         <div class="project-top">
-                            <div class="project-folder" style="color: var(--secondary);"><i class="far fa-folder-open"></i></div>
+                            <div class="project-folder"><i class="far fa-folder-open"></i></div>
                             <div class="project-links">
-                                <span style="font-size: 0.75rem; padding: 0.3rem 0.8rem; background: rgba(139, 92, 246, 0.15); border: 1px solid rgba(139, 92, 246, 0.4); border-radius: 20px; color: var(--secondary); font-weight: 600;"><i class="fas fa-circle" style="font-size: 0.5rem; animation: pulse 2s infinite; margin-right: 0.3rem;"></i>Active Dev</span>
+                                <span class="badge-active-dev"><i class="fas fa-circle"></i>Active Dev</span>
                                 <a href="https://github.com/Junaid-Techie/job-ai-app" target="_blank" style="margin-left: 0.5rem;"><i class="fab fa-github"></i></a>
                                 <a href="https://job-ai-app-six.vercel.app" target="_blank"><i class="fas fa-external-link-alt"></i></a>
                             </div>
@@ -430,7 +458,7 @@
                             <li>OpenAI API</li>
                             <li>Next.js</li>
                         </ul>
-                        <button class="btn-outline case-btn" style="margin-top: 1.5rem; width: 100%; cursor: pointer; border-color: var(--secondary); color: var(--secondary);" onclick="openModal('JobMatch AI', '<strong>Project Architecture &amp; Deep Dive:</strong><br><br>JobMatch AI is a semantic job matching and resume search platform designed to bypass rigid keyword filtering by understanding the underlying concepts and experience of candidates.<br><br><strong>Technical Implementation:</strong><br><ul><li><strong>End-to-End Matching:</strong> Automatically ranks live job listings against uploaded candidate resumes, generating contextual cover letters with GPT-4o-mini and tracking job applications in real-time.</li><li><strong>Deduplication Pipeline:</strong> Designed an intelligent ingestion pipeline that filters and deduplicates job postings before embedding, avoiding redundant vector database writes and maintaining fresh search states from live APIs.</li><li><strong>Vector Architecture:</strong> Deployed a FastAPI backend communicating with Supabase PostgreSQL and pgvector for ultra-fast, semantic similarity search.</li><li><strong>Frontend &amp; Deploys:</strong> Created a highly interactive Next.js dashboard with secure JWT token authentication, deployed seamlessly across Vercel, Render, and Supabase with dynamic resume file processing.</li></ul><br><strong>Business Impact:</strong> Transforms recruiting from rigid keyword queries to context-aware intelligence, vastly improving screening accuracy.')">Read Case Study</button>
+                        <button class="btn-outline case-btn" style="margin-top: 1.5rem; width: 100%; cursor: pointer;" onclick="openModal('JobMatch AI', '<strong>Project Architecture &amp; Deep Dive:</strong><br><br>JobMatch AI is a semantic job matching and resume search platform designed to bypass rigid keyword filtering by understanding the underlying concepts and experience of candidates.<br><br><strong>Technical Implementation:</strong><br><ul><li><strong>End-to-End Matching:</strong> Automatically ranks live job listings against uploaded candidate resumes, generating contextual cover letters with GPT-4o-mini and tracking job applications in real-time.</li><li><strong>Deduplication Pipeline:</strong> Designed an intelligent ingestion pipeline that filters and deduplicates job postings before embedding, avoiding redundant vector database writes and maintaining fresh search states from live APIs.</li><li><strong>Vector Architecture:</strong> Deployed a FastAPI backend communicating with Supabase PostgreSQL and pgvector for ultra-fast, semantic similarity search.</li><li><strong>Frontend &amp; Deploys:</strong> Created a highly interactive Next.js dashboard with secure JWT token authentication, deployed seamlessly across Vercel, Render, and Supabase with dynamic resume file processing.</li></ul><br><strong>Business Impact:</strong> Transforms recruiting from rigid keyword queries to context-aware intelligence, vastly improving screening accuracy.')">Read Case Study</button>
                     </div>
                 </div>
                 
