@@ -533,6 +533,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
             });
         });
+    } // end if (filterBtns.length > 0 && projectCards.length > 0)
+
     // Retro Terminal Logging Simulation
     const terminalFeed = document.getElementById('terminalFeed');
     if (terminalFeed) {
