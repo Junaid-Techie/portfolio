@@ -116,65 +116,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
     100% { transform: translate(5%, 5%) rotate(10deg); }
 }
 
-/* Post-Apocalyptic Floating Spores / Firefly Dust Overlay */
-.bg-spores {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: -1;
-    pointer-events: none;
-    overflow: hidden;
-}
 
-.bg-spores::before,
-.bg-spores::after {
-    content: '';
-    position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    pointer-events: none;
-    background-image: 
-        radial-gradient(circle at 10% 20%, rgba(207, 171, 58, 0.22) 1.5px, transparent 2.5px),
-        radial-gradient(circle at 30% 60%, rgba(207, 171, 58, 0.18) 2px, transparent 3px),
-        radial-gradient(circle at 50% 30%, rgba(131, 146, 123, 0.22) 1px, transparent 2px),
-        radial-gradient(circle at 70% 80%, rgba(207, 171, 58, 0.25) 1.5px, transparent 3px),
-        radial-gradient(circle at 90% 40%, rgba(131, 146, 123, 0.18) 2px, transparent 4px),
-        radial-gradient(circle at 20% 75%, rgba(207, 171, 58, 0.22) 1px, transparent 2px),
-        radial-gradient(circle at 80% 15%, rgba(207, 171, 58, 0.25) 2px, transparent 3px);
-    background-size: 350px 350px;
-    animation: drift 45s linear infinite;
-    opacity: 0.65;
-    will-change: transform;
-    backface-visibility: hidden;
-}
-
-.bg-spores::after {
-    background-image: 
-        radial-gradient(circle at 15% 35%, rgba(207, 171, 58, 0.22) 2px, transparent 3px),
-        radial-gradient(circle at 45% 15%, rgba(131, 146, 123, 0.18) 1.5px, transparent 2.5px),
-        radial-gradient(circle at 65% 75%, rgba(207, 171, 58, 0.25) 2px, transparent 3px),
-        radial-gradient(circle at 85% 55%, rgba(207, 171, 58, 0.18) 1px, transparent 2px),
-        radial-gradient(circle at 25% 85%, rgba(131, 146, 123, 0.22) 2.5px, transparent 4px);
-    background-size: 280px 280px;
-    animation: drift-reverse 55s linear infinite;
-    opacity: 0.6;
-    will-change: transform;
-    backface-visibility: hidden;
-}
-
-@keyframes drift {
-    0% { transform: translate(0, 0) rotate(0deg); }
-    100% { transform: translate(4%, 8%) rotate(360deg); }
-}
-
-@keyframes drift-reverse {
-    0% { transform: translate(0, 0) rotate(0deg); }
-    100% { transform: translate(-5%, -7%) rotate(-360deg); }
-}
 
 
 /* Typography */
