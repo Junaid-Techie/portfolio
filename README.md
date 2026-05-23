@@ -1,50 +1,84 @@
-# Junaid Ahmed Mohammed | Professional Portfolio
+# 📡 TRANSMISSION UPLINK // SURVIVOR SECURE DOSSIER
 
-![Live Website](https://img.shields.io/badge/Status-Live-success?style=for-the-badge)
-![Tech Stack](https://img.shields.io/badge/Tech-HTML%20|%20CSS%20|%20JS-blue?style=for-the-badge)
+```text
+================================================================================
+  SIGNAL PROFILE: LOCKED & ENCRYPTED // RECOVERY NODES: ACTIVE
+  BEACON ID: JUNAID AHMED MOHAMMED // DECRYPTED COORDS: 42.3601° N, 71.0589° W
+  "When you're lost in the darkness, look for the light.
+   When you're lost in raw data, build a pipeline."
+================================================================================
+```
 
-Welcome to the source code of my personal portfolio website. This repository contains a fully responsive, high-performance web application designed to showcase my professional experience as a Senior Data Engineer, my technical projects in AI/ML, and my academic research.
+[![Live Uplink Status](https://img.shields.io/badge/FACTION_STATUS-FIREFLY_OPERATIONAL-cfab3a?style=for-the-badge&labelColor=0b0c0a)](https://junaid-techie.github.io/portfolio/)
+[![Infection Metric](https://img.shields.io/badge/INFECTION_VECTORS-UNINFECTED-10b981?style=for-the-badge&labelColor=0b0c0a)](#)
+[![Telemetry Quality](https://img.shields.io/badge/SIGNAL_QUALITY-100%25_OPTIMAL-10b981?style=for-the-badge&labelColor=0b0c0a)](#)
 
-**🌐 Live Demo:** [https://junaid-techie.github.io/portfolio/](https://junaid-techie.github.io/portfolio/)
+Welcome to the central telemetry repository of Junaid Ahmed Mohammed's professional portfolio. This is a high-performance, responsive static web application designed to showcase enterprise-scale data engineering systems (processing **12 TB+** data streams), generative AI adapters, and academic research pipelines.
+
+**🌐 ESTABLISH DIRECT VISUAL UPLINK:** [https://junaid-techie.github.io/portfolio/](https://junaid-techie.github.io/portfolio/)
+
+---
+
+## ⚔️ Tactical Specs & Core Artifacts
+
+- **Atmospheric Survivor UX:** Sleek, custom dark-mode "glassmorphism" themed around distressed Moss Charcoal (`#0b0c0a`) and Firefly Gold (`#cfab3a`), featuring real-time radar sweep animations and interactive particle spores cursor tracking.
+- **NiVA Chatbot Showcase:** Detailed architectural mapping of an omnichannel Dialogflow ES assistant, powered by serverless Firebase Functions, persistent Firestore states, Google Calendar API triggers, and Twilio voice/SMS gateways.
+- **Telemetry Hub:** Integrated live GitHub contribution calendars representing open-source activity pipelines alongside a simulated retro terminal uplink logging active data flows.
+- **Bilateral Encryption dossier:** A fully functional, responsive secure contact panel backed by Web3Forms with client-side fallback triggers and active mx-record validation.
 
 ---
 
-## ✨ Key Features
+## ⚙️ Ingestion & In-Memory Technologies
 
-- **Premium UI/UX:** A custom dark-mode "glassmorphic" aesthetic with sleek glowing hover interactions and pure CSS 3D animations (such as the rotating data cube).
-- **Dynamic Integrations:** Pulls live GitHub contribution calendar data to display real-time open-source activity directly on the page.
-- **Serverless Contact Form:** Fully functional contact form powered by Web3Forms, including local fallback mechanisms to handle rate-limiting.
-- **Fully Responsive:** Uses modern CSS Grid and Flexbox to ensure a flawless experience across all devices and screen sizes.
+This dossier has been coded entirely from scratch with vanilla web technologies for maximum performance, minimal payload size, and zero heavy dependencies:
 
-## 🛠️ Technology Stack
-
-This portfolio was built from scratch without relying on heavy frontend frameworks, ensuring maximum performance and zero dependencies:
-
-- **HTML5:** Semantic, accessible structuring.
-- **CSS3:** Custom variables, grid/flex layouts, CSS filters (for dark-mode SVG generation), and keyframe animations.
-- **Vanilla JavaScript:** DOM manipulation, modal logic, and asynchronous form submission handling.
-
-## 🚀 Running Locally
-
-If you'd like to run this site on your local machine:
-
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/Junaid-Techie/portfolio.git
-   ```
-2. Navigate to the directory:
-   ```bash
-   cd portfolio
-   ```
-3. Because this is a static site built with vanilla web technologies, you don't need `npm` or `node`. You can simply open `index.html` in your browser. For the best experience, serve it through a local development server (like VS Code's Live Server extension or Python's HTTP server):
-   ```bash
-   python -m http.server 8000
-   ```
-4. Open `http://localhost:8000` in your web browser.
-
-## 📫 Contact
-
-You can reach me directly through the contact form on the live website, or connect with me on [LinkedIn](https://www.linkedin.com/in/mjunaid56).
+*   **HTML5 Platform:** Semantic structure optimized for accessibility, screen readers, and SEO indexing.
+*   **CSS3 Custom Grid:** Configured using HSL variable matrices, CSS Grid and Flexbox layouts, cinematic vignette overlays, and hardware-accelerated animations (zero-repaint sweeps).
+*   **Vanilla JavaScript:** Clean DOM event handlers, scroll-to-top tracking, filtering hooks, and project modal managers.
 
 ---
-*&copy; 2026 Junaid Ahmed Mohammed. All Rights Reserved.*
+
+## 📦 Organized Repository Structure
+
+To maintain optimal pipeline throughput, the repository files have been organized into dedicated recovery sectors:
+
+*   📂 **`scripts/`**: Consolidates the **12 Python helper scripts** (used for pixel analysis, vector tracing, contour checks, and image upscaling).
+*   📂 **`assets/`**: Groups all **14 SVG vector assets** (Wolves, Moths, Fireflies, raw and upscaled vectors) along with unused design templates (`profile.png` and `profilev1.jpg`).
+*   📄 **Root Files**: Holds the operational files (`index.html`, `style.css`, `script.js`, `profile.jpg`, `thumbnail.png`, `README.md`, `_config.yml`) to ensure clean, direct deployment bounds.
+
+---
+
+## 📡 Local Telemetry Setup
+
+If you wish to clone this recovery node and run Junaid's portfolio locally:
+
+### 1. Synchronize Local Node
+Clone this repository to establish local data integrity:
+```bash
+git clone https://github.com/Junaid-Techie/portfolio.git
+cd portfolio
+```
+
+### 2. Establish Local Server
+Because this is a serverless, static web app, no heavy `npm` or `node_modules` are required. Simply open `index.html` in your browser, or establish a lightweight local development port using Python's server:
+```bash
+python -m http.server 8000
+```
+
+### 3. Decrypt Telemetry
+Open your local uplink node in your web browser:
+```text
+http://localhost:8000
+```
+
+---
+
+## 📡 Bilateral Communications dossier
+
+To transmit direct messages, recruit for active operations, or talk pipeline engineering:
+*   **LinkedIn Uplink:** [linkedin.com/in/mjunaid56](https://www.linkedin.com/in/mjunaid56)
+*   **GitHub Repository Hub:** [github.com/Junaid-Techie](https://github.com/Junaid-Techie)
+*   **Secure Radio Transmission:** Fill out the AES-encrypted contact dossier in the footer of the [Live Portfolio](https://junaid-techie.github.io/portfolio/).
+
+---
+*&copy; 2026 Junaid Ahmed Mohammed. All Rights Reserved. "When you're lost in the darkness, look for the light."*
