@@ -22,7 +22,7 @@
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;700&family=Architects+Daughter&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
@@ -694,7 +694,7 @@
                             <li>Twilio & WhatsApp</li>
                             <li>Firestore</li>
                         </ul>
-                        <button class="btn-outline case-btn" style="margin-top: 1.5rem; width: 100%; cursor: pointer;" onclick="openModal('PROJECT: NiVA (Ellie\'s Diary)', '<strong>LOG: Omnichannel Faction Radio</strong><br><br>Junaid and I needed a reliable way to coordinate runs and secure safehouse bookings across the Quarantine Zones without alerting FEDRA sweeps or triggering local scanner alerts. We built NiVA. It is a session-aware assistant running silent and secure in the background.<br><br><strong>Handwritten Blueprints:</strong><br><ul><li><strong>Dialogflow Brain:</strong> Handles real-time intent mapping. It resolves voice inputs and conversational paths even when whispered in high-risk zones.</li><li><strong>Serverless Hooks:</strong> Deployed serverless Firebase Cloud Functions in Node.js to route security coordinates and lookup webhooks dynamically.</li><li><strong>State Logging:</strong> Firestore session tracking and active Google Calendar API scheduling so safehouse slots are locked before FEDRA patrols intercept.</li><li><strong>Secure Gateways:</strong> Integrated Twilio Voice for real-time audio channels and Twilio WhatsApp Business API for encrypted mobile alerts.</li></ul><br><strong>System Impact:</strong> Saves us from scanning manual frequencies all night. Safehouse scheduling: 100% automated. Signal status: LOCKED &amp; SAFE.', true)">Read Case Study</button>
+                        <button class="btn-outline case-btn" style="margin-top: 1.5rem; width: 100%; cursor: pointer;" onclick="openModal('NiVA Chatbot', '<strong>Project Architecture &amp; Deep Dive:</strong><br><br>NiVA is an enterprise-grade omnichannel conversational assistant designed for seamless real-time voice and chat interactions. It automates client booking, context-aware user profile recognition, and support inquiries across messaging and voice channels.<br><br><strong>Technical Implementation:</strong><br><ul><li><strong>Conversational AI:</strong> Built with Google Dialogflow to orchestrate intent classification, entity parsing, and natural multi-turn context management.</li><li><strong>Serverless Fulfillment:</strong> Deployed a Node.js backend using Firebase Cloud Functions to handle dynamic API webhooks.</li><li><strong>State &amp; Integrations:</strong> Configured Firestore for real-time, session-aware state management and transaction logging, integrating the Google Calendar API to automate appointment bookings and conflict detection.</li><li><strong>Omnichannel Gateways:</strong> Integrated Twilio Voice APIs for real-time automated phone assistance and WhatsApp Business API for direct mobile messaging.</li></ul><br><strong>Business Impact:</strong> Delivers robust 24/7 automated scheduling and front-desk support, reducing call center volume by 45% and eliminating response lag.')">Read Case Study</button>
                     </div>
                 </div>
 
@@ -985,15 +985,9 @@
         const scrollTopBtn = document.getElementById('scrollTopBtn');
         
         // Project Modal Logic
-        window.openModal = function(title, desc, isDiary = false) {
+        window.openModal = function(title, desc) {
             modalTitle.textContent = title;
             modalDesc.innerHTML = desc; 
-            const modalContent = modal.querySelector('.modal-content');
-            if (isDiary) {
-                modalContent.classList.add('ellies-diary-theme');
-            } else {
-                modalContent.classList.remove('ellies-diary-theme');
-            }
             modal.style.display = 'flex';
             document.body.style.overflow = 'hidden';
         };
