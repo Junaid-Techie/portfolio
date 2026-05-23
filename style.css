@@ -2103,3 +2103,177 @@ ul {
     box-sizing: border-box;
 }
 
+/* ==========================================================================
+   SECURE TACTICAL TERMINAL DOSSIER THEME (The Last of Us / Firefly Cyber)
+   ========================================================================== */
+.modal-content.secure-terminal-theme {
+    background: #0b0c0a !important; /* Distress moss/charcoal terminal base */
+    border: 2px solid #cfab3a !important; /* Firefly Gold border */
+    border-radius: 6px !important;
+    box-shadow: 0 0 35px rgba(207, 171, 58, 0.2), inset 0 0 20px rgba(0, 0, 0, 0.9) !important;
+    font-family: 'Space Grotesk', 'Courier New', monospace !important;
+    color: #e2e8f0 !important;
+    padding: 3.5rem 2.5rem 3rem !important;
+    position: relative !important;
+    overflow: hidden !important;
+    line-height: 1.6 !important;
+}
+
+/* CRT Screen Scanline Overlay Filter */
+.modal-content.secure-terminal-theme::before {
+    content: '' !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    background: linear-gradient(
+        rgba(18, 16, 16, 0) 50%, 
+        rgba(0, 0, 0, 0.3) 50%
+    ), linear-gradient(
+        90deg, 
+        rgba(207, 171, 58, 0.02), 
+        rgba(0, 255, 0, 0.01), 
+        rgba(0, 0, 255, 0.02)
+    ) !important;
+    background-size: 100% 4px, 6px 100% !important;
+    z-index: 2 !important;
+    pointer-events: none !important;
+    opacity: 0.85 !important;
+}
+
+/* Telemetry Radar Horizontal Scanline Sweep */
+.modal-content.secure-terminal-theme::after {
+    content: '' !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 6px !important;
+    background: rgba(207, 171, 58, 0.2) !important;
+    box-shadow: 0 0 12px #cfab3a !important;
+    animation: scanlineSweep 7s linear infinite !important;
+    z-index: 3 !important;
+    pointer-events: none !important;
+    opacity: 0.8 !important;
+}
+
+@keyframes scanlineSweep {
+    0% { top: -10px; }
+    100% { top: 100%; }
+}
+
+/* Title Header Style */
+.modal-content.secure-terminal-theme h3 {
+    font-family: 'Space Grotesk', 'Courier New', monospace !important;
+    color: #cfab3a !important; /* Firefly Gold */
+    font-size: 1.8rem !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    border-bottom: 1px solid rgba(207, 171, 58, 0.3) !important;
+    padding-bottom: 0.8rem !important;
+    margin-bottom: 1.6rem !important;
+    letter-spacing: 1px !important;
+    text-shadow: 0 0 8px rgba(207, 171, 58, 0.4) !important;
+    position: relative !important;
+    z-index: 5 !important;
+}
+
+/* Console Highlights */
+.modal-content.secure-terminal-theme p,
+.modal-content.secure-terminal-theme div {
+    font-family: 'Space Grotesk', 'Courier New', monospace !important;
+    color: #cbd5e1 !important;
+    position: relative !important;
+    z-index: 5 !important;
+}
+
+.modal-content.secure-terminal-theme strong {
+    color: #cfab3a !important; /* gold console highlight */
+    font-weight: 700 !important;
+    text-shadow: 0 0 6px rgba(207, 171, 58, 0.3) !important;
+}
+
+/* Telemetry Prompt Terminal Bullet points */
+.modal-content.secure-terminal-theme ul {
+    list-style-type: none !important;
+    padding-left: 0.2rem !important;
+    margin: 1.5rem 0 !important;
+}
+
+.modal-content.secure-terminal-theme li {
+    position: relative !important;
+    padding-left: 1.5rem !important;
+    margin-bottom: 0.8rem !important;
+    font-family: 'Space Grotesk', 'Courier New', monospace !important;
+    color: #cbd5e1 !important;
+}
+
+.modal-content.secure-terminal-theme li::before {
+    content: '$' !important;
+    position: absolute !important;
+    left: 0 !important;
+    color: #cfab3a !important;
+    font-family: monospace !important;
+    font-weight: bold !important;
+}
+
+/* Close button stamp header override */
+.modal-content.secure-terminal-theme .close-modal {
+    background: rgba(207, 171, 58, 0.05) !important;
+    border: 1px solid rgba(207, 171, 58, 0.3) !important;
+    color: #cfab3a !important;
+    border-radius: 4px !important;
+    box-shadow: 0 0 5px rgba(207, 171, 58, 0.1) !important;
+    width: 38px !important;
+    height: 38px !important;
+    top: 1.5rem !important;
+    right: 1.5rem !important;
+    z-index: 10 !important;
+}
+
+.modal-content.secure-terminal-theme .close-modal:hover {
+    background: rgba(207, 171, 58, 0.15) !important;
+    border-color: #cfab3a !important;
+    color: #fff !important;
+    box-shadow: 0 0 12px rgba(207, 171, 58, 0.4) !important;
+    transform: scale(1.05) !important;
+}
+
+/* Secure Terminal Command exit CTA button */
+.modal-content.secure-terminal-theme .modal-close-btn {
+    background: transparent !important;
+    border: 1px solid #cfab3a !important;
+    color: #cfab3a !important;
+    font-family: 'Space Grotesk', 'Courier New', monospace !important;
+    font-size: 1.1rem !important;
+    font-weight: bold !important;
+    text-transform: uppercase !important;
+    border-radius: 4px !important;
+    box-shadow: 0 0 8px rgba(207, 171, 58, 0.1) !important;
+    transition: all 0.3s ease !important;
+    position: relative !important;
+    z-index: 5 !important;
+    margin-top: 2rem !important;
+    padding: 0.8rem 1.5rem !important;
+}
+
+.modal-content.secure-terminal-theme .modal-close-btn:hover {
+    background: #cfab3a !important;
+    color: #0b0c0a !important;
+    box-shadow: 0 0 15px rgba(207, 171, 58, 0.4) !important;
+    transform: translateY(-2px) !important;
+}
+
+/* Responsive console adjustments */
+@media (max-width: 768px) {
+    .modal-content.secure-terminal-theme {
+        padding: 3.5rem 1.5rem 2rem !important;
+        font-size: 1.05rem !important;
+    }
+    .modal-content.secure-terminal-theme h3 {
+        font-size: 1.5rem !important;
+        padding-right: 2rem !important;
+    }
+}
+

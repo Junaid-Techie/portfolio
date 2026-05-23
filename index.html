@@ -694,7 +694,7 @@
                             <li>Twilio & WhatsApp</li>
                             <li>Firestore</li>
                         </ul>
-                        <button class="btn-outline case-btn" style="margin-top: 1.5rem; width: 100%; cursor: pointer;" onclick="openModal('NiVA Chatbot', '<strong>Project Architecture &amp; Deep Dive:</strong><br><br>NiVA is an enterprise-grade omnichannel conversational assistant designed for seamless real-time voice and chat interactions. It automates client booking, context-aware user profile recognition, and support inquiries across messaging and voice channels.<br><br><strong>Technical Implementation:</strong><br><ul><li><strong>Conversational AI:</strong> Built with Google Dialogflow to orchestrate intent classification, entity parsing, and natural multi-turn context management.</li><li><strong>Serverless Fulfillment:</strong> Deployed a Node.js backend using Firebase Cloud Functions to handle dynamic API webhooks.</li><li><strong>State &amp; Integrations:</strong> Configured Firestore for real-time, session-aware state management and transaction logging, integrating the Google Calendar API to automate appointment bookings and conflict detection.</li><li><strong>Omnichannel Gateways:</strong> Integrated Twilio Voice APIs for real-time automated phone assistance and WhatsApp Business API for direct mobile messaging.</li></ul><br><strong>Business Impact:</strong> Delivers robust 24/7 automated scheduling and front-desk support, reducing call center volume by 45% and eliminating response lag.')">Read Case Study</button>
+                        <button class="btn-outline case-btn" style="margin-top: 1.5rem; width: 100%; cursor: pointer;" onclick="openModal('DECRYPTED TELEMETRY // PROJECT: NiVA', '<strong>SYSTEM SECURE LOG // PIPELINE COMPONENT DECRYPTED</strong><br><br>This log details the high-performance architectural design of NiVA, Junaid\'s omnichannel conversational scheduling assistant. The system automates real-time client booking, user profile recognition, and context-aware messaging across multiple integration ports.<br><br><strong>Console Telemetry Specifications:</strong><br><ul><li><strong>Conversational Engine:</strong> Integrated Google Dialogflow to orchestrate intent classification, entity parsing, and natural multi-turn context management.</li><li><strong>Serverless Hook Architecture:</strong> Deployed secure Firebase Cloud Functions (Node.js) webhooks to handle dynamic backend requests.</li><li><strong>Persistence &amp; Syncing:</strong> Configured Firestore for sub-second database transactions, logging active user session states and syncing Google Calendar API schedules in real-time.</li><li><strong>Omnichannel Dispatch:</strong> Deployed Twilio Voice APIs for automated telephone channels and Twilio WhatsApp Business API for end-to-end mobile messaging.</li></ul><br><strong>Operational Telemetry Impact:</strong> Successfully established 24/7 automated scheduling with zero transmission lag, reducing customer support call volume by 45%.', true)">Read Case Study</button>
                     </div>
                 </div>
 
@@ -985,9 +985,15 @@
         const scrollTopBtn = document.getElementById('scrollTopBtn');
         
         // Project Modal Logic
-        window.openModal = function(title, desc) {
+        window.openModal = function(title, desc, isTerminal = false) {
             modalTitle.textContent = title;
             modalDesc.innerHTML = desc; 
+            const modalContent = modal.querySelector('.modal-content');
+            if (isTerminal) {
+                modalContent.classList.add('secure-terminal-theme');
+            } else {
+                modalContent.classList.remove('secure-terminal-theme');
+            }
             modal.style.display = 'flex';
             document.body.style.overflow = 'hidden';
         };
