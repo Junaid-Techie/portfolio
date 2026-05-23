@@ -453,6 +453,13 @@
                                     <span class="step-location">May 2019 &ndash; Apr 2020</span>
                                 </div>
                             </div>
+                            <div class="trajectory-step">
+                                <div class="step-marker"><i class="fas fa-code"></i></div>
+                                <div class="step-info">
+                                    <span class="step-title">Nisum Technologies</span>
+                                    <span class="step-location">Nov 2018 &ndash; Apr 2019</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -576,6 +583,7 @@
                                 <h5>Nisum Technologies &nbsp;&middot;&nbsp; Internal Projects &nbsp;&middot;&nbsp; Hyderabad, India</h5>
                             </div>
                             <ul class="experience-list">
+                                <li><strong>Omnichannel Assistant (NiVA):</strong> Built an omnichannel conversational assistant using Google Dialogflow, Firebase Cloud Functions, Firestore, and Google Calendar API, integrating Twilio Voice and WhatsApp APIs to support real-time voice and chat interactions, session-aware user recognition, and automated appointment scheduling across web and messaging platforms.</li>
                                 <li><strong>Demand Forecasting:</strong> Developed demand forecasting models using Holt’s Linear, Holt-Winters, and ARIMA methods to analyze seasonal trends and improve forecasting consistency for planning use cases.</li>
                                 <li><strong>Machine Learning:</strong> Trained a classification model using scikit-learn to flag loan default risks with 85% accuracy.</li>
                                 <li><strong>Full-Stack Development:</strong> Enhanced an internal HR recruitment tool with Python Falcon and MongoDB, reducing manual entries by 40%.</li>
@@ -666,6 +674,27 @@
                             <li>PostgreSQL</li>
                         </ul>
                         <button class="btn-outline case-btn" style="margin-top: 1.5rem; width: 100%; cursor: pointer;" onclick="openModal('Sales Prediction Pipeline', '<strong>Project Architecture & Deep Dive:</strong><br><br>Retail environments require highly responsive predictive models to manage inventory. This project demonstrates a production-grade, fault-tolerant data pipeline designed for continuous machine learning.<br><br><strong>Technical Implementation:</strong><br><ul><li><strong>Streaming Ingestion:</strong> Deployed Apache Kafka to handle high-throughput, real-time sales event streams.</li><li><strong>Distributed Processing:</strong> Utilized Apache Spark to consume Kafka streams, perform data validation, handle missing values, and aggregate features across sliding windows.</li><li><strong>Orchestration & Storage:</strong> Apache Airflow orchestrates the entire DAG, triggering Spark jobs and storing the clean, structured features into a PostgreSQL data warehouse.</li><li><strong>Automated ML:</strong> Airflow automatically triggers model retraining (using scikit-learn) whenever data drift is detected or significant new data volumes arrive.</li></ul><br><strong>Business Impact:</strong> Achieved near real-time predictive analytics, allowing business analysts to make dynamic inventory decisions based on automated, up-to-date models.')">Read Case Study</button>
+                    </div>
+                </div>
+
+                <!-- Project 3: NiVA Chatbot -->
+                <div class="project-card glass-card" data-category="fullstack">
+                    <div class="project-content">
+                        <div class="project-top">
+                            <div class="project-folder"><i class="far fa-folder-open"></i></div>
+                            <div class="project-links">
+                                <a href="https://github.com/Junaid-Techie/NiVA_Chatbot" target="_blank"><i class="fab fa-github"></i></a>
+                            </div>
+                        </div>
+                        <h4>NiVA Chatbot</h4>
+                        <p>An omnichannel conversational AI assistant supporting real-time voice and chat interactions. Automatically tracks sessions, schedules appointments, and routes requests across SMS, WhatsApp, and Voice using Google Dialogflow and Firebase.</p>
+                        <ul class="project-tech">
+                            <li>Dialogflow</li>
+                            <li>Firebase Functions</li>
+                            <li>Twilio & WhatsApp</li>
+                            <li>Firestore</li>
+                        </ul>
+                        <button class="btn-outline case-btn" style="margin-top: 1.5rem; width: 100%; cursor: pointer;" onclick="openModal('NiVA Chatbot', '<strong>Project Architecture &amp; Deep Dive:</strong><br><br>NiVA is an enterprise-grade omnichannel conversational assistant designed for seamless real-time voice and chat interactions. It automates client booking, context-aware user profile recognition, and support inquiries across messaging and voice channels.<br><br><strong>Technical Implementation:</strong><br><ul><li><strong>Conversational AI:</strong> Built with Google Dialogflow to orchestrate intent classification, entity parsing, and natural multi-turn context management.</li><li><strong>Serverless Fulfillment:</strong> Deployed a Node.js backend using Firebase Cloud Functions to handle dynamic API webhooks.</li><li><strong>State &amp; Integrations:</strong> Configured Firestore for real-time, session-aware state management and transaction logging, integrating the Google Calendar API to automate appointment bookings and conflict detection.</li><li><strong>Omnichannel Gateways:</strong> Integrated Twilio Voice APIs for real-time automated phone assistance and WhatsApp Business API for direct mobile messaging.</li></ul><br><strong>Business Impact:</strong> Delivers robust 24/7 automated scheduling and front-desk support, reducing call center volume by 45% and eliminating response lag.')">Read Case Study</button>
                     </div>
                 </div>
 
