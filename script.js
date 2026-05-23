@@ -76,6 +76,139 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }, 100);
 
+    // --- Ambient Spore Canvas Builder (PS5 Home Screen Background Spores in TLOU Theme) ---
+    const ambientCanvas = document.createElement('canvas');
+    ambientCanvas.id = 'ambient-spore-canvas';
+    ambientCanvas.style.position = 'fixed';
+    ambientCanvas.style.top = '0';
+    ambientCanvas.style.left = '0';
+    ambientCanvas.style.width = '100vw';
+    ambientCanvas.style.height = '100vh';
+    ambientCanvas.style.pointerEvents = 'none';
+    ambientCanvas.style.zIndex = '-1'; // Behind everything
+    document.body.appendChild(ambientCanvas);
+
+    const actx = ambientCanvas.getContext('2d');
+    let ambientParticles = [];
+    const maxAmbientParticles = 30; // Kept low for buttery 60fps performance
+
+    class AmbientParticle {
+        constructor(isInit = false) {
+            this.x = Math.random() * ambientCanvas.width;
+            // If initializing, scatter all over screen; if spawning new, start below the screen
+            this.y = isInit ? Math.random() * ambientCanvas.height : ambientCanvas.height + 20;
+            this.z = Math.random() * 0.8 + 0.2; // 3D Depth Layer factor
+            this.size = (Math.random() * 5 + 2) * this.z; // Depth-based sizing
+            this.baseSpeedY = (Math.random() * 0.2 + 0.08) * -1; // Slow upward float
+            this.speedY = this.baseSpeedY * this.z; // Depth-based speed
+            this.angle = Math.random() * Math.PI * 2;
+            this.angleSpeed = Math.random() * 0.01 + 0.005;
+            this.amplitude = (Math.random() * 15 + 5) * this.z; // Sideways drift amplitude
+            this.baseOpacity = (Math.random() * 0.15 + 0.08) * this.z;
+            this.opacity = 0; // Fade in gently
+            this.pulsePhase = Math.random() * Math.PI * 2;
+            this.pulseSpeed = Math.random() * 0.005 + 0.002;
+        }
+
+        update() {
+            // Drift upward
+            this.y += this.speedY;
+            
+            // Gentle sinusoidal sway left and right
+            this.angle += this.angleSpeed;
+            this.x += Math.sin(this.angle) * 0.15;
+
+            // Gentle opacity breathing pulse
+            this.pulsePhase += this.pulseSpeed;
+            const pulseFactor = (Math.sin(this.pulsePhase) + 1) / 2; // 0 to 1
+            this.opacity = this.baseOpacity * (0.6 + pulseFactor * 0.4);
+
+            // Recycle if particle drifts out of screen bounds
+            if (this.y < -20 || this.x < -20 || this.x > ambientCanvas.width + 20) {
+                const index = ambientParticles.indexOf(this);
+                if (index > -1) {
+                    ambientParticles[index] = new AmbientParticle(false);
+                }
+            }
+        }
+
+        draw() {
+            // Render glowing circular lens-bokeh particle (radial gradient)
+            const gradient = actx.createRadialGradient(
+                this.x, this.y, 0,
+                this.x, this.y, this.size * 2.5
+            );
+            
+            // Gold spores (#cfab3a) mixed with soft moss-green values based on depth
+            const color = this.z > 0.6 
+                ? `rgba(207, 171, 58, ${this.opacity})` // High-fidelity gold spores
+                : `rgba(74, 222, 128, ${this.opacity * 0.45})`; // Soft background green spores
+                
+            gradient.addColorStop(0, color);
+            gradient.addColorStop(0.4, color);
+            gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
+
+            actx.fillStyle = gradient;
+            actx.beginPath();
+            actx.arc(this.x, this.y, this.size * 2.5, 0, Math.PI * 2);
+            actx.fill();
+        }
+    }
+
+    function resizeAmbientCanvas() {
+        ambientCanvas.width = window.innerWidth;
+        ambientCanvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeAmbientCanvas);
+    resizeAmbientCanvas();
+
+    // Populate starting spores
+    for (let i = 0; i < maxAmbientParticles; i++) {
+        ambientParticles.push(new AmbientParticle(true));
+    }
+
+    // Gentle cursor wind force: Spores shift slightly away from the mouse cursor
+    let mouseX = null;
+    let mouseY = null;
+    window.addEventListener('mousemove', (e) => {
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+    });
+    window.addEventListener('mouseout', () => {
+        mouseX = null;
+        mouseY = null;
+    });
+
+    function animateAmbientSpores() {
+        actx.clearRect(0, 0, ambientCanvas.width, ambientCanvas.height);
+
+        for (let i = 0; i < ambientParticles.length; i++) {
+            const p = ambientParticles[i];
+            
+            // Wind force calculation if cursor is in view
+            if (mouseX !== null && mouseY !== null) {
+                const dx = p.x - mouseX;
+                const dy = p.y - mouseY;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                const pushRadius = 180; // Distance of wind influence
+                
+                if (dist < pushRadius) {
+                    const force = (pushRadius - dist) / pushRadius; // 0 to 1
+                    const angle = Math.atan2(dy, dx);
+                    // Shift spores gently outwards matching depth (foreground moves more)
+                    p.x += Math.cos(angle) * force * 1.5 * p.z;
+                    p.y += Math.sin(angle) * force * 0.8 * p.z;
+                }
+            }
+
+            p.update();
+            p.draw();
+        }
+
+        requestAnimationFrame(animateAmbientSpores);
+    }
+    animateAmbientSpores();
+
     // --- Cursor Grid Trace Effect ---
     const canvas = document.createElement('canvas');
     canvas.id = 'particle-canvas';
