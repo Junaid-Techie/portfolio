@@ -90,18 +90,54 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const actx = ambientCanvas.getContext('2d');
     let ambientParticles = [];
-    const maxAmbientParticles = 85; // Raised density for a rich, galaxy-like fireflies visual
+    const maxAmbientParticles = 180; // Raised density for a rich, immersive PS5 home screen atmosphere
     let wavePhase = 0; // Wave timing index for ambient auroral ribbons and god rays
+
+    // High-performance offscreen bokeh templates to avoid heavy canvas blur filtering on every frame
+    const bokehTemplates = {};
+    function createBokehTemplates() {
+        const colors = [
+            { name: 'gold', color: 'rgba(207, 171, 58, 0.42)' },
+            { name: 'green', color: 'rgba(115, 140, 102, 0.32)' }
+        ];
+        
+        colors.forEach(c => {
+            // We'll create small, medium, and large pre-blurred bokeh canvases
+            const sizes = [
+                { name: 'large', radius: 18, blur: 16 },
+                { name: 'medium', radius: 10, blur: 10 },
+                { name: 'small', radius: 6, blur: 6 }
+            ];
+            
+            sizes.forEach(s => {
+                const offscreen = document.createElement('canvas');
+                const pad = (s.radius + s.blur) * 2 + 10;
+                offscreen.width = pad;
+                offscreen.height = pad;
+                const octx = offscreen.getContext('2d');
+                
+                octx.filter = `blur(${s.blur}px)`;
+                octx.fillStyle = c.color;
+                octx.beginPath();
+                octx.arc(pad / 2, pad / 2, s.radius, 0, Math.PI * 2);
+                octx.fill();
+                
+                bokehTemplates[`${c.name}_${s.name}`] = {
+                    canvas: offscreen,
+                    halfSize: pad / 2
+                };
+            });
+        });
+    }
+    createBokehTemplates();
 
     class AmbientParticle {
         constructor(isInit = false) {
             this.x = Math.random() * ambientCanvas.width;
             
-            // Concentrate initial spawning coordinates vertically around the horizontal wave band (65% screen height)
-            const waveCenter = ambientCanvas.height * 0.65;
-            const spread = ambientCanvas.height * 0.24;
+            // Distribute across the entire screen height on initial load; spawn below bottom if recycled
             this.y = isInit 
-                ? waveCenter + (Math.random() - 0.5) * spread 
+                ? Math.random() * ambientCanvas.height 
                 : ambientCanvas.height + 25;
                 
             this.z = Math.random() * 0.84 + 0.16; // 3D Depth Layer factor
@@ -180,21 +216,25 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         draw() {
-            // Dynamic horizontal wave-band opacity scaling: Concentrates particles around undulating center height
-            const waveOffset = Math.sin(wavePhase * 2.5) * (ambientCanvas.height * 0.08); // Sway wave vertically over time
-            const targetY = ambientCanvas.height * 0.65 + waveOffset;
-            const bandHalfWidth = ambientCanvas.height * 0.28;
-            const distFromBand = Math.abs(this.y - targetY);
-            let bandOpacityMultiplier = 1.0;
-            
-            if (distFromBand < bandHalfWidth) {
-                // Smooth cosine curve: opacities fade off cleanly towards the top and bottom edges of the band
-                bandOpacityMultiplier = Math.cos((distFromBand / bandHalfWidth) * Math.PI * 0.5);
-            } else {
-                bandOpacityMultiplier = 0.0;
+            // Soft fading at all borders (top, bottom, left, right) so particles blend seamlessly in the atmosphere
+            let edgeFade = 1.0;
+            const topFadeDist = 120;
+            const bottomFadeDist = 120;
+            const sideFadeDist = 80;
+
+            if (this.y < topFadeDist) {
+                edgeFade *= Math.max(0, this.y / topFadeDist);
+            } else if (this.y > ambientCanvas.height - bottomFadeDist) {
+                edgeFade *= Math.max(0, (ambientCanvas.height - this.y) / bottomFadeDist);
+            }
+
+            if (this.x < sideFadeDist) {
+                edgeFade *= Math.max(0, this.x / sideFadeDist);
+            } else if (this.x > ambientCanvas.width - sideFadeDist) {
+                edgeFade *= Math.max(0, (ambientCanvas.width - this.x) / sideFadeDist);
             }
             
-            const renderOpacity = this.opacity * bandOpacityMultiplier;
+            const renderOpacity = this.opacity * edgeFade;
             if (renderOpacity <= 0.01) return; // Skip drawing if faded out
 
             // Curated forest-lichen moss green (#738c66) and warm amber fireflies gold (#cfab3a)
@@ -203,23 +243,26 @@ document.addEventListener('DOMContentLoaded', () => {
                 : `rgba(115, 140, 102, ${renderOpacity * 0.65})`; // Lichen Green spores
 
             if (this.isBokeh) {
-                // TRUE Photographic Lens Bokeh: Render blurry circular dots using a real Canvas blur filter!
-                actx.save();
+                // TRUE Photographic Lens Bokeh using high-performance offscreen templates
+                const colorType = this.z > 0.28 ? 'gold' : 'green';
+                let sizeType = 'small';
+                if (this.size > 14) {
+                    sizeType = 'large';
+                } else if (this.size > 10) {
+                    sizeType = 'medium';
+                }
                 
-                const blurAmount = Math.max(2, this.size * 0.5); // Dynamic blur based on particle size
-                actx.filter = `blur(${blurAmount}px)`;
-                
-                const bokehColor = this.z > 0.28
-                    ? `rgba(207, 171, 58, ${renderOpacity * 0.42})` // Gold bokeh
-                    : `rgba(115, 140, 102, ${renderOpacity * 0.32})`; // Moss green bokeh
-
-                actx.fillStyle = bokehColor;
-                actx.beginPath();
-                // We draw a solid circular arc; the blur filter converts it to a beautiful, soft bokeh circle!
-                actx.arc(this.x, this.y, this.size * 1.5, 0, Math.PI * 2);
-                actx.fill();
-                
-                actx.restore();
+                const template = bokehTemplates[`${colorType}_${sizeType}`];
+                if (template) {
+                    actx.save();
+                    actx.globalAlpha = renderOpacity;
+                    actx.drawImage(
+                        template.canvas, 
+                        this.x - template.halfSize, 
+                        this.y - template.halfSize
+                    );
+                    actx.restore();
+                }
             } else if (this.isFilament) {
                 // High-fidelity drifting curved line filaments
                 actx.beginPath();
@@ -292,10 +335,20 @@ document.addEventListener('DOMContentLoaded', () => {
         mouseX = e.clientX;
         mouseY = e.clientY;
     });
+    window.addEventListener('touchmove', (e) => {
+        if (e.touches && e.touches.length > 0) {
+            mouseX = e.touches[0].clientX;
+            mouseY = e.touches[0].clientY;
+        }
+    }, { passive: true });
     window.addEventListener('mouseout', () => {
         mouseX = null;
         mouseY = null;
     });
+    window.addEventListener('touchend', () => {
+        mouseX = null;
+        mouseY = null;
+    }, { passive: true });
 
     // Helper: Draw faint, wavy, slow-moving auroral ribbon light bands
     function drawAuroralRibbon(ctx, width, height, phase, color, baseY, amplitude) {
@@ -433,7 +486,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <!-- Sharp Foreground -->
         <path fill="%23cfab3a" fill-rule="evenodd" d="M 584.0,259.0 L 582.0,260.0 L 581.0,270.0 L 577.0,284.0 L 571.0,297.0 L 567.0,303.0 L 554.0,316.0 L 548.0,320.0 L 536.0,325.0 L 535.0,752.0 L 537.0,752.0 L 546.0,736.0 L 546.0,734.0 L 554.0,721.0 L 576.0,679.0 L 577.0,402.0 L 583.0,409.0 L 632.0,479.0 L 637.0,485.0 L 639.0,485.0 L 611.0,397.0 L 608.0,391.0 L 589.0,333.0 L 590.0,327.0 L 696.0,403.0 L 698.0,403.0 L 698.0,401.0 Z M 445.0,259.0 L 440.0,264.0 L 332.0,399.0 L 331.0,403.0 L 333.0,403.0 L 433.0,331.0 L 440.0,330.0 L 390.0,482.0 L 390.0,485.0 L 393.0,484.0 L 450.0,403.0 L 453.0,403.0 L 453.0,680.0 L 473.0,716.0 L 473.0,718.0 L 481.0,731.0 L 487.0,744.0 L 489.0,746.0 L 491.0,751.0 L 494.0,752.0 L 493.0,325.0 L 484.0,322.0 L 476.0,317.0 L 461.0,302.0 L 452.0,285.0 L 448.0,272.0 L 447.0,262.0 Z M 533.0,164.0 L 693.0,335.0 L 714.0,335.0 L 832.0,277.0 L 832.0,256.0 L 575.0,155.0 L 575.0,134.0 L 692.0,160.0 L 696.0,162.0 L 709.0,164.0 L 878.0,204.0 L 906.0,205.0 L 1013.0,94.0 L 1014.0,90.0 L 1004.0,66.0 L 565.0,63.0 L 601.0,7.0 L 598.0,6.0 L 533.0,59.0 Z M 496.0,163.0 L 496.0,60.0 L 429.0,5.0 L 428.0,8.0 L 461.0,58.0 L 463.0,65.0 L 25.0,65.0 L 15.0,90.0 L 15.0,93.0 L 123.0,205.0 L 151.0,204.0 L 450.0,134.0 L 454.0,135.0 L 454.0,154.0 L 452.0,156.0 L 196.0,256.0 L 196.0,276.0 L 198.0,278.0 L 315.0,335.0 L 336.0,335.0 Z" />
     </svg>`;
-    const cursorUrl = `url("data:image/svg+xml,${cursorSvg.replace(/\n\s*/g, '')}") 16 1, crosshair`;
+    const cursorUrl = `url("data:image/svg+xml,${encodeURIComponent(cursorSvg.replace(/\n\s*/g, ''))}") 16 12, auto`;
 
     const cursorStyle = document.createElement('style');
     cursorStyle.innerHTML = `
@@ -447,6 +500,11 @@ document.addEventListener('DOMContentLoaded', () => {
     let spores = [];  // Drifting Firefly spore particles
     let isAnimating = false;
 
+    let targetX = null;  // Last known actual mouse/touch X
+    let targetY = null;  // Last known actual mouse/touch Y
+    let activeX = null;  // Elastic interpolated tracker X
+    let activeY = null;  // Elastic interpolated tracker Y
+
     function resizeCanvas() {
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
@@ -457,23 +515,14 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('resize', resizeCanvas);
     resizeCanvas();
 
-    let targetX = null;
-    let targetY = null;
-    let hasNewPosition = false;
-
-    function updateTargetPosition(clientX, clientY) {
+    const handleMove = (clientX, clientY) => {
         targetX = clientX;
         targetY = clientY;
-        hasNewPosition = true;
-
+        
         if (!isAnimating) {
             isAnimating = true;
             requestAnimationFrame(animatePixels);
         }
-    }
-
-    const handleMove = (clientX, clientY) => {
-        updateTargetPosition(clientX, clientY);
     };
 
     window.addEventListener('mousemove', (e) => {
@@ -495,7 +544,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const handleEnd = () => {
         targetX = null;
         targetY = null;
-        hasNewPosition = false;
+        activeX = null;
+        activeY = null;
     };
     window.addEventListener('mouseout', handleEnd);
     window.addEventListener('touchend', handleEnd, { passive: true });
@@ -504,45 +554,65 @@ document.addEventListener('DOMContentLoaded', () => {
     document.addEventListener('touchcancel', handleEnd, { passive: true });
 
     function processMouseMovement() {
-        if (!hasNewPosition || targetX === null || targetY === null) return;
+        if (targetX === null || targetY === null) return;
+
+        // Elastic spring-tracking coordinates for organic liquid inertia
+        if (activeX === null || activeY === null) {
+            activeX = targetX;
+            activeY = targetY;
+        } else {
+            // Smooth elastic interpolation: catches up beautifully over multiple frames!
+            activeX += (targetX - activeX) * 0.22;
+            activeY += (targetY - activeY) * 0.22;
+        }
 
         let shouldAdd = false;
         if (points.length === 0) {
             shouldAdd = true;
         } else {
-            let lastPoint = points[points.length - 1];
-            let dx = targetX - lastPoint.x;
-            let dy = targetY - lastPoint.y;
-            let dist = Math.sqrt(dx * dx + dy * dy);
+            const lastPoint = points[points.length - 1];
+            const dx = activeX - lastPoint.x;
+            const dy = activeY - lastPoint.y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
 
-            // Append coordinate if the cursor has moved sufficiently
             if (dist > 1.5) {
-                // If the coordinate jump is massive (e.g. window re-entry), clear points to prevent visual trail cuts
                 if (dist > 250) {
                     points = [];
                 }
+                
+                // Path steps interpolation: creates a completely continuous and smooth line under fast mouse swipes
+                if (dist > 8) {
+                    const steps = Math.floor(dist / 6);
+                    for (let j = 1; j < steps; j++) {
+                        const ratio = j / steps;
+                        points.push({
+                            x: lastPoint.x + dx * ratio,
+                            y: lastPoint.y + dy * ratio,
+                            life: 1.0
+                        });
+                    }
+                }
+                
                 shouldAdd = true;
             }
         }
 
         if (shouldAdd) {
-            points.push({ x: targetX, y: targetY, life: 1.0 });
+            points.push({ x: activeX, y: activeY, life: 1.0 });
 
-            // Firefly Spore Sparkle: Spawn a floating spore that drifts upwards like warm sparks
-            if (Math.random() > 0.55) {
+            // Spawn floating embers along the custom trace path
+            if (Math.random() > 0.45) {
                 spores.push({
-                    x: targetX,
-                    y: targetY,
-                    vx: (Math.random() - 0.5) * 1.6,
-                    vy: (Math.random() - 0.4) * 1.5 - 0.8, // Upward floating bias
-                    size: Math.random() * 2 + 1.2,
+                    x: activeX,
+                    y: activeY,
+                    vx: (Math.random() - 0.5) * 1.5,
+                    vy: (Math.random() - 0.5) * 1.2 - 0.8, // Upward floating bias
+                    size: Math.random() * 2.4 + 1.2,
                     life: 1.0,
-                    decay: Math.random() * 0.02 + 0.015
+                    decay: Math.random() * 0.014 + 0.008
                 });
             }
         }
-
-        hasNewPosition = false;
     }
 
     function drawTrail() {
@@ -553,20 +623,19 @@ document.addEventListener('DOMContentLoaded', () => {
             const p1 = points[i - 1];
             const p2 = points[i];
 
-            // Compute combined life/age factor (0 = tail, 1 = head)
-            const relativePos = i / (points.length - 1);
-            const age = relativePos * ((p1.life + p2.life) / 2);
+            // Compute combined life/age factor directly from actual point decay life
+            const life = (p1.life + p2.life) / 2;
 
-            if (age <= 0.02) continue;
+            if (life <= 0.01) continue;
 
-            // Taper filament width: 4.5px at the head down to 1.0px at the tail
-            const size = 1.0 + age * 3.5;
+            // Organic smooth tapering size: 4.5px at life=1.0 down to 0.8px at life=0.0
+            const size = 0.8 + life * 3.7;
 
             // 1. Soft atmospheric gold glow (wide, low opacity)
             ctx.beginPath();
             ctx.moveTo(p1.x, p1.y);
             ctx.lineTo(p2.x, p2.y);
-            ctx.strokeStyle = `rgba(207, 171, 58, ${age * 0.18})`;
+            ctx.strokeStyle = `rgba(207, 171, 58, ${life * 0.25})`;
             ctx.lineWidth = size * 2.8;
             ctx.lineCap = 'round';
             ctx.lineJoin = 'round';
@@ -576,19 +645,20 @@ document.addEventListener('DOMContentLoaded', () => {
             ctx.beginPath();
             ctx.moveTo(p1.x, p1.y);
             ctx.lineTo(p2.x, p2.y);
-            ctx.strokeStyle = `rgba(207, 171, 58, ${age * 0.85})`;
+            ctx.strokeStyle = `rgba(207, 171, 58, ${life * 0.85})`;
             ctx.lineWidth = size;
             ctx.lineCap = 'round';
             ctx.lineJoin = 'round';
             ctx.stroke();
 
             // 3. Ultra-bright hot center core for the front (head) of the trail
-            if (age > 0.55) {
+            if (life > 0.45) {
+                const hotCoreOpacity = (life - 0.45) / 0.55;
                 ctx.beginPath();
                 ctx.moveTo(p1.x, p1.y);
                 ctx.lineTo(p2.x, p2.y);
-                ctx.strokeStyle = `rgba(255, 255, 255, ${age * 0.95})`;
-                ctx.lineWidth = size * 0.4;
+                ctx.strokeStyle = `rgba(255, 255, 255, ${hotCoreOpacity * 0.95})`;
+                ctx.lineWidth = size * 0.45;
                 ctx.lineCap = 'round';
                 ctx.lineJoin = 'round';
                 ctx.stroke();
@@ -599,7 +669,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function updatePointsAndSpores() {
         // Decay active path coordinates
         for (let i = 0; i < points.length; i++) {
-            points[i].life -= 0.035; 
+            points[i].life -= 0.022; // Smooth longer-lasting trail
         }
 
         // Shift out decayed coordinates from the tail
@@ -641,8 +711,11 @@ document.addEventListener('DOMContentLoaded', () => {
         drawTrail();
         updatePointsAndSpores();
 
-        // Keep loop running if points or spores are still active and decaying
-        if (points.length > 0 || spores.length > 0) {
+        // Keep loop running if points or spores are still active and decaying, or if active positions are still catching up to target
+        const isSpringCatchingUp = targetX !== null && targetY !== null && activeX !== null && activeY !== null && 
+                                   (Math.abs(targetX - activeX) > 0.5 || Math.abs(targetY - activeY) > 0.5);
+
+        if (points.length > 0 || spores.length > 0 || isSpringCatchingUp) {
             requestAnimationFrame(animatePixels);
         } else {
             isAnimating = false;
