@@ -146,16 +146,18 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         update() {
-            // Apply floating vectors + physical cursor wind velocity
-            this.y += this.speedY + this.vy;
-            this.x += Math.sin(this.angle) * 0.18 + this.vx;
+            // Calculate continuous organic fluid turbulence currents (spores drift and swirl together)
+            const time = wavePhase * 10;
+            const noiseX = Math.sin(this.y * 0.006 + time * 0.15) * Math.cos(this.x * 0.004 - time * 0.08) * 0.35;
+            const noiseY = Math.cos(this.x * 0.005 + time * 0.12) * Math.sin(this.y * 0.003 - time * 0.05) * 0.18;
+
+            // Apply turbulence + floating vectors + physical cursor wind velocity
+            this.y += this.speedY + noiseY + this.vy;
+            this.x += noiseX + this.vx;
 
             // Apply friction/drag to cursor wind velocity so particles slow down naturally
             this.vx *= 0.93;
             this.vy *= 0.93;
-
-            // Sinusoidal horizontal sway
-            this.angle += this.angleSpeed;
 
             // Slowly rotate filaments
             if (this.isFilament) {
@@ -178,8 +180,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         draw() {
-            // Dynamic horizontal wave-band opacity scaling: Concentrates particles around 65% of screen height
-            const targetY = ambientCanvas.height * 0.65;
+            // Dynamic horizontal wave-band opacity scaling: Concentrates particles around undulating center height
+            const waveOffset = Math.sin(wavePhase * 2.5) * (ambientCanvas.height * 0.08); // Sway wave vertically over time
+            const targetY = ambientCanvas.height * 0.65 + waveOffset;
             const bandHalfWidth = ambientCanvas.height * 0.28;
             const distFromBand = Math.abs(this.y - targetY);
             let bandOpacityMultiplier = 1.0;
@@ -249,6 +252,23 @@ document.addEventListener('DOMContentLoaded', () => {
                 actx.beginPath();
                 actx.arc(this.x, this.y, this.size * 2.5, 0, Math.PI * 2);
                 actx.fill();
+
+                // AAA Premium Menu Detail: Render soft golden cross-hair lens flares on the brightest foreground specifications when they peak
+                if (this.z > 0.8 && renderOpacity > 0.65) {
+                    actx.beginPath();
+                    actx.strokeStyle = `rgba(255, 255, 255, ${(renderOpacity - 0.65) * 1.8})`;
+                    actx.lineWidth = 0.5;
+                    
+                    // Horizontal flare line
+                    actx.moveTo(this.x - this.size * 2.2, this.y);
+                    actx.lineTo(this.x + this.size * 2.2, this.y);
+                    
+                    // Vertical flare line
+                    actx.moveTo(this.x, this.y - this.size * 2.2);
+                    actx.lineTo(this.x, this.y + this.size * 2.2);
+                    
+                    actx.stroke();
+                }
             }
         }
     }
