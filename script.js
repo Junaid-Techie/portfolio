@@ -90,17 +90,38 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const actx = ambientCanvas.getContext('2d');
     let ambientParticles = [];
-    const maxAmbientParticles = 55; // Elevated count for richer environmental atmosphere
+    const maxAmbientParticles = 65; // Elevated count for richer bokeh layers
+    let wavePhase = 0; // Wave timing index for ambient auroral ribbons
 
     class AmbientParticle {
         constructor(isInit = false) {
             this.x = Math.random() * ambientCanvas.width;
             // Scatter all over screen on initialize; spawn below viewport otherwise
             this.y = isInit ? Math.random() * ambientCanvas.height : ambientCanvas.height + 25;
-            this.z = Math.random() * 0.82 + 0.18; // 3D Depth Layer factor
-            this.size = (Math.random() * 4.5 + 1.8) * this.z; // Depth-based sizing
-            this.baseSpeedY = (Math.random() * 0.18 + 0.06) * -1; // Slow organic upward float
-            this.speedY = this.baseSpeedY * this.z; // Depth-based speed
+            this.z = Math.random() * 0.84 + 0.16; // 3D Depth Layer factor
+            
+            // Configure three distinct layers for high cinematic depth
+            if (this.z < 0.4) {
+                // Background Lens Bokeh: Large, slow, fuzzy out-of-focus specs
+                this.isBokeh = true;
+                this.isFilament = false;
+                this.size = Math.random() * 9 + 7.5;
+                this.baseSpeedY = (Math.random() * 0.04 + 0.015) * -1;
+            } else if (this.z > 0.76) {
+                // Foreground Speculators: Tiny, sharp, fastSpecs that react strongly to cursor wind
+                this.isBokeh = false;
+                this.isFilament = false;
+                this.size = (Math.random() * 1.5 + 0.8) * this.z;
+                this.baseSpeedY = (Math.random() * 0.22 + 0.12) * -1;
+            } else {
+                // Midground: Classic spores and curved drifting thread filaments
+                this.isBokeh = false;
+                this.isFilament = Math.random() < 0.16;
+                this.size = (Math.random() * 3.8 + 1.6) * this.z;
+                this.baseSpeedY = (Math.random() * 0.15 + 0.05) * -1;
+            }
+
+            this.speedY = this.baseSpeedY * this.z;
             this.angle = Math.random() * Math.PI * 2;
             this.angleSpeed = Math.random() * 0.008 + 0.003;
             
@@ -108,8 +129,7 @@ document.addEventListener('DOMContentLoaded', () => {
             this.vx = 0;
             this.vy = 0;
 
-            // Filaments: Some background elements render as curved drifting threads instead of dots
-            this.isFilament = Math.random() < 0.16;
+            // Curved filaments rotation
             this.rot = Math.random() * Math.PI * 2;
             this.rotSpeed = (Math.random() - 0.5) * 0.012;
 
@@ -136,13 +156,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 this.rot += this.rotSpeed;
             }
 
-            // Muted organic breathing pulse
+            // Muted organic breathing pulse + firefly shimmering twinkles
             this.pulsePhase += this.pulseSpeed;
             const pulseFactor = (Math.sin(this.pulsePhase) + 1) / 2; // 0 to 1
-            this.opacity = this.baseOpacity * (0.55 + pulseFactor * 0.45);
+            const shimmer = Math.sin(this.pulsePhase * 3.2) * 0.12; // Twinkle spec
+            this.opacity = Math.max(0, this.baseOpacity * (0.55 + pulseFactor * 0.45) + shimmer);
 
             // Recycle if particle drifts far outside bounds
-            if (this.y < -30 || this.x < -30 || this.x > ambientCanvas.width + 30) {
+            if (this.y < -40 || this.x < -40 || this.x > ambientCanvas.width + 40) {
                 const index = ambientParticles.indexOf(this);
                 if (index > -1) {
                     ambientParticles[index] = new AmbientParticle(false);
@@ -156,7 +177,25 @@ document.addEventListener('DOMContentLoaded', () => {
                 ? `rgba(207, 171, 58, ${this.opacity})` // Gold spores
                 : `rgba(115, 140, 102, ${this.opacity * 0.65})`; // Lichen Green spores
 
-            if (this.isFilament) {
+            if (this.isBokeh) {
+                // Soft background lens bokeh circles with heavy blur multiplier (4.5)
+                const bokehColor = this.z > 0.28
+                    ? `rgba(207, 171, 58, ${this.opacity * 0.35})`
+                    : `rgba(115, 140, 102, ${this.opacity * 0.25})`;
+
+                const gradient = actx.createRadialGradient(
+                    this.x, this.y, 0,
+                    this.x, this.y, this.size * 4.5
+                );
+                gradient.addColorStop(0, bokehColor);
+                gradient.addColorStop(0.35, bokehColor);
+                gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
+
+                actx.fillStyle = gradient;
+                actx.beginPath();
+                actx.arc(this.x, this.y, this.size * 4.5, 0, Math.PI * 2);
+                actx.fill();
+            } else if (this.isFilament) {
                 // High-fidelity drifting curved line filaments
                 actx.beginPath();
                 actx.strokeStyle = color;
@@ -216,8 +255,52 @@ document.addEventListener('DOMContentLoaded', () => {
         mouseY = null;
     });
 
+    // Helper: Draw faint, wavy, slow-moving auroral ribbon light bands
+    function drawAuroralRibbon(ctx, width, height, phase, color, baseY, amplitude) {
+        ctx.beginPath();
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 140; // Wide and soft
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        
+        for (let x = 0; x <= width; x += 30) {
+            const y = baseY + Math.sin(x * 0.0015 + phase) * amplitude + Math.cos(x * 0.003 - phase * 0.5) * (amplitude * 0.3);
+            if (x === 0) {
+                ctx.moveTo(x, y);
+            } else {
+                ctx.lineTo(x, y);
+            }
+        }
+        ctx.stroke();
+    }
+
     function animateAmbientSpores() {
         actx.clearRect(0, 0, ambientCanvas.width, ambientCanvas.height);
+
+        // Increment wave phase for slow auroral ribbon breathing motion
+        wavePhase += 0.0018;
+
+        // Render Ribbon 1: Amber Gold (Backing layer)
+        drawAuroralRibbon(
+            actx,
+            ambientCanvas.width,
+            ambientCanvas.height,
+            wavePhase,
+            'rgba(207, 171, 58, 0.012)', // Faint amber aura
+            ambientCanvas.height * 0.45,
+            65
+        );
+
+        // Render Ribbon 2: Lichen Green (Backing layer)
+        drawAuroralRibbon(
+            actx,
+            ambientCanvas.width,
+            ambientCanvas.height,
+            wavePhase + Math.PI,
+            'rgba(115, 140, 102, 0.016)', // Muted lichen green aura
+            ambientCanvas.height * 0.55,
+            85
+        );
 
         for (let i = 0; i < ambientParticles.length; i++) {
             const p = ambientParticles[i];
