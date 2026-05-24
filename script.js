@@ -112,19 +112,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 this.isBokeh = true;
                 this.isFilament = false;
                 this.size = Math.random() * 11 + 8.5; // Massive bokeh circles (8.5px to 19.5px!)
-                this.baseSpeedY = (Math.random() * 0.035 + 0.015) * -1; // Drift very slowly
+                this.baseSpeedY = (Math.random() * 0.012 + 0.005) * -1; // Drift lazily and slowly (weightless!)
             } else if (this.z > 0.76) {
                 // Foreground Embers: Tiny, bright, sharp specs of gold specs that float faster and respond instantly to cursor winds
                 this.isBokeh = false;
                 this.isFilament = false;
-                this.size = (Math.random() * 1.6 + 0.8) * this.z;
-                this.baseSpeedY = (Math.random() * 0.22 + 0.12) * -1; // Faster float
+                this.size = (Math.random() * 1.5 + 0.8) * this.z;
+                this.baseSpeedY = (Math.random() * 0.08 + 0.04) * -1; // Lazy float speed
             } else {
                 // Midground: Classic spores and slowly rotating curved filaments
                 this.isBokeh = false;
                 this.isFilament = Math.random() < 0.16;
                 this.size = (Math.random() * 4.0 + 1.8) * this.z;
-                this.baseSpeedY = (Math.random() * 0.14 + 0.04) * -1;
+                this.baseSpeedY = (Math.random() * 0.05 + 0.015) * -1; // Slow suspended float
             }
 
             this.speedY = this.baseSpeedY * this.z;
@@ -203,23 +203,23 @@ document.addEventListener('DOMContentLoaded', () => {
                 : `rgba(115, 140, 102, ${renderOpacity * 0.65})`; // Lichen Green spores
 
             if (this.isBokeh) {
-                // Soft background lens bokeh circles with heavy blur multiplier (4.5)
+                // TRUE Photographic Lens Bokeh: Render blurry circular dots using a real Canvas blur filter!
+                actx.save();
+                
+                const blurAmount = Math.max(2, this.size * 0.5); // Dynamic blur based on particle size
+                actx.filter = `blur(${blurAmount}px)`;
+                
                 const bokehColor = this.z > 0.28
-                    ? `rgba(207, 171, 58, ${renderOpacity * 0.35})`
-                    : `rgba(115, 140, 102, ${renderOpacity * 0.25})`;
+                    ? `rgba(207, 171, 58, ${renderOpacity * 0.42})` // Gold bokeh
+                    : `rgba(115, 140, 102, ${renderOpacity * 0.32})`; // Moss green bokeh
 
-                const gradient = actx.createRadialGradient(
-                    this.x, this.y, 0,
-                    this.x, this.y, this.size * 4.5
-                );
-                gradient.addColorStop(0, bokehColor);
-                gradient.addColorStop(0.35, bokehColor);
-                gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
-
-                actx.fillStyle = gradient;
+                actx.fillStyle = bokehColor;
                 actx.beginPath();
-                actx.arc(this.x, this.y, this.size * 4.5, 0, Math.PI * 2);
+                // We draw a solid circular arc; the blur filter converts it to a beautiful, soft bokeh circle!
+                actx.arc(this.x, this.y, this.size * 1.5, 0, Math.PI * 2);
                 actx.fill();
+                
+                actx.restore();
             } else if (this.isFilament) {
                 // High-fidelity drifting curved line filaments
                 actx.beginPath();
@@ -324,6 +324,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const beamAngle = Math.sin(phase * 0.15) * 0.025 + 0.62; // Slow, elegant angular sway
         const endX = Math.cos(beamAngle) * width * 1.5;
         const endY = Math.sin(beamAngle) * height * 1.5;
+        
+        // Apply a massive 85px blur filter specifically to the light cone to make it incredibly soft and volumetric!
+        ctx.filter = 'blur(85px)';
         
         const gradient = ctx.createLinearGradient(0, 0, endX, endY);
         
