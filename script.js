@@ -90,35 +90,41 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const actx = ambientCanvas.getContext('2d');
     let ambientParticles = [];
-    const maxAmbientParticles = 65; // Elevated count for richer bokeh layers
-    let wavePhase = 0; // Wave timing index for ambient auroral ribbons
+    const maxAmbientParticles = 85; // Raised density for a rich, galaxy-like fireflies visual
+    let wavePhase = 0; // Wave timing index for ambient auroral ribbons and god rays
 
     class AmbientParticle {
         constructor(isInit = false) {
             this.x = Math.random() * ambientCanvas.width;
-            // Scatter all over screen on initialize; spawn below viewport otherwise
-            this.y = isInit ? Math.random() * ambientCanvas.height : ambientCanvas.height + 25;
+            
+            // Concentrate initial spawning coordinates vertically around the horizontal wave band (65% screen height)
+            const waveCenter = ambientCanvas.height * 0.65;
+            const spread = ambientCanvas.height * 0.24;
+            this.y = isInit 
+                ? waveCenter + (Math.random() - 0.5) * spread 
+                : ambientCanvas.height + 25;
+                
             this.z = Math.random() * 0.84 + 0.16; // 3D Depth Layer factor
             
-            // Configure three distinct layers for high cinematic depth
-            if (this.z < 0.4) {
-                // Background Lens Bokeh: Large, slow, fuzzy out-of-focus specs
+            // Build three highly focused depth-of-field layers
+            if (this.z < 0.38) {
+                // Background Lens Bokeh: Large, slow, fuzzy out-of-focus bokeh circles
                 this.isBokeh = true;
                 this.isFilament = false;
-                this.size = Math.random() * 9 + 7.5;
-                this.baseSpeedY = (Math.random() * 0.04 + 0.015) * -1;
+                this.size = Math.random() * 11 + 8.5; // Massive bokeh circles (8.5px to 19.5px!)
+                this.baseSpeedY = (Math.random() * 0.035 + 0.015) * -1; // Drift very slowly
             } else if (this.z > 0.76) {
-                // Foreground Speculators: Tiny, sharp, fastSpecs that react strongly to cursor wind
+                // Foreground Embers: Tiny, bright, sharp specs of gold specs that float faster and respond instantly to cursor winds
                 this.isBokeh = false;
                 this.isFilament = false;
-                this.size = (Math.random() * 1.5 + 0.8) * this.z;
-                this.baseSpeedY = (Math.random() * 0.22 + 0.12) * -1;
+                this.size = (Math.random() * 1.6 + 0.8) * this.z;
+                this.baseSpeedY = (Math.random() * 0.22 + 0.12) * -1; // Faster float
             } else {
-                // Midground: Classic spores and curved drifting thread filaments
+                // Midground: Classic spores and slowly rotating curved filaments
                 this.isBokeh = false;
                 this.isFilament = Math.random() < 0.16;
-                this.size = (Math.random() * 3.8 + 1.6) * this.z;
-                this.baseSpeedY = (Math.random() * 0.15 + 0.05) * -1;
+                this.size = (Math.random() * 4.0 + 1.8) * this.z;
+                this.baseSpeedY = (Math.random() * 0.14 + 0.04) * -1;
             }
 
             this.speedY = this.baseSpeedY * this.z;
@@ -136,7 +142,7 @@ document.addEventListener('DOMContentLoaded', () => {
             this.baseOpacity = (Math.random() * 0.18 + 0.08) * this.z;
             this.opacity = 0; // Fade in gently
             this.pulsePhase = Math.random() * Math.PI * 2;
-            this.pulseSpeed = Math.random() * 0.004 + 0.0015;
+            this.pulseSpeed = Math.random() * 0.005 + 0.002; // Elevated speed for active shimmer
         }
 
         update() {
@@ -156,10 +162,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 this.rot += this.rotSpeed;
             }
 
-            // Muted organic breathing pulse + firefly shimmering twinkles
+            // Muted organic breathing pulse + firefly shimmering twinkles (sparkling flares)
             this.pulsePhase += this.pulseSpeed;
             const pulseFactor = (Math.sin(this.pulsePhase) + 1) / 2; // 0 to 1
-            const shimmer = Math.sin(this.pulsePhase * 3.2) * 0.12; // Twinkle spec
+            const shimmer = Math.sin(this.pulsePhase * 3.6) * 0.14; // Twitch sparkle offset!
             this.opacity = Math.max(0, this.baseOpacity * (0.55 + pulseFactor * 0.45) + shimmer);
 
             // Recycle if particle drifts far outside bounds
@@ -172,16 +178,32 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         draw() {
+            // Dynamic horizontal wave-band opacity scaling: Concentrates particles around 65% of screen height
+            const targetY = ambientCanvas.height * 0.65;
+            const bandHalfWidth = ambientCanvas.height * 0.28;
+            const distFromBand = Math.abs(this.y - targetY);
+            let bandOpacityMultiplier = 1.0;
+            
+            if (distFromBand < bandHalfWidth) {
+                // Smooth cosine curve: opacities fade off cleanly towards the top and bottom edges of the band
+                bandOpacityMultiplier = Math.cos((distFromBand / bandHalfWidth) * Math.PI * 0.5);
+            } else {
+                bandOpacityMultiplier = 0.0;
+            }
+            
+            const renderOpacity = this.opacity * bandOpacityMultiplier;
+            if (renderOpacity <= 0.01) return; // Skip drawing if faded out
+
             // Curated forest-lichen moss green (#738c66) and warm amber fireflies gold (#cfab3a)
             const color = this.z > 0.55
-                ? `rgba(207, 171, 58, ${this.opacity})` // Gold spores
-                : `rgba(115, 140, 102, ${this.opacity * 0.65})`; // Lichen Green spores
+                ? `rgba(207, 171, 58, ${renderOpacity})` // Gold spores
+                : `rgba(115, 140, 102, ${renderOpacity * 0.65})`; // Lichen Green spores
 
             if (this.isBokeh) {
                 // Soft background lens bokeh circles with heavy blur multiplier (4.5)
                 const bokehColor = this.z > 0.28
-                    ? `rgba(207, 171, 58, ${this.opacity * 0.35})`
-                    : `rgba(115, 140, 102, ${this.opacity * 0.25})`;
+                    ? `rgba(207, 171, 58, ${renderOpacity * 0.35})`
+                    : `rgba(115, 140, 102, ${renderOpacity * 0.25})`;
 
                 const gradient = actx.createRadialGradient(
                     this.x, this.y, 0,
@@ -274,6 +296,43 @@ document.addEventListener('DOMContentLoaded', () => {
         ctx.stroke();
     }
 
+    // Helper: Draw volumetric spotlight beam fanning from top-left diagonally down-right
+    function drawVolumetricLight(ctx, width, height, phase) {
+        ctx.save();
+        
+        // Project diagonal beam originating from (0, 0)
+        const beamAngle = Math.sin(phase * 0.15) * 0.025 + 0.62; // Slow, elegant angular sway
+        const endX = Math.cos(beamAngle) * width * 1.5;
+        const endY = Math.sin(beamAngle) * height * 1.5;
+        
+        const gradient = ctx.createLinearGradient(0, 0, endX, endY);
+        
+        // Volumetric light gradient stops (gold spotlight beam fading diagonally)
+        const baseOpacity = 0.055 + Math.sin(phase * 0.3) * 0.015; // Slow breathing pulse
+        gradient.addColorStop(0, `rgba(207, 171, 58, ${baseOpacity * 2.8})`);
+        gradient.addColorStop(0.25, `rgba(207, 171, 58, ${baseOpacity * 1.4})`);
+        gradient.addColorStop(0.6, `rgba(207, 171, 58, ${baseOpacity * 0.4})`);
+        gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
+        
+        ctx.fillStyle = gradient;
+        
+        // Volumetric beam cone path fanning outward
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        const spread = width * 0.75;
+        const p1x = endX - spread * Math.sin(beamAngle);
+        const p1y = endY + spread * Math.cos(beamAngle);
+        const p2x = endX + spread * Math.sin(beamAngle);
+        const p2y = endY - spread * Math.cos(beamAngle);
+        
+        ctx.lineTo(p1x, p1y);
+        ctx.lineTo(p2x, p2y);
+        ctx.closePath();
+        ctx.fill();
+        
+        ctx.restore();
+    }
+
     function animateAmbientSpores() {
         actx.clearRect(0, 0, ambientCanvas.width, ambientCanvas.height);
 
@@ -301,6 +360,9 @@ document.addEventListener('DOMContentLoaded', () => {
             ambientCanvas.height * 0.55,
             85
         );
+
+        // Render Volumetric Light Shaft (Breathing top-left spotlight beam cone overlay)
+        drawVolumetricLight(actx, ambientCanvas.width, ambientCanvas.height, wavePhase);
 
         for (let i = 0; i < ambientParticles.length; i++) {
             const p = ambientParticles[i];
