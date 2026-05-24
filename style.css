@@ -1355,81 +1355,44 @@ ul {
     -webkit-backdrop-filter: blur(10px);
     overflow-y: auto; /* Enable scroll on the backdrop */
     padding: 2rem 1rem;
-}
-
-.modal-content {
-    background: #0b0c0a !important; /* Distressed moss/charcoal terminal base */
-    border: 2px solid #738c66 !important; /* TLOU Moss Green border */
-    border-radius: 6px !important;
-    box-shadow: 0 0 35px rgba(115, 140, 102, 0.22), inset 0 0 20px rgba(0, 0, 0, 0.9) !important;
-    font-family: 'Space Grotesk', 'Courier New', monospace !important;
-    color: #cbd5e1 !important;
-    max-width: 700px;
+}.modal-content {
+    background: rgba(14, 16, 13, 0.98) !important; /* Deep matte charcoal-olive pane */
+    border: 1px solid rgba(147, 166, 134, 0.15) !important; /* Micro-fine lichen border */
+    border-radius: 8px !important;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.65), 0 0 30px rgba(115, 140, 102, 0.04) !important;
+    font-family: var(--font-sans), 'Inter', sans-serif !important; /* Premium clean sans-serif */
+    color: #e2e8f0 !important;
+    max-width: 680px;
     width: 100%;
     position: relative !important;
-    padding: 3.5rem 2.5rem 3rem !important;
-    margin: auto; /* Centers in the flex container */
+    padding: 3.5rem 3rem 3rem !important;
+    margin: auto;
     overflow: hidden !important;
-    line-height: 1.6 !important;
-    animation: modalAppear 0.45s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    line-height: 1.75 !important;
+    animation: modalAppear 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
-/* CRT Screen Scanline Overlay Filter */
+/* CRT Screen Scanline Overlay Filter - Hiding for smooth cinematic look */
 .modal-content::before {
-    content: '' !important;
-    position: absolute !important;
-    top: 0 !important;
-    left: 0 !important;
-    width: 100% !important;
-    height: 100% !important;
-    background: linear-gradient(
-        rgba(18, 16, 16, 0) 50%, 
-        rgba(0, 0, 0, 0.3) 50%
-    ), linear-gradient(
-        90deg, 
-        rgba(115, 140, 102, 0.02), 
-        rgba(0, 255, 0, 0.01), 
-        rgba(0, 0, 255, 0.02)
-    ) !important;
-    background-size: 100% 4px, 6px 100% !important;
-    z-index: 2 !important;
-    pointer-events: none !important;
-    opacity: 0.85 !important;
+    display: none !important;
 }
 
-/* Telemetry Radar Horizontal Scanline Sweep */
+/* Telemetry Radar Horizontal Scanline Sweep - Hiding for smooth cinematic look */
 .modal-content::after {
-    content: '' !important;
-    position: absolute !important;
-    top: 0 !important;
-    left: 0 !important;
-    width: 100% !important;
-    height: 6px !important;
-    background: rgba(115, 140, 102, 0.2) !important;
-    box-shadow: 0 0 12px #738c66 !important;
-    animation: scanlineSweep 7s linear infinite !important;
-    z-index: 3 !important;
-    pointer-events: none !important;
-    opacity: 0.8 !important;
-}
-
-@keyframes scanlineSweep {
-    0% { top: -10px; }
-    100% { top: 100%; }
+    display: none !important;
 }
 
 /* Title Header Style */
 .modal-content h3 {
-    font-family: 'Space Grotesk', 'Courier New', monospace !important;
-    color: #a3b599 !important; /* TLOU Lichen Green */
-    font-size: 1.8rem !important;
-    font-weight: 700 !important;
+    font-family: var(--font-sans), 'Inter', sans-serif !important;
+    color: #f1f5f9 !important; /* Crisp light slate */
+    font-size: 1.6rem !important;
+    font-weight: 600 !important;
     text-transform: uppercase !important;
-    border-bottom: 1px solid rgba(115, 140, 102, 0.35) !important;
+    letter-spacing: 0.12em !important; /* Wide tracking menu text style */
+    border-bottom: 1px solid rgba(147, 166, 134, 0.15) !important;
     padding-bottom: 0.8rem !important;
     margin-bottom: 1.6rem !important;
-    letter-spacing: 1px !important;
-    text-shadow: 0 0 8px rgba(115, 140, 102, 0.45) !important;
     position: relative !important;
     z-index: 5 !important;
     padding-right: 3rem; /* Prevents overlap with close button */
@@ -1438,22 +1401,21 @@ ul {
 /* Console Highlights */
 .modal-content p,
 .modal-content div {
-    font-family: 'Space Grotesk', 'Courier New', monospace !important;
+    font-family: var(--font-sans), 'Inter', sans-serif !important;
     color: #cbd5e1 !important;
     position: relative !important;
     z-index: 5 !important;
 }
 
 .modal-content strong {
-    color: #a3b599 !important; /* lichen green console highlight */
-    font-weight: 700 !important;
-    text-shadow: 0 0 6px rgba(115, 140, 102, 0.3) !important;
+    color: #a3b599 !important; /* Lichen moss green highlight */
+    font-weight: 600 !important;
 }
 
-/* Telemetry Prompt Terminal Bullet points */
+/* Minimalist Custom Bullets */
 .modal-content ul {
     list-style-type: none !important;
-    padding-left: 0.2rem !important;
+    padding-left: 0 !important;
     margin: 1.5rem 0 !important;
 }
 
@@ -1461,75 +1423,74 @@ ul {
     position: relative !important;
     padding-left: 1.5rem !important;
     margin-bottom: 0.8rem !important;
-    font-family: 'Space Grotesk', 'Courier New', monospace !important;
+    font-family: var(--font-sans), 'Inter', sans-serif !important;
     color: #cbd5e1 !important;
 }
 
 .modal-content li::before {
-    content: '$' !important;
+    content: '' !important;
     position: absolute !important;
-    left: 0 !important;
-    color: #738c66 !important;
-    font-family: monospace !important;
-    font-weight: bold !important;
+    left: 0.25rem !important;
+    top: 0.7rem !important;
+    width: 6px !important;
+    height: 6px !important;
+    background-color: #738c66 !important; /* Tiny organic moss square accent */
+    border-radius: 1px !important;
+    opacity: 0.85 !important;
 }
 
 @keyframes modalAppear {
-    from { opacity: 0; transform: translateY(20px) scale(0.95); }
+    from { opacity: 0; transform: translateY(12px) scale(0.98); }
     to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
-/* Close button stamp header override */
+/* Close button - Elegant minimalist cross */
 .close-modal {
     position: absolute !important;
     top: 1.5rem !important;
     right: 1.5rem !important;
     cursor: pointer !important;
-    transition: var(--transition) !important;
+    transition: all 0.3s ease !important;
     z-index: 10 !important;
-    background: rgba(115, 140, 102, 0.05) !important;
-    border: 1px solid rgba(115, 140, 102, 0.3) !important;
-    color: #738c66 !important;
-    border-radius: 4px !important;
-    box-shadow: 0 0 5px rgba(115, 140, 102, 0.1) !important;
-    width: 38px !important;
-    height: 38px !important;
+    background: transparent !important;
+    border: none !important;
+    color: rgba(255, 255, 255, 0.4) !important;
+    font-size: 1.5rem !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
+    width: 32px !important;
+    height: 32px !important;
 }
 
 .close-modal:hover {
-    background: rgba(115, 140, 102, 0.15) !important;
-    border-color: #a3b599 !important;
-    color: #fff !important;
-    box-shadow: 0 0 12px rgba(115, 140, 102, 0.4) !important;
-    transform: scale(1.05) !important;
+    color: #a3b599 !important; /* Lichen Green */
+    transform: scale(1.1) !important;
 }
 
-/* Secure Terminal Command exit CTA button */
+/* Flat, Premium Close CTA button at bottom */
 .modal-content .modal-close-btn {
-    background: transparent !important;
-    border: 1px solid #738c66 !important;
-    color: #738c66 !important;
-    font-family: 'Space Grotesk', 'Courier New', monospace !important;
-    font-size: 1.1rem !important;
-    font-weight: bold !important;
+    background: rgba(115, 140, 102, 0.1) !important;
+    border: 1px solid rgba(115, 140, 102, 0.3) !important;
+    color: #a3b599 !important;
+    font-family: var(--font-sans), 'Inter', sans-serif !important;
+    font-size: 0.9rem !important;
+    font-weight: 500 !important;
+    letter-spacing: 0.1em !important;
     text-transform: uppercase !important;
     border-radius: 4px !important;
-    box-shadow: 0 0 8px rgba(115, 140, 102, 0.1) !important;
-    transition: all 0.3s ease !important;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
     position: relative !important;
     z-index: 5 !important;
     margin-top: 2rem !important;
-    padding: 0.8rem 1.5rem !important;
+    padding: 0.7rem 1.8rem !important;
 }
 
 .modal-content .modal-close-btn:hover {
     background: #738c66 !important;
-    color: #0b0c0a !important;
-    box-shadow: 0 0 15px rgba(115, 140, 102, 0.4) !important;
-    transform: translateY(-2px) !important;
+    border-color: #738c66 !important;
+    color: #0e100d !important;
+    transform: translateY(-1px) !important;
 }
 
 /* Responsive Modals */

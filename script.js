@@ -90,41 +90,59 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const actx = ambientCanvas.getContext('2d');
     let ambientParticles = [];
-    const maxAmbientParticles = 30; // Kept low for buttery 60fps performance
+    const maxAmbientParticles = 55; // Elevated count for richer environmental atmosphere
 
     class AmbientParticle {
         constructor(isInit = false) {
             this.x = Math.random() * ambientCanvas.width;
-            // If initializing, scatter all over screen; if spawning new, start below the screen
-            this.y = isInit ? Math.random() * ambientCanvas.height : ambientCanvas.height + 20;
-            this.z = Math.random() * 0.8 + 0.2; // 3D Depth Layer factor
-            this.size = (Math.random() * 5 + 2) * this.z; // Depth-based sizing
-            this.baseSpeedY = (Math.random() * 0.2 + 0.08) * -1; // Slow upward float
+            // Scatter all over screen on initialize; spawn below viewport otherwise
+            this.y = isInit ? Math.random() * ambientCanvas.height : ambientCanvas.height + 25;
+            this.z = Math.random() * 0.82 + 0.18; // 3D Depth Layer factor
+            this.size = (Math.random() * 4.5 + 1.8) * this.z; // Depth-based sizing
+            this.baseSpeedY = (Math.random() * 0.18 + 0.06) * -1; // Slow organic upward float
             this.speedY = this.baseSpeedY * this.z; // Depth-based speed
             this.angle = Math.random() * Math.PI * 2;
-            this.angleSpeed = Math.random() * 0.01 + 0.005;
-            this.amplitude = (Math.random() * 15 + 5) * this.z; // Sideways drift amplitude
-            this.baseOpacity = (Math.random() * 0.15 + 0.08) * this.z;
+            this.angleSpeed = Math.random() * 0.008 + 0.003;
+            
+            // Physical wind velocity vectors for smooth cursor trailing inertia
+            this.vx = 0;
+            this.vy = 0;
+
+            // Filaments: Some background elements render as curved drifting threads instead of dots
+            this.isFilament = Math.random() < 0.16;
+            this.rot = Math.random() * Math.PI * 2;
+            this.rotSpeed = (Math.random() - 0.5) * 0.012;
+
+            this.baseOpacity = (Math.random() * 0.18 + 0.08) * this.z;
             this.opacity = 0; // Fade in gently
             this.pulsePhase = Math.random() * Math.PI * 2;
-            this.pulseSpeed = Math.random() * 0.005 + 0.002;
+            this.pulseSpeed = Math.random() * 0.004 + 0.0015;
         }
 
         update() {
-            // Drift upward
-            this.y += this.speedY;
-            
-            // Gentle sinusoidal sway left and right
-            this.angle += this.angleSpeed;
-            this.x += Math.sin(this.angle) * 0.15;
+            // Apply floating vectors + physical cursor wind velocity
+            this.y += this.speedY + this.vy;
+            this.x += Math.sin(this.angle) * 0.18 + this.vx;
 
-            // Gentle opacity breathing pulse
+            // Apply friction/drag to cursor wind velocity so particles slow down naturally
+            this.vx *= 0.93;
+            this.vy *= 0.93;
+
+            // Sinusoidal horizontal sway
+            this.angle += this.angleSpeed;
+
+            // Slowly rotate filaments
+            if (this.isFilament) {
+                this.rot += this.rotSpeed;
+            }
+
+            // Muted organic breathing pulse
             this.pulsePhase += this.pulseSpeed;
             const pulseFactor = (Math.sin(this.pulsePhase) + 1) / 2; // 0 to 1
-            this.opacity = this.baseOpacity * (0.6 + pulseFactor * 0.4);
+            this.opacity = this.baseOpacity * (0.55 + pulseFactor * 0.45);
 
-            // Recycle if particle drifts out of screen bounds
-            if (this.y < -20 || this.x < -20 || this.x > ambientCanvas.width + 20) {
+            // Recycle if particle drifts far outside bounds
+            if (this.y < -30 || this.x < -30 || this.x > ambientCanvas.width + 30) {
                 const index = ambientParticles.indexOf(this);
                 if (index > -1) {
                     ambientParticles[index] = new AmbientParticle(false);
@@ -133,25 +151,44 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         draw() {
-            // Render glowing circular lens-bokeh particle (radial gradient)
-            const gradient = actx.createRadialGradient(
-                this.x, this.y, 0,
-                this.x, this.y, this.size * 2.5
-            );
-            
-            // Gold spores (#cfab3a) mixed with soft moss-green values based on depth
-            const color = this.z > 0.6 
-                ? `rgba(207, 171, 58, ${this.opacity})` // High-fidelity gold spores
-                : `rgba(74, 222, 128, ${this.opacity * 0.45})`; // Soft background green spores
-                
-            gradient.addColorStop(0, color);
-            gradient.addColorStop(0.4, color);
-            gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
+            // Curated forest-lichen moss green (#738c66) and warm amber fireflies gold (#cfab3a)
+            const color = this.z > 0.55
+                ? `rgba(207, 171, 58, ${this.opacity})` // Gold spores
+                : `rgba(115, 140, 102, ${this.opacity * 0.65})`; // Lichen Green spores
 
-            actx.fillStyle = gradient;
-            actx.beginPath();
-            actx.arc(this.x, this.y, this.size * 2.5, 0, Math.PI * 2);
-            actx.fill();
+            if (this.isFilament) {
+                // High-fidelity drifting curved line filaments
+                actx.beginPath();
+                actx.strokeStyle = color;
+                actx.lineWidth = Math.max(0.6, this.size * 0.22);
+                actx.lineCap = 'round';
+                
+                const length = this.size * 2.2;
+                const x1 = this.x - length * Math.cos(this.rot);
+                const y1 = this.y - length * Math.sin(this.rot);
+                const x2 = this.x + length * Math.cos(this.rot);
+                const y2 = this.y + length * Math.sin(this.rot);
+                const cx = this.x + length * 0.4 * Math.sin(this.rot);
+                const cy = this.y - length * 0.4 * Math.cos(this.rot);
+                
+                actx.moveTo(x1, y1);
+                actx.quadraticCurveTo(cx, cy, x2, y2);
+                actx.stroke();
+            } else {
+                // Glowing radial bokeh spore circles
+                const gradient = actx.createRadialGradient(
+                    this.x, this.y, 0,
+                    this.x, this.y, this.size * 2.5
+                );
+                gradient.addColorStop(0, color);
+                gradient.addColorStop(0.35, color);
+                gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
+
+                actx.fillStyle = gradient;
+                actx.beginPath();
+                actx.arc(this.x, this.y, this.size * 2.5, 0, Math.PI * 2);
+                actx.fill();
+            }
         }
     }
 
@@ -162,12 +199,12 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('resize', resizeAmbientCanvas);
     resizeAmbientCanvas();
 
-    // Populate starting spores
+    // Populate starting ambient spores
     for (let i = 0; i < maxAmbientParticles; i++) {
         ambientParticles.push(new AmbientParticle(true));
     }
 
-    // Gentle cursor wind force: Spores shift slightly away from the mouse cursor
+    // Cursor wind current tracking
     let mouseX = null;
     let mouseY = null;
     window.addEventListener('mousemove', (e) => {
@@ -185,19 +222,19 @@ document.addEventListener('DOMContentLoaded', () => {
         for (let i = 0; i < ambientParticles.length; i++) {
             const p = ambientParticles[i];
             
-            // Wind force calculation if cursor is in view
+            // Cursor physical wind acceleration (spores accelerate away and slow down organically)
             if (mouseX !== null && mouseY !== null) {
                 const dx = p.x - mouseX;
                 const dy = p.y - mouseY;
                 const dist = Math.sqrt(dx * dx + dy * dy);
-                const pushRadius = 180; // Distance of wind influence
+                const pushRadius = 220; // Soft radius of physical influence
                 
                 if (dist < pushRadius) {
                     const force = (pushRadius - dist) / pushRadius; // 0 to 1
                     const angle = Math.atan2(dy, dx);
-                    // Shift spores gently outwards matching depth (foreground moves more)
-                    p.x += Math.cos(angle) * force * 1.5 * p.z;
-                    p.y += Math.sin(angle) * force * 0.8 * p.z;
+                    // Apply physical velocity offsets scaled by 3D depth layer
+                    p.vx += Math.cos(angle) * force * 0.45 * p.z;
+                    p.vy += Math.sin(angle) * force * 0.25 * p.z;
                 }
             }
 
@@ -218,7 +255,7 @@ document.addEventListener('DOMContentLoaded', () => {
     canvas.style.width = '100vw';
     canvas.style.height = '100vh';
     canvas.style.pointerEvents = 'none';
-    canvas.style.zIndex = '9999';
+    canvas.style.zIndex = '100000'; // Elevated to sit cleanly over layout layers but below popup modals
     document.body.appendChild(canvas);
 
     // Custom SVG Cursor: Iconic Fireflies Emblem from The Last of Us, styled and colored in gold (#cfab3a) with a soft backing glow
@@ -267,22 +304,36 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    const handleMove = (clientX, clientY) => {
+        updateTargetPosition(clientX, clientY);
+    };
+
     window.addEventListener('mousemove', (e) => {
-        updateTargetPosition(e.clientX, e.clientY);
+        handleMove(e.clientX, e.clientY);
     });
 
-    window.addEventListener('touchmove', (e) => {
+    // Highly reliable multi-target touch capture bound on both window and document
+    const handleTouch = (e) => {
         if (e.touches && e.touches.length > 0) {
-            updateTargetPosition(e.touches[0].clientX, e.touches[0].clientY);
+            handleMove(e.touches[0].clientX, e.touches[0].clientY);
         }
-    }, { passive: true });
+    };
+    window.addEventListener('touchstart', handleTouch, { passive: true });
+    window.addEventListener('touchmove', handleTouch, { passive: true });
+    document.addEventListener('touchstart', handleTouch, { passive: true });
+    document.addEventListener('touchmove', handleTouch, { passive: true });
 
-    // Reset target positions when mouse leaves viewport
-    window.addEventListener('mouseout', () => {
+    // Instantly reset positions upon touch release or drag lift
+    const handleEnd = () => {
         targetX = null;
         targetY = null;
         hasNewPosition = false;
-    });
+    };
+    window.addEventListener('mouseout', handleEnd);
+    window.addEventListener('touchend', handleEnd, { passive: true });
+    window.addEventListener('touchcancel', handleEnd, { passive: true });
+    document.addEventListener('touchend', handleEnd, { passive: true });
+    document.addEventListener('touchcancel', handleEnd, { passive: true });
 
     function processMouseMovement() {
         if (!hasNewPosition || targetX === null || targetY === null) return;
