@@ -414,39 +414,47 @@ ul {
     width: 32px;
     height: 24px;
     color: #eab308 !important; /* Yellow/Gold */
-    animation: fireflyFloat 6s ease-in-out infinite;
+    animation: fireflyFloat 8s ease-in-out infinite;
     transform-origin: center;
     will-change: transform, opacity;
 }
 
 @keyframes fireflyFloat {
     0%, 100% { 
-        transform: translateY(0) rotate(0deg); 
-        opacity: 0.4; 
+        transform: translateY(0) translateX(0); 
+        opacity: 0.3; 
     }
-    25% { 
-        transform: translateY(-3px) rotate(-3deg); 
-        opacity: 0.7; 
+    33% { 
+        transform: translateY(-4px) translateX(2px); 
+        opacity: 0.8; 
     }
-    75% { 
-        transform: translateY(2px) rotate(3deg); 
-        opacity: 1; 
+    66% { 
+        transform: translateY(-1px) translateX(-2px); 
+        opacity: 0.45; 
     }
 }
 
 .tlou-wolf {
     width: 32px;
     height: 32px;
-    color: var(--text-muted);
-    margin-left: 1rem; /* Clear space between Firefly and Wolf logo */
-    animation: wolfFloat 6s ease-in-out infinite alternate;
+    color: #5c674e !important; /* Authentic distressed WLF military olive green */
+    margin-left: 1.2rem; /* Clear space between Firefly and Wolf logo */
+    animation: wolfBreathing 7s ease-in-out infinite;
     transform-origin: center;
-    will-change: transform, opacity;
+    will-change: transform, opacity, color;
 }
 
-@keyframes wolfFloat {
-    0% { transform: translateY(0) rotate(0deg); opacity: 0.6; }
-    100% { transform: translateY(-3px) rotate(2deg); opacity: 1; }
+@keyframes wolfBreathing {
+    0%, 100% { 
+        transform: scale(1) translateY(0); 
+        opacity: 0.45; 
+        color: #5c674e !important;
+    }
+    50% { 
+        transform: scale(1.04) translateY(-1px); 
+        opacity: 0.9; 
+        color: #74876b !important; /* Tactical bright moss green */
+    }
 }
 
 .nav-links {
