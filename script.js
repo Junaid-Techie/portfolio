@@ -496,14 +496,19 @@ document.addEventListener('DOMContentLoaded', () => {
     document.head.appendChild(cursorStyle);
 
     const ctx = canvas.getContext('2d');
-    let points = [];  // Array of { x, y, life }
+    const numNodes = 28; // Highly detailed nodes for ultra-fluid winding ribbon
+    let nodes = [];
+    for (let i = 0; i < numNodes; i++) {
+        nodes.push({ x: 0, y: 0, vx: 0, vy: 0 });
+    }
+
     let spores = [];  // Drifting Firefly spore particles
     let isAnimating = false;
 
     let targetX = null;  // Last known actual mouse/touch X
     let targetY = null;  // Last known actual mouse/touch Y
-    let activeX = null;  // Elastic interpolated tracker X
-    let activeY = null;  // Elastic interpolated tracker Y
+    let trailAlpha = 0.0;
+    let idleFrames = 0;
 
     function resizeCanvas() {
         canvas.width = window.innerWidth;
@@ -518,6 +523,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const handleMove = (clientX, clientY) => {
         targetX = clientX;
         targetY = clientY;
+        idleFrames = 0;
+        trailAlpha = Math.min(1.0, trailAlpha + 0.15); // Quick fade-in when moving
         
         if (!isAnimating) {
             isAnimating = true;
@@ -544,8 +551,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const handleEnd = () => {
         targetX = null;
         targetY = null;
-        activeX = null;
-        activeY = null;
     };
     window.addEventListener('mouseout', handleEnd);
     window.addEventListener('touchend', handleEnd, { passive: true });
@@ -556,109 +561,161 @@ document.addEventListener('DOMContentLoaded', () => {
     function processMouseMovement() {
         if (targetX === null || targetY === null) return;
 
-        // Elastic spring-tracking coordinates for organic liquid inertia
-        if (activeX === null || activeY === null) {
-            activeX = targetX;
-            activeY = targetY;
-        } else {
-            // Smooth elastic interpolation: catches up beautifully over multiple frames!
-            activeX += (targetX - activeX) * 0.22;
-            activeY += (targetY - activeY) * 0.22;
-        }
-
-        let shouldAdd = false;
-        if (points.length === 0) {
-            shouldAdd = true;
-        } else {
-            const lastPoint = points[points.length - 1];
-            const dx = activeX - lastPoint.x;
-            const dy = activeY - lastPoint.y;
-            const dist = Math.sqrt(dx * dx + dy * dy);
-
-            if (dist > 1.5) {
-                if (dist > 250) {
-                    points = [];
-                }
-                
-                // Path steps interpolation: creates a completely continuous and smooth line under fast mouse swipes
-                if (dist > 8) {
-                    const steps = Math.floor(dist / 6);
-                    for (let j = 1; j < steps; j++) {
-                        const ratio = j / steps;
-                        points.push({
-                            x: lastPoint.x + dx * ratio,
-                            y: lastPoint.y + dy * ratio,
-                            life: 1.0
-                        });
-                    }
-                }
-                
-                shouldAdd = true;
+        // Initialize all nodes to cursor position on first movement
+        if (nodes[0].x === 0 && nodes[0].y === 0) {
+            for (let i = 0; i < numNodes; i++) {
+                nodes[i].x = targetX;
+                nodes[i].y = targetY;
+                nodes[i].vx = 0;
+                nodes[i].vy = 0;
             }
         }
 
-        if (shouldAdd) {
-            points.push({ x: activeX, y: activeY, life: 1.0 });
+        // Node 0 is the head: Eased toward target position for organic lag
+        nodes[0].x += (targetX - nodes[0].x) * 0.45;
+        nodes[0].y += (targetY - nodes[0].y) * 0.45;
 
-            // Spawn floating embers along the custom trace path
-            if (Math.random() > 0.45) {
-                spores.push({
-                    x: activeX,
-                    y: activeY,
-                    vx: (Math.random() - 0.5) * 1.5,
-                    vy: (Math.random() - 0.5) * 1.2 - 0.8, // Upward floating bias
-                    size: Math.random() * 2.4 + 1.2,
-                    life: 1.0,
-                    decay: Math.random() * 0.014 + 0.008
-                });
-            }
+        // Pull the rest of the nodes with physical spring damping
+        for (let i = 1; i < numNodes; i++) {
+            const prev = nodes[i - 1];
+            const curr = nodes[i];
+
+            // Taper spring tension and damping along the tail for premium lag-momentum
+            const tension = 0.55 - (i / numNodes) * 0.22;
+            const damping = 0.52 - (i / numNodes) * 0.15;
+
+            const dx = prev.x - curr.x;
+            const dy = prev.y - curr.y;
+
+            curr.vx += dx * tension;
+            curr.vy += dy * tension;
+            
+            // Subtle upward lift to make the tail of the ribbon drift slightly upward like warm smoke
+            curr.vy -= 0.012;
+
+            curr.vx *= damping;
+            curr.vy *= damping;
+
+            curr.x += curr.vx;
+            curr.y += curr.vy;
+        }
+
+        // Spawn floating spores along the path with slow drift
+        if (trailAlpha > 0.15 && Math.random() > 0.48) {
+            // Select a random node in the first half of the chain
+            const randIndex = Math.floor(Math.random() * (numNodes / 2));
+            const n = nodes[randIndex];
+            spores.push({
+                x: n.x,
+                y: n.y,
+                vx: (Math.random() - 0.5) * 1.5,
+                vy: (Math.random() - 0.5) * 1.2 - 0.8, // Drifts upward
+                size: Math.random() * 2.4 + 1.2,
+                life: 1.0,
+                decay: Math.random() * 0.014 + 0.008
+            });
         }
     }
 
     function drawTrail() {
-        if (points.length < 2) return;
+        if (nodes.length < 3 || trailAlpha <= 0.01) return;
 
-        // Draw seamless continuous flowing filament of glowing fireflies trail
-        for (let i = 1; i < points.length; i++) {
-            const p1 = points[i - 1];
-            const p2 = points[i];
+        // Connect head node (Node 0) to first segment
+        const headXc = (nodes[0].x + nodes[1].x) / 2;
+        const headYc = (nodes[0].y + nodes[1].y) / 2;
+        const headSize = 0.8 + trailAlpha * 4.2;
 
-            // Compute combined life/age factor directly from actual point decay life
-            const life = (p1.life + p2.life) / 2;
+        // Head segment: atmospheric glow
+        ctx.beginPath();
+        ctx.moveTo(nodes[0].x, nodes[0].y);
+        ctx.lineTo(headXc, headYc);
+        ctx.strokeStyle = `rgba(207, 171, 58, ${trailAlpha * 0.18})`;
+        ctx.lineWidth = headSize * 2.8;
+        ctx.lineCap = 'round';
+        ctx.stroke();
 
-            if (life <= 0.01) continue;
+        // Head segment: glowing core
+        ctx.beginPath();
+        ctx.moveTo(nodes[0].x, nodes[0].y);
+        ctx.lineTo(headXc, headYc);
+        ctx.strokeStyle = `rgba(207, 171, 58, ${trailAlpha * 0.85})`;
+        ctx.lineWidth = headSize;
+        ctx.lineCap = 'round';
+        ctx.stroke();
 
-            // Organic smooth tapering size: 4.5px at life=1.0 down to 0.8px at life=0.0
-            const size = 0.8 + life * 3.7;
-
-            // 1. Soft atmospheric gold glow (wide, low opacity)
+        // Head segment: hot center core
+        if (trailAlpha > 0.45) {
             ctx.beginPath();
-            ctx.moveTo(p1.x, p1.y);
-            ctx.lineTo(p2.x, p2.y);
-            ctx.strokeStyle = `rgba(207, 171, 58, ${life * 0.25})`;
+            ctx.moveTo(nodes[0].x, nodes[0].y);
+            ctx.lineTo(headXc, headYc);
+            ctx.strokeStyle = `rgba(255, 255, 255, ${(trailAlpha - 0.45) / 0.55 * 0.95})`;
+            ctx.lineWidth = headSize * 0.4;
+            ctx.lineCap = 'round';
+            ctx.stroke();
+        }
+
+        // Draw the rest of the glowing background aura (wide and low opacity)
+        for (let i = 1; i < nodes.length - 1; i++) {
+            const p1 = nodes[i];
+            const p2 = nodes[i + 1];
+            const xc = (p1.x + p2.x) / 2;
+            const yc = (p1.y + p2.y) / 2;
+            const prevXc = (nodes[i - 1].x + p1.x) / 2;
+            const prevYc = (nodes[i - 1].y + p1.y) / 2;
+
+            // age goes from 1.0 (head) to 0.0 (tail)
+            const ratio = (nodes.length - i) / nodes.length; 
+            const age = ratio * trailAlpha;
+
+            if (age <= 0.01) continue;
+
+            const size = 0.8 + age * 4.2;
+
+            // Wide golden atmospheric glow
+            ctx.beginPath();
+            ctx.moveTo(prevXc, prevYc);
+            ctx.quadraticCurveTo(p1.x, p1.y, xc, yc);
+            ctx.strokeStyle = `rgba(207, 171, 58, ${age * 0.16})`;
             ctx.lineWidth = size * 2.8;
             ctx.lineCap = 'round';
             ctx.lineJoin = 'round';
             ctx.stroke();
+        }
 
-            // 2. Core golden line (glowing filament)
+        // Draw the main glowing core
+        for (let i = 1; i < nodes.length - 1; i++) {
+            const p1 = nodes[i];
+            const p2 = nodes[i + 1];
+            const xc = (p1.x + p2.x) / 2;
+            const yc = (p1.y + p2.y) / 2;
+            const prevXc = (nodes[i - 1].x + p1.x) / 2;
+            const prevYc = (nodes[i - 1].y + p1.y) / 2;
+
+            const ratio = (nodes.length - i) / nodes.length;
+            const age = ratio * trailAlpha;
+
+            if (age <= 0.01) continue;
+
+            const size = 0.8 + age * 4.2;
+
+            // Core glowing line
             ctx.beginPath();
-            ctx.moveTo(p1.x, p1.y);
-            ctx.lineTo(p2.x, p2.y);
-            ctx.strokeStyle = `rgba(207, 171, 58, ${life * 0.85})`;
+            ctx.moveTo(prevXc, prevYc);
+            ctx.quadraticCurveTo(p1.x, p1.y, xc, yc);
+            ctx.strokeStyle = `rgba(207, 171, 58, ${age * 0.85})`;
             ctx.lineWidth = size;
             ctx.lineCap = 'round';
             ctx.lineJoin = 'round';
             ctx.stroke();
 
-            // 3. Ultra-bright hot center core for the front (head) of the trail
-            if (life > 0.45) {
-                const hotCoreOpacity = (life - 0.45) / 0.55;
+            // Ultra-bright hot center core
+            if (age > 0.45) {
+                const hotCoreOpacity = (age - 0.45) / 0.55;
                 ctx.beginPath();
-                ctx.moveTo(p1.x, p1.y);
-                ctx.lineTo(p2.x, p2.y);
+                ctx.moveTo(prevXc, prevYc);
+                ctx.quadraticCurveTo(p1.x, p1.y, xc, yc);
                 ctx.strokeStyle = `rgba(255, 255, 255, ${hotCoreOpacity * 0.95})`;
-                ctx.lineWidth = size * 0.45;
+                ctx.lineWidth = size * 0.4;
                 ctx.lineCap = 'round';
                 ctx.lineJoin = 'round';
                 ctx.stroke();
@@ -667,16 +724,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function updatePointsAndSpores() {
-        // Decay active path coordinates
-        for (let i = 0; i < points.length; i++) {
-            points[i].life -= 0.022; // Smooth longer-lasting trail
-        }
-
-        // Shift out decayed coordinates from the tail
-        while (points.length > 0 && points[0].life <= 0) {
-            points.shift();
-        }
-
         // Draw and update active firefly spores
         for (let i = spores.length - 1; i >= 0; i--) {
             const s = spores[i];
@@ -706,16 +753,40 @@ document.addEventListener('DOMContentLoaded', () => {
     function animatePixels() {
         processMouseMovement();
 
+        // Increment idle frames if mouse is stationary
+        if (targetX !== null && targetY !== null) {
+            const distToTarget = Math.sqrt(Math.pow(targetX - nodes[0].x, 2) + Math.pow(targetY - nodes[0].y, 2));
+            if (distToTarget < 2.0) {
+                idleFrames++;
+            } else {
+                idleFrames = 0;
+                trailAlpha = Math.min(1.0, trailAlpha + 0.08);
+            }
+        } else {
+            idleFrames++;
+        }
+
+        // Decay trail alpha when idle
+        if (idleFrames > 12) {
+            trailAlpha -= 0.04;
+            if (trailAlpha < 0.0) trailAlpha = 0.0;
+        }
+
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
         drawTrail();
         updatePointsAndSpores();
 
-        // Keep loop running if points or spores are still active and decaying, or if active positions are still catching up to target
-        const isSpringCatchingUp = targetX !== null && targetY !== null && activeX !== null && activeY !== null && 
-                                   (Math.abs(targetX - activeX) > 0.5 || Math.abs(targetY - activeY) > 0.5);
+        // Keep animating if trail is still visible, spores are active, or nodes are still moving
+        let isMoving = false;
+        if (nodes.length > 0) {
+            const tailDist = Math.sqrt(Math.pow(nodes[0].x - nodes[nodes.length - 1].x, 2) + Math.pow(nodes[0].y - nodes[nodes.length - 1].y, 2));
+            if (tailDist > 1.5) {
+                isMoving = true;
+            }
+        }
 
-        if (points.length > 0 || spores.length > 0 || isSpringCatchingUp) {
+        if (trailAlpha > 0.0 || spores.length > 0 || isMoving) {
             requestAnimationFrame(animatePixels);
         } else {
             isAnimating = false;
