@@ -151,10 +151,10 @@ document.addEventListener('DOMContentLoaded', () => {
             
             // Build three highly focused depth-of-field layers for the wave
             if (this.z < 0.38) {
-                // Background Lens Bokeh: Massive, slow, fuzzy out-of-focus bokeh
-                this.isBokeh = true;
+                // Background Spores: Small, slow, distant spores
+                this.isBokeh = false;
                 this.isFilament = false;
-                this.size = Math.random() * 15 + 12; // Massive bokeh circles
+                this.size = (Math.random() * 2.5 + 1.0) * this.z; // Distant background particles
                 this.baseSpeedX = (Math.random() * 0.06 + 0.02); // Drift right lazily
             } else if (this.z > 0.76) {
                 // Foreground Embers: Tiny, bright, sharp specs of gold
