@@ -66,7 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Handle initial visible elements on load
-    window.triggerInitialReveal = function() {
+    setTimeout(() => {
         fadeElements.forEach(element => {
             const rect = element.getBoundingClientRect();
             if (rect.top <= window.innerHeight) {
@@ -74,12 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 revealOnScroll.unobserve(element);
             }
         });
-    };
-
-    // If there is no boot screen, trigger immediately. Otherwise, the boot screen will trigger it.
-    if (!document.getElementById('fedra-boot-screen')) {
-        setTimeout(window.triggerInitialReveal, 100);
-    }
+    }, 100);
 
     // --- Ambient Spore Canvas Builder (PS5 Home Screen Background Spores in TLOU Theme) ---
     const ambientCanvas = document.createElement('canvas');
@@ -1240,66 +1235,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }, { passive: true });
     });
 
-    // 2. FEDRA Terminal Boot Sequence Overlay
-    const bootScreen = document.getElementById('fedra-boot-screen');
-    const bootText = document.getElementById('fedra-text');
-    
-    if (bootScreen && bootText) {
-        // Prevent scrolling while booting
-        document.body.style.overflow = 'hidden';
-        
-        const bootSequence = [
-            "INITIALIZING FEDRA MAINFRAME...",
-            "VERIFYING LOCAL NODE INTEGRITY... [OK]",
-            "DECRYPTING FIREFLY ARCHIVES...",
-            "PIPELINE SYNCS: ESTABLISHED",
-            "WELCOME, OPERATIVE."
-        ];
-        
-        let currentString = "";
-        let lineIndex = 0;
-        let charIndex = 0;
-        
-        function typeChar() {
-            if (lineIndex < bootSequence.length) {
-                const targetLine = bootSequence[lineIndex];
-                
-                if (charIndex < targetLine.length) {
-                    currentString += targetLine.charAt(charIndex);
-                    bootText.textContent = currentString;
-                    charIndex++;
-                    setTimeout(typeChar, 15 + Math.random() * 25); // Fast, mechanical character typing
-                } else {
-                    currentString += "\n";
-                    bootText.textContent = currentString;
-                    lineIndex++;
-                    charIndex = 0;
-                    setTimeout(typeChar, 180 + Math.random() * 250); // Pause briefly at end of line
-                }
-            } else {
-                // Boot complete, hold for a moment then fade out
-                setTimeout(() => {
-                    bootScreen.classList.add('hidden');
-                    document.body.style.overflow = ''; // Restore scrolling
-                    
-                    // Trigger the sleek fade-up of the hero content right as the boot screen fades
-                    if (typeof window.triggerInitialReveal === 'function') {
-                        window.triggerInitialReveal();
-                    }
-                    
-                    // Remove from DOM after fade completes to free memory
-                    setTimeout(() => {
-                        if (bootScreen.parentNode) {
-                            bootScreen.parentNode.removeChild(bootScreen);
-                        }
-                    }, 800);
-                }, 600);
-            }
-        }
-        
-        // Start boot sequence shortly after load
-        setTimeout(typeChar, 300);
-    }
+    // 2. (FEDRA Boot Sequence Removed per user request)
 
     // 3. Spore Burst Micro-Interaction on Buttons
     const primaryBtns = document.querySelectorAll('.btn-primary');
