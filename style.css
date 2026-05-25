@@ -417,17 +417,26 @@ ul {
     width: 32px;
     height: 24px;
     color: #eab308 !important; /* Yellow/Gold */
-    animation: flickerGlow 4s infinite alternate;
+    animation: fireflyPulse 4s ease-in-out infinite alternate;
     filter: drop-shadow(0 0 6px rgba(234, 179, 8, 0.65));
 }
 
-@keyframes flickerGlow {
-    0%, 100% { opacity: 1; }
-    5% { opacity: 0.8; }
-    10% { opacity: 1; }
-    15% { opacity: 0.95; }
-    50% { opacity: 0.4; }
-    75% { opacity: 0.85; }
+@keyframes fireflyPulse {
+    0% { opacity: 0.2; filter: drop-shadow(0 0 2px rgba(234, 179, 8, 0.2)); transform: scale(0.95); }
+    100% { opacity: 1; filter: drop-shadow(0 0 12px rgba(234, 179, 8, 0.9)); transform: scale(1.05); }
+}
+
+.tlou-wolf {
+    width: 32px;
+    height: 32px;
+    color: var(--text-muted);
+    animation: wolfFloat 6s ease-in-out infinite alternate;
+    transform-origin: center;
+}
+
+@keyframes wolfFloat {
+    0% { transform: translateY(0) rotate(0deg); opacity: 0.6; filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.1)); }
+    100% { transform: translateY(-3px) rotate(2deg); opacity: 1; filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.4)); }
 }
 
 .nav-links {
@@ -2438,9 +2447,6 @@ ul {
 .intro-wolf {
     animation: dropAndSwing 1.8s cubic-bezier(0.25, 1, 0.5, 1) forwards;
     animation-delay: 0.8s;
-    color: var(--text-main);
-    width: 32px;
-    height: 32px;
     margin-left: 0.5rem;
 }
 
