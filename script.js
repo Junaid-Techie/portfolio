@@ -479,30 +479,25 @@ document.addEventListener('DOMContentLoaded', () => {
     canvas.style.zIndex = '100000'; // Elevated to sit cleanly over layout layers but below popup modals
     document.body.appendChild(canvas);
 
-    // Custom SVG Cursor: Iconic Fireflies Emblem from The Last of Us, styled and colored in gold (#cfab3a) with a soft backing glow
-    // SINGLE-ENCODED FIX: Using "#cfab3a" directly instead of "%23cfab3a" so that encodeURIComponent encodes it correctly to "%23cfab3a" exactly once.
-    const cursorSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="24" viewBox="0 0 1024 763" fill="none">
-        <!-- Glow Backing -->
-        <path fill="rgba(207, 171, 58, 0.22)" fill-rule="evenodd" d="M 584.0,259.0 L 582.0,260.0 L 581.0,270.0 L 577.0,284.0 L 571.0,297.0 L 567.0,303.0 L 554.0,316.0 L 548.0,320.0 L 536.0,325.0 L 535.0,752.0 L 537.0,752.0 L 546.0,736.0 L 546.0,734.0 L 554.0,721.0 L 576.0,679.0 L 577.0,402.0 L 583.0,409.0 L 632.0,479.0 L 637.0,485.0 L 639.0,485.0 L 611.0,397.0 L 608.0,391.0 L 589.0,333.0 L 590.0,327.0 L 696.0,403.0 L 698.0,403.0 L 698.0,401.0 Z M 445.0,259.0 L 440.0,264.0 L 332.0,399.0 L 331.0,403.0 L 333.0,403.0 L 433.0,331.0 L 440.0,330.0 L 390.0,482.0 L 390.0,485.0 L 393.0,484.0 L 450.0,403.0 L 453.0,403.0 L 453.0,680.0 L 473.0,716.0 L 473.0,718.0 L 481.0,731.0 L 487.0,744.0 L 489.0,746.0 L 491.0,751.0 L 494.0,752.0 L 493.0,325.0 L 484.0,322.0 L 476.0,317.0 L 461.0,302.0 L 452.0,285.0 L 448.0,272.0 L 447.0,262.0 Z M 533.0,164.0 L 693.0,335.0 L 714.0,335.0 L 832.0,277.0 L 832.0,256.0 L 575.0,155.0 L 575.0,134.0 L 692.0,160.0 L 696.0,162.0 L 709.0,164.0 L 878.0,204.0 L 906.0,205.0 L 1013.0,94.0 L 1014.0,90.0 L 1004.0,66.0 L 565.0,63.0 L 601.0,7.0 L 598.0,6.0 L 533.0,59.0 Z M 496.0,163.0 L 496.0,60.0 L 429.0,5.0 L 428.0,8.0 L 461.0,58.0 L 463.0,65.0 L 25.0,65.0 L 15.0,90.0 L 15.0,93.0 L 123.0,205.0 L 151.0,204.0 L 450.0,134.0 L 454.0,135.0 L 454.0,154.0 L 452.0,156.0 L 196.0,256.0 L 196.0,276.0 L 198.0,278.0 L 315.0,335.0 L 336.0,335.0 Z" />
-        <!-- Sharp Foreground -->
-        <path fill="#cfab3a" fill-rule="evenodd" d="M 584.0,259.0 L 582.0,260.0 L 581.0,270.0 L 577.0,284.0 L 571.0,297.0 L 567.0,303.0 L 554.0,316.0 L 548.0,320.0 L 536.0,325.0 L 535.0,752.0 L 537.0,752.0 L 546.0,736.0 L 546.0,734.0 L 554.0,721.0 L 576.0,679.0 L 577.0,402.0 L 583.0,409.0 L 632.0,479.0 L 637.0,485.0 L 639.0,485.0 L 611.0,397.0 L 608.0,391.0 L 589.0,333.0 L 590.0,327.0 L 696.0,403.0 L 698.0,403.0 L 698.0,401.0 Z M 445.0,259.0 L 440.0,264.0 L 332.0,399.0 L 331.0,403.0 L 333.0,403.0 L 433.0,331.0 L 440.0,330.0 L 390.0,482.0 L 390.0,485.0 L 393.0,484.0 L 450.0,403.0 L 453.0,403.0 L 453.0,680.0 L 473.0,716.0 L 473.0,718.0 L 481.0,731.0 L 487.0,744.0 L 489.0,746.0 L 491.0,751.0 L 494.0,752.0 L 493.0,325.0 L 484.0,322.0 L 476.0,317.0 L 461.0,302.0 L 452.0,285.0 L 448.0,272.0 L 447.0,262.0 Z M 533.0,164.0 L 693.0,335.0 L 714.0,335.0 L 832.0,277.0 L 832.0,256.0 L 575.0,155.0 L 575.0,134.0 L 692.0,160.0 L 696.0,162.0 L 709.0,164.0 L 878.0,204.0 L 906.0,205.0 L 1013.0,94.0 L 1014.0,90.0 L 1004.0,66.0 L 565.0,63.0 L 601.0,7.0 L 598.0,6.0 L 533.0,59.0 Z M 496.0,163.0 L 496.0,60.0 L 429.0,5.0 L 428.0,8.0 L 461.0,58.0 L 463.0,65.0 L 25.0,65.0 L 15.0,90.0 L 15.0,93.0 L 123.0,205.0 L 151.0,204.0 L 450.0,134.0 L 454.0,135.0 L 454.0,154.0 L 452.0,156.0 L 196.0,256.0 L 196.0,276.0 L 198.0,278.0 L 315.0,335.0 L 336.0,335.0 Z" />
-    </svg>`;
-    const cursorUrl = `url("data:image/svg+xml,${encodeURIComponent(cursorSvg.replace(/\n\s*/g, ''))}") 16 12, auto`;
-
-    const cursorStyle = document.createElement('style');
-    cursorStyle.innerHTML = `
-        body, html { cursor: ${cursorUrl} !important; }
-        a, button, .hamburger, .fab, .fas, a * { cursor: pointer !important; }
-    `;
-    document.head.appendChild(cursorStyle);
-
     const ctx = canvas.getContext('2d');
     let spores = [];  // Drifting Firefly spore particles
     let isAnimating = false;
 
-    // Track previous mouse and touch coordinates to enable path interpolation
+    // Track previous mouse coordinates to enable path interpolation
     let prevMouse = { x: null, y: null };
-    const activeTouches = {}; // Map of touch ID -> { x, y }
+
+    // Eased trail objects for mouse and multi-touch tracking
+    const mouseTrail = {
+        leadX: null,
+        leadY: null,
+        targetX: null,
+        targetY: null,
+        points: [],
+        speed: 0,
+        isActive: false
+    };
+
+    const activeTouchTrails = {};
 
     function resizeCanvas() {
         canvas.width = window.innerWidth;
@@ -520,9 +515,9 @@ document.addEventListener('DOMContentLoaded', () => {
             y: y,
             vx: (Math.random() - 0.5) * 1.5,
             vy: (Math.random() - 0.5) * 1.2 - 0.9, // Upward drifting bias
-            size: Math.random() * 2.4 + 1.2,
+            size: Math.random() * 1.5 + 0.8, // Delicate size: 0.8px to 2.3px
             life: 1.0,
-            decay: Math.random() * 0.014 + 0.008
+            decay: Math.random() * 0.025 + 0.015 // Faster decay for minimal footprint
         });
 
         if (!isAnimating) {
@@ -536,6 +531,15 @@ document.addEventListener('DOMContentLoaded', () => {
         const x = e.clientX;
         const y = e.clientY;
 
+        mouseTrail.targetX = x;
+        mouseTrail.targetY = y;
+        mouseTrail.isActive = true;
+
+        if (mouseTrail.leadX === null || mouseTrail.leadY === null) {
+            mouseTrail.leadX = x;
+            mouseTrail.leadY = y;
+        }
+
         if (prevMouse.x !== null && prevMouse.y !== null) {
             const dx = x - prevMouse.x;
             const dy = y - prevMouse.y;
@@ -543,35 +547,58 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (dist > 1.5) {
                 // Interpolate along the mouse movement path to guarantee continuous spore generation without gaps
-                const steps = Math.max(1, Math.floor(dist / 8));
+                const steps = Math.max(1, Math.floor(dist / 12)); // Sparse spawn spacing
                 for (let j = 0; j <= steps; j++) {
                     const ratio = j / steps;
                     const interpX = prevMouse.x + dx * ratio;
                     const interpY = prevMouse.y + dy * ratio;
-                    if (Math.random() > 0.35) {
+                    if (Math.random() > 0.78) { // Keep spores sparse and minimal
                         spawnSpore(interpX, interpY);
                     }
                 }
             }
         } else {
-            spawnSpore(x, y);
+            if (Math.random() > 0.78) {
+                spawnSpore(x, y);
+            }
         }
 
         prevMouse.x = x;
         prevMouse.y = y;
+
+        if (!isAnimating) {
+            isAnimating = true;
+            requestAnimationFrame(animatePixels);
+        }
     });
 
     window.addEventListener('mouseout', () => {
         prevMouse.x = null;
         prevMouse.y = null;
+        mouseTrail.targetX = null;
+        mouseTrail.targetY = null;
+        mouseTrail.isActive = false;
     });
 
     // Multi-Touch Event Listeners supporting multiple fingers concurrently
     const handleTouchStart = (e) => {
         for (let i = 0; i < e.touches.length; i++) {
             const touch = e.touches[i];
-            activeTouches[touch.identifier] = { x: touch.clientX, y: touch.clientY };
-            spawnSpore(touch.clientX, touch.clientY);
+            const id = touch.identifier;
+            
+            activeTouchTrails[id] = {
+                leadX: touch.clientX,
+                leadY: touch.clientY,
+                targetX: touch.clientX,
+                targetY: touch.clientY,
+                points: [],
+                speed: 0,
+                isActive: true
+            };
+
+            if (Math.random() > 0.78) {
+                spawnSpore(touch.clientX, touch.clientY);
+            }
         }
     };
 
@@ -582,38 +609,63 @@ document.addEventListener('DOMContentLoaded', () => {
             const x = touch.clientX;
             const y = touch.clientY;
 
-            const prev = activeTouches[id];
-            if (prev) {
-                const dx = x - prev.x;
-                const dy = y - prev.y;
+            let trail = activeTouchTrails[id];
+            if (!trail) {
+                trail = activeTouchTrails[id] = {
+                    leadX: x,
+                    leadY: y,
+                    targetX: x,
+                    targetY: y,
+                    points: [],
+                    speed: 0,
+                    isActive: true
+                };
+            }
+
+            const prevX = trail.targetX;
+            const prevY = trail.targetY;
+
+            trail.targetX = x;
+            trail.targetY = y;
+            trail.isActive = true;
+
+            // Spore spawning with interpolation
+            if (prevX !== null && prevY !== null) {
+                const dx = x - prevX;
+                const dy = y - prevY;
                 const dist = Math.sqrt(dx * dx + dy * dy);
 
                 if (dist > 1.5) {
-                    // Interpolate touch swipes path for dense, fluid multi-finger tracking
-                    const steps = Math.max(1, Math.floor(dist / 8));
+                    const steps = Math.max(1, Math.floor(dist / 12));
                     for (let j = 0; j <= steps; j++) {
                         const ratio = j / steps;
-                        const interpX = prev.x + dx * ratio;
-                        const interpY = prev.y + dy * ratio;
-                        if (Math.random() > 0.35) {
+                        const interpX = prevX + dx * ratio;
+                        const interpY = prevY + dy * ratio;
+                        if (Math.random() > 0.78) {
                             spawnSpore(interpX, interpY);
                         }
                     }
                 }
             } else {
-                spawnSpore(x, y);
+                if (Math.random() > 0.78) {
+                    spawnSpore(x, y);
+                }
             }
+        }
 
-            // Update registered coordinate
-            activeTouches[id] = { x: x, y: y };
+        if (!isAnimating) {
+            isAnimating = true;
+            requestAnimationFrame(animatePixels);
         }
     };
 
     const handleTouchEnd = (e) => {
         const activeIds = Array.from(e.touches).map(t => t.identifier);
-        for (const id in activeTouches) {
+        for (const id in activeTouchTrails) {
             if (!activeIds.includes(parseInt(id))) {
-                delete activeTouches[id];
+                activeTouchTrails[id].isActive = false;
+                activeTouchTrails[id].targetX = null;
+                activeTouchTrails[id].targetY = null;
             }
         }
     };
@@ -627,8 +679,133 @@ document.addEventListener('DOMContentLoaded', () => {
     document.addEventListener('touchend', handleTouchEnd, { passive: true });
     document.addEventListener('touchcancel', handleTouchEnd, { passive: true });
 
+    function drawTrailRibbon(points, speed) {
+        if (points.length < 2) return;
+
+        // Fades out completely when speed is near 0
+        const velocityFactor = Math.min(1, speed / 3.0);
+        if (velocityFactor < 0.01) return;
+
+        const maxOpacity = 0.48; // Max core opacity requested
+        const glowOpacityMax = 0.08; // Max glow opacity requested
+        const maxAge = 15;
+
+        for (let i = 1; i < points.length; i++) {
+            const p1 = points[i - 1];
+            const p2 = points[i];
+
+            // Ratios along the trail
+            const ratio1 = (i - 1) / points.length;
+            const ratio2 = i / points.length;
+
+            const age1 = p1.age;
+            const age2 = p2.age;
+
+            const lifeRatio1 = 1 - (age1 / maxAge);
+            const lifeRatio2 = 1 - (age2 / maxAge);
+            const avgLife = (lifeRatio1 + lifeRatio2) / 2;
+
+            if (avgLife <= 0) continue;
+
+            // Width tapers from 1.5px at the head to 0.4px at the tail
+            const w1 = 1.5 * (1 - ratio1) + 0.4 * ratio1;
+            const w2 = 1.5 * (1 - ratio2) + 0.4 * ratio2;
+            const avgWidth = (w1 + w2) / 2;
+
+            const coreOpacity = maxOpacity * avgLife * velocityFactor;
+            const glowOpacity = glowOpacityMax * avgLife * velocityFactor;
+
+            // 1. Draw glowing background
+            ctx.beginPath();
+            ctx.moveTo(p1.x, p1.y);
+            ctx.lineTo(p2.x, p2.y);
+            ctx.lineWidth = avgWidth * 4.5;
+            ctx.lineCap = 'round';
+            ctx.strokeStyle = `rgba(207, 171, 58, ${glowOpacity})`;
+            ctx.stroke();
+
+            // 2. Draw core filament
+            ctx.beginPath();
+            ctx.moveTo(p1.x, p1.y);
+            ctx.lineTo(p2.x, p2.y);
+            ctx.lineWidth = avgWidth;
+            ctx.lineCap = 'round';
+            ctx.strokeStyle = `rgba(207, 171, 58, ${coreOpacity})`;
+            ctx.stroke();
+        }
+    }
+
     function animatePixels() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        let hasActiveTrails = false;
+
+        // Process mouse trail if active or has remaining points
+        if (mouseTrail.isActive || mouseTrail.points.length > 0) {
+            hasActiveTrails = true;
+
+            if (mouseTrail.isActive && mouseTrail.targetX !== null && mouseTrail.targetY !== null) {
+                // Easing (spring catchup damping)
+                const dx = mouseTrail.targetX - mouseTrail.leadX;
+                const dy = mouseTrail.targetY - mouseTrail.leadY;
+                
+                mouseTrail.leadX += dx * 0.28;
+                mouseTrail.leadY += dy * 0.28;
+
+                const instSpeed = Math.sqrt(dx * dx + dy * dy);
+                mouseTrail.speed += (instSpeed - mouseTrail.speed) * 0.15;
+
+                // Add new point at head
+                mouseTrail.points.unshift({ x: mouseTrail.leadX, y: mouseTrail.leadY, age: 0 });
+            } else {
+                // Decay speed to 0 if mouse out or inactive
+                mouseTrail.speed += (0 - mouseTrail.speed) * 0.15;
+            }
+
+            // Age existing points
+            for (let p of mouseTrail.points) {
+                p.age++;
+            }
+            // Filter out old points
+            mouseTrail.points = mouseTrail.points.filter(p => p.age < 15);
+
+            // Draw mouse trail
+            drawTrailRibbon(mouseTrail.points, mouseTrail.speed);
+        }
+
+        // Process touch trails
+        for (const id in activeTouchTrails) {
+            const trail = activeTouchTrails[id];
+            
+            if (trail.isActive || trail.points.length > 0) {
+                hasActiveTrails = true;
+
+                if (trail.isActive && trail.targetX !== null && trail.targetY !== null) {
+                    const dx = trail.targetX - trail.leadX;
+                    const dy = trail.targetY - trail.leadY;
+
+                    trail.leadX += dx * 0.28;
+                    trail.leadY += dy * 0.28;
+
+                    const instSpeed = Math.sqrt(dx * dx + dy * dy);
+                    trail.speed += (instSpeed - trail.speed) * 0.15;
+
+                    trail.points.unshift({ x: trail.leadX, y: trail.leadY, age: 0 });
+                } else {
+                    trail.speed += (0 - trail.speed) * 0.15;
+                }
+
+                for (let p of trail.points) {
+                    p.age++;
+                }
+                trail.points = trail.points.filter(p => p.age < 15);
+
+                drawTrailRibbon(trail.points, trail.speed);
+            } else {
+                // Clean up fully decayed trail
+                delete activeTouchTrails[id];
+            }
+        }
 
         // Update and draw active firefly spores
         for (let i = spores.length - 1; i >= 0; i--) {
@@ -642,20 +819,22 @@ document.addEventListener('DOMContentLoaded', () => {
                 continue;
             }
 
-            // Central glowing spore circle
+            // Central glowing spore circle - fuzzed and minimal
             ctx.beginPath();
             ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
-            ctx.fillStyle = `rgba(207, 171, 58, ${s.life * 0.75})`;
+            ctx.fillStyle = `rgba(207, 171, 58, ${s.life * 0.48})`;
             ctx.fill();
 
             // Soft atmospheric spore glow
             ctx.beginPath();
             ctx.arc(s.x, s.y, s.size * 2, 0, Math.PI * 2);
-            ctx.fillStyle = `rgba(207, 171, 58, ${s.life * 0.15})`;
+            ctx.fillStyle = `rgba(207, 171, 58, ${s.life * 0.08})`;
             ctx.fill();
         }
 
-        if (spores.length > 0) {
+        const hasSpores = spores.length > 0;
+
+        if (hasActiveTrails || hasSpores) {
             requestAnimationFrame(animatePixels);
         } else {
             isAnimating = false;
