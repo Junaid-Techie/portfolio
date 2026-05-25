@@ -2387,3 +2387,81 @@ ul {
 .cinematic-img:hover {
     filter: sepia(0) contrast(1) brightness(1) saturate(1);
 }
+
+/* Phase 10: Custom Intro Drop Animations */
+.intro-icons-container {
+    display: flex;
+    gap: 1.5rem;
+    margin-bottom: 0.8rem;
+    align-items: flex-end;
+    position: relative;
+    z-index: 10;
+}
+
+.intro-icon {
+    width: 45px;
+    height: 45px;
+    color: var(--primary);
+    opacity: 0;
+    transform-origin: top center;
+    filter: drop-shadow(0 0 8px var(--primary-glow));
+}
+
+.intro-icon svg {
+    width: 100%;
+    height: 100%;
+}
+
+/* Drop-in Animation (Pendulum Swing) */
+@keyframes dropAndSwing {
+    0% {
+        opacity: 0;
+        transform: translateY(-200px) rotate(-45deg);
+    }
+    40% {
+        opacity: 1;
+        transform: translateY(20px) rotate(25deg);
+    }
+    60% {
+        transform: translateY(-10px) rotate(-15deg);
+    }
+    80% {
+        transform: translateY(5px) rotate(5deg);
+    }
+    100% {
+        opacity: 0.8;
+        transform: translateY(0) rotate(0);
+    }
+}
+
+.intro-moth {
+    animation: dropAndSwing 1.8s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+    animation-delay: 0.2s;
+}
+
+.intro-firefly {
+    animation: dropAndSwing 1.8s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+    animation-delay: 0.5s;
+    color: var(--secondary);
+    width: 32px;
+    height: 32px;
+}
+
+.intro-wolf {
+    animation: dropAndSwing 1.8s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+    animation-delay: 0.8s;
+    color: var(--text-main);
+    width: 42px;
+    height: 42px;
+}
+
+/* Inner wrapper for hover scaling so it doesn't fight the animation transform */
+.intro-icon svg {
+    transition: transform 0.3s ease, filter 0.3s ease, color 0.3s ease;
+}
+
+.intro-icon:hover svg {
+    transform: scale(1.2) translateY(-3px);
+    color: #fff;
+    filter: drop-shadow(0 0 15px var(--primary));
+}
