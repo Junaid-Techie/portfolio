@@ -160,7 +160,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Foreground Embers: Tiny, bright, sharp specs of gold
                 this.isBokeh = false;
                 this.isFilament = false;
-                this.size = (Math.random() * 1.8 + 1.2) * this.z;
+                this.isShiny = Math.random() > 0.3; // 70% of foreground are intensely shiny
+                this.size = (Math.random() * 1.5 + 0.8) * this.z;
                 this.baseSpeedX = (Math.random() * 0.3 + 0.15); // Faster foreground sweep
             } else {
                 // Midground: Classic spores and slowly rotating curved filaments
@@ -217,8 +218,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Muted organic breathing pulse + firefly shimmering twinkles
             this.pulsePhase += this.pulseSpeed;
-            const pulseFactor = (Math.sin(this.pulsePhase) + 1) / 2; // 0 to 1
-            const shimmer = Math.sin(this.pulsePhase * 3.6) * 0.18; // Twitch sparkle
+            let pulseFactor = (Math.sin(this.pulsePhase) + 1) / 2; // 0 to 1
+            let shimmer = Math.sin(this.pulsePhase * 3.6) * 0.18; // Twitch sparkle
+            
+            if (this.isShiny) {
+                // Intense chaotic twinkling for shiny PS5 particles
+                pulseFactor = (Math.sin(this.pulsePhase * 8.0) + 1) / 2;
+                shimmer = Math.sin(this.pulsePhase * 15.0) * 0.5;
+            }
+            
             this.opacity = Math.max(0, this.baseOpacity * (0.65 + pulseFactor * 0.35) + shimmer);
 
             // Recycle if particle drifts far outside bounds (off right side, or too far up/down)
@@ -310,11 +318,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 actx.beginPath();
                 actx.arc(this.x, this.y, this.size * 2.5, 0, Math.PI * 2);
                 actx.fill();
+                
+                // Pure white hot core for shiny particles
+                if (this.isShiny) {
+                    actx.fillStyle = `rgba(255, 255, 255, ${renderOpacity * 1.5})`;
+                    actx.beginPath();
+                    actx.arc(this.x, this.y, this.size * 0.8, 0, Math.PI * 2);
+                    actx.fill();
+                }
 
                 // AAA Premium Menu Detail: Render soft golden cross-hair lens flares on the brightest foreground specifications when they peak
-                if (this.z > 0.8 && renderOpacity > 0.65) {
+                if ((this.isShiny || this.z > 0.8) && renderOpacity > 0.5) {
                     actx.beginPath();
-                    actx.strokeStyle = `rgba(255, 255, 255, ${(renderOpacity - 0.65) * 1.8})`;
+                    actx.strokeStyle = `rgba(255, 255, 255, ${(renderOpacity - 0.5) * 1.5})`;
                     actx.lineWidth = 0.5;
                     
                     // Horizontal flare line
