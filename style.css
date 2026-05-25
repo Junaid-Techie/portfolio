@@ -414,7 +414,7 @@ ul {
     width: 32px;
     height: 24px;
     color: #eab308 !important; /* Yellow/Gold */
-    animation: fireflyFloat 8s ease-in-out infinite;
+    animation: fireflyFloat 6s ease-in-out infinite;
     transform-origin: center;
     will-change: transform, opacity;
 }
@@ -422,38 +422,32 @@ ul {
 @keyframes fireflyFloat {
     0%, 100% { 
         transform: translateY(0) translateX(0); 
-        opacity: 0.3; 
+        opacity: 0.35; 
     }
-    33% { 
-        transform: translateY(-4px) translateX(2px); 
-        opacity: 0.8; 
-    }
-    66% { 
-        transform: translateY(-1px) translateX(-2px); 
-        opacity: 0.45; 
+    50% { 
+        transform: translateY(-5px) translateX(3px); 
+        opacity: 0.95; 
     }
 }
 
 .tlou-wolf {
     width: 32px;
     height: 32px;
-    color: #5c674e !important; /* Authentic distressed WLF military olive green */
+    color: #74876b !important; /* Premium tactical WLF military moss green */
     margin-left: 1.2rem; /* Clear space between Firefly and Wolf logo */
-    animation: wolfBreathing 7s ease-in-out infinite;
+    animation: wolfBreathing 6s ease-in-out infinite;
     transform-origin: center;
-    will-change: transform, opacity, color;
+    will-change: transform, opacity;
 }
 
 @keyframes wolfBreathing {
     0%, 100% { 
         transform: scale(1) translateY(0); 
         opacity: 0.45; 
-        color: #5c674e !important;
     }
     50% { 
         transform: scale(1.04) translateY(-1px); 
-        opacity: 0.9; 
-        color: #74876b !important; /* Tactical bright moss green */
+        opacity: 0.95; 
     }
 }
 
