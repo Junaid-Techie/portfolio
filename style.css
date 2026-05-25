@@ -1,6 +1,6 @@
 :root {
     /* Color Palette — The Last of Us Survival/Tactical Theme */
-    --bg-color: #0b0c0a;        /* Distressed deep moss charcoal */
+    --bg-color: #05080f;        /* Deep midnight PS5 charcoal */
     --text-main: #f0f3ed;       /* Survival weathered off-white */
     --text-muted: #83927b;      /* Overgrown forest sage green */
     
@@ -9,7 +9,7 @@
     --secondary: #4a5a41;       /* Post-apocalyptic Overgrown Moss Green */
     --accent: #d97706;          /* Tactical Flare Orange */
     
-    --glass-bg: rgba(14, 16, 13, 0.92); /* Rich, highly-optimized moss-charcoal for maximum readability and zero-lag rendering */
+    --glass-bg: rgba(5, 8, 15, 0.92); /* Deep midnight glass for PS5 theme */
     --glass-border: rgba(207, 171, 58, 0.15); /* Weathered brass outline */
     --glass-hover: rgba(207, 171, 58, 0.28);
     
@@ -85,7 +85,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
     left: -15%;
     width: 80vw;
     height: 80vw;
-    background: radial-gradient(circle, rgba(207, 171, 58, 0.16) 0%, rgba(11, 12, 10, 0) 70%);
+    background: radial-gradient(circle, rgba(207, 171, 58, 0.16) 0%, rgba(5, 8, 15, 0) 70%);
     border-radius: 50%;
     z-index: -2;
     filter: blur(80px);
@@ -101,7 +101,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
     right: -15%;
     width: 90vw;
     height: 90vw;
-    background: radial-gradient(circle, rgba(115, 140, 102, 0.22) 0%, rgba(11, 12, 10, 0) 75%);
+    background: radial-gradient(circle, rgba(115, 140, 102, 0.22) 0%, rgba(5, 8, 15, 0) 75%);
     border-radius: 50%;
     z-index: -2;
     filter: blur(100px);

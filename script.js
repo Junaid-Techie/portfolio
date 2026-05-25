@@ -90,7 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const actx = ambientCanvas.getContext('2d');
     let ambientParticles = [];
-    const maxAmbientParticles = 180; // Raised density for a rich, immersive PS5 home screen atmosphere
+    const maxAmbientParticles = 550; // Massively raised density for a rich, immersive PS5 wave
     let wavePhase = 0; // Wave timing index for ambient auroral ribbons and god rays
 
     // High-performance offscreen bokeh templates to avoid heavy canvas blur filtering on every frame
@@ -104,8 +104,8 @@ document.addEventListener('DOMContentLoaded', () => {
         colors.forEach(c => {
             // We'll create small, medium, and large pre-blurred bokeh canvases
             const sizes = [
-                { name: 'large', radius: 18, blur: 16 },
-                { name: 'medium', radius: 10, blur: 10 },
+                { name: 'large', radius: 24, blur: 18 },
+                { name: 'medium', radius: 12, blur: 10 },
                 { name: 'small', radius: 6, blur: 6 }
             ];
             
@@ -133,37 +133,46 @@ document.addEventListener('DOMContentLoaded', () => {
 
     class AmbientParticle {
         constructor(isInit = false) {
-            this.x = Math.random() * ambientCanvas.width;
+            // Distribute across the sweeping wave
+            this.x = isInit 
+                ? Math.random() * ambientCanvas.width 
+                : -40 - Math.random() * 100; // Spawn slightly off-screen left when recycled
+                
+            // Core wave curves elegantly across the bottom half
+            const normX = this.x / window.innerWidth;
+            const curveBaseY = window.innerHeight * 0.82 - Math.sin(normX * Math.PI * 1.2) * (window.innerHeight * 0.25);
             
-            // Distribute across the entire screen height on initial load; spawn below bottom if recycled
-            this.y = isInit 
-                ? Math.random() * ambientCanvas.height 
-                : ambientCanvas.height + 25;
+            // Create a dense cluster around the curve with Gaussian-like spread
+            const spreadFactor = (Math.random() + Math.random() + Math.random() - 1.5); 
+            const spreadAmplitude = window.innerHeight * 0.45;
+            this.y = curveBaseY + spreadFactor * spreadAmplitude;
                 
             this.z = Math.random() * 0.84 + 0.16; // 3D Depth Layer factor
             
-            // Build three highly focused depth-of-field layers
+            // Build three highly focused depth-of-field layers for the wave
             if (this.z < 0.38) {
-                // Background Lens Bokeh: Large, slow, fuzzy out-of-focus bokeh circles
+                // Background Lens Bokeh: Massive, slow, fuzzy out-of-focus bokeh
                 this.isBokeh = true;
                 this.isFilament = false;
-                this.size = Math.random() * 11 + 8.5; // Massive bokeh circles (8.5px to 19.5px!)
-                this.baseSpeedY = (Math.random() * 0.012 + 0.005) * -1; // Drift lazily and slowly (weightless!)
+                this.size = Math.random() * 15 + 12; // Massive bokeh circles
+                this.baseSpeedX = (Math.random() * 0.06 + 0.02); // Drift right lazily
             } else if (this.z > 0.76) {
-                // Foreground Embers: Tiny, bright, sharp specs of gold specs that float faster and respond instantly to cursor winds
+                // Foreground Embers: Tiny, bright, sharp specs of gold
                 this.isBokeh = false;
                 this.isFilament = false;
-                this.size = (Math.random() * 1.5 + 0.8) * this.z;
-                this.baseSpeedY = (Math.random() * 0.08 + 0.04) * -1; // Lazy float speed
+                this.size = (Math.random() * 1.8 + 1.2) * this.z;
+                this.baseSpeedX = (Math.random() * 0.3 + 0.15); // Faster foreground sweep
             } else {
                 // Midground: Classic spores and slowly rotating curved filaments
                 this.isBokeh = false;
-                this.isFilament = Math.random() < 0.16;
-                this.size = (Math.random() * 4.0 + 1.8) * this.z;
-                this.baseSpeedY = (Math.random() * 0.05 + 0.015) * -1; // Slow suspended float
+                this.isFilament = Math.random() < 0.08;
+                this.size = (Math.random() * 5.0 + 2.0) * this.z;
+                this.baseSpeedX = (Math.random() * 0.15 + 0.08); // Steady midground sweep
             }
 
-            this.speedY = this.baseSpeedY * this.z;
+            this.speedX = this.baseSpeedX * this.z;
+            this.speedY = (Math.random() - 0.5) * 0.04; 
+            
             this.angle = Math.random() * Math.PI * 2;
             this.angleSpeed = Math.random() * 0.008 + 0.003;
             
@@ -175,23 +184,29 @@ document.addEventListener('DOMContentLoaded', () => {
             this.rot = Math.random() * Math.PI * 2;
             this.rotSpeed = (Math.random() - 0.5) * 0.012;
 
-            this.baseOpacity = (Math.random() * 0.18 + 0.08) * this.z;
+            this.baseOpacity = (Math.random() * 0.25 + 0.12) * this.z;
             this.opacity = 0; // Fade in gently
             this.pulsePhase = Math.random() * Math.PI * 2;
-            this.pulseSpeed = Math.random() * 0.005 + 0.002; // Elevated speed for active shimmer
+            this.pulseSpeed = Math.random() * 0.006 + 0.002; 
         }
 
         update() {
-            // Calculate continuous organic fluid turbulence currents (spores drift and swirl together)
-            const time = wavePhase * 10;
-            const noiseX = Math.sin(this.y * 0.006 + time * 0.15) * Math.cos(this.x * 0.004 - time * 0.08) * 0.35;
-            const noiseY = Math.cos(this.x * 0.005 + time * 0.12) * Math.sin(this.y * 0.003 - time * 0.05) * 0.18;
+            // Calculate continuous organic fluid turbulence currents
+            const time = wavePhase * 8;
+            const noiseX = Math.sin(this.y * 0.006 + time * 0.15) * Math.cos(this.x * 0.004 - time * 0.08) * 0.25;
+            const noiseY = Math.cos(this.x * 0.005 + time * 0.12) * Math.sin(this.y * 0.003 - time * 0.05) * 0.35;
 
-            // Apply turbulence + floating vectors + physical cursor wind velocity
+            // Apply turbulence + sweeping vector + physical cursor wind velocity
+            this.x += this.speedX + noiseX + this.vx;
             this.y += this.speedY + noiseY + this.vy;
-            this.x += noiseX + this.vx;
 
-            // Apply friction/drag to cursor wind velocity so particles slow down naturally
+            // Gently pull particles back towards the flowing wave over time
+            const normX = this.x / ambientCanvas.width;
+            const curveBaseY = ambientCanvas.height * 0.82 - Math.sin(normX * Math.PI * 1.2 - wavePhase * 1.5) * (ambientCanvas.height * 0.25);
+            const distFromCurve = curveBaseY - this.y;
+            this.y += distFromCurve * 0.0015; // Soft gravity toward wave center
+
+            // Apply friction/drag to cursor wind velocity
             this.vx *= 0.93;
             this.vy *= 0.93;
 
@@ -200,14 +215,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 this.rot += this.rotSpeed;
             }
 
-            // Muted organic breathing pulse + firefly shimmering twinkles (sparkling flares)
+            // Muted organic breathing pulse + firefly shimmering twinkles
             this.pulsePhase += this.pulseSpeed;
             const pulseFactor = (Math.sin(this.pulsePhase) + 1) / 2; // 0 to 1
-            const shimmer = Math.sin(this.pulsePhase * 3.6) * 0.14; // Twitch sparkle offset!
-            this.opacity = Math.max(0, this.baseOpacity * (0.55 + pulseFactor * 0.45) + shimmer);
+            const shimmer = Math.sin(this.pulsePhase * 3.6) * 0.18; // Twitch sparkle
+            this.opacity = Math.max(0, this.baseOpacity * (0.65 + pulseFactor * 0.35) + shimmer);
 
-            // Recycle if particle drifts far outside bounds
-            if (this.y < -40 || this.x < -40 || this.x > ambientCanvas.width + 40) {
+            // Recycle if particle drifts far outside bounds (off right side, or too far up/down)
+            if (this.x > ambientCanvas.width + 120 || this.y < -100 || this.y > ambientCanvas.height + 100) {
                 const index = ambientParticles.indexOf(this);
                 if (index > -1) {
                     ambientParticles[index] = new AmbientParticle(false);
@@ -374,20 +389,21 @@ document.addEventListener('DOMContentLoaded', () => {
         ctx.save();
         
         // Project diagonal beam originating from (0, 0)
-        const beamAngle = Math.sin(phase * 0.15) * 0.025 + 0.62; // Slow, elegant angular sway
-        const endX = Math.cos(beamAngle) * width * 1.5;
-        const endY = Math.sin(beamAngle) * height * 1.5;
+        const beamAngle = Math.sin(phase * 0.1) * 0.04 + 0.65; // Slow, elegant angular sway
+        const endX = Math.cos(beamAngle) * width * 1.8; // Extended reach
+        const endY = Math.sin(beamAngle) * height * 1.8;
         
-        // Apply a massive 85px blur filter specifically to the light cone to make it incredibly soft and volumetric!
-        ctx.filter = 'blur(85px)';
+        // Slightly reduced blur for a sharper, more prominent PS5-style god ray beam
+        ctx.filter = 'blur(65px)';
         
         const gradient = ctx.createLinearGradient(0, 0, endX, endY);
         
-        // Volumetric light gradient stops (gold spotlight beam fading diagonally)
-        const baseOpacity = 0.055 + Math.sin(phase * 0.3) * 0.015; // Slow breathing pulse
-        gradient.addColorStop(0, `rgba(207, 171, 58, ${baseOpacity * 2.8})`);
-        gradient.addColorStop(0.25, `rgba(207, 171, 58, ${baseOpacity * 1.4})`);
-        gradient.addColorStop(0.6, `rgba(207, 171, 58, ${baseOpacity * 0.4})`);
+        // Massive volumetric light gradient stops (gold spotlight beam fading diagonally)
+        // Significantly brighter base opacity to match the intense PS5 top-left glow
+        const baseOpacity = 0.15 + Math.sin(phase * 0.4) * 0.03; 
+        gradient.addColorStop(0, `rgba(207, 171, 58, ${baseOpacity * 3.5})`);
+        gradient.addColorStop(0.3, `rgba(207, 171, 58, ${baseOpacity * 1.8})`);
+        gradient.addColorStop(0.7, `rgba(207, 171, 58, ${baseOpacity * 0.3})`);
         gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
         
         ctx.fillStyle = gradient;
@@ -395,7 +411,8 @@ document.addEventListener('DOMContentLoaded', () => {
         // Volumetric beam cone path fanning outward
         ctx.beginPath();
         ctx.moveTo(0, 0);
-        const spread = width * 0.75;
+        // Wider spread for a more enveloping god ray
+        const spread = width * 0.85;
         const p1x = endX - spread * Math.sin(beamAngle);
         const p1y = endY + spread * Math.cos(beamAngle);
         const p2x = endX + spread * Math.sin(beamAngle);
@@ -412,18 +429,19 @@ document.addEventListener('DOMContentLoaded', () => {
     function animateAmbientSpores() {
         actx.clearRect(0, 0, ambientCanvas.width, ambientCanvas.height);
 
-        // Increment wave phase for slow auroral ribbon breathing motion
-        wavePhase += 0.0018;
+        // Increment wave phase for slow auroral ribbon breathing motion and particle flow
+        wavePhase += 0.0015;
 
         // Render Ribbon 1: Amber Gold (Backing layer)
+        // Positioned along the particle wave path
         drawAuroralRibbon(
             actx,
             ambientCanvas.width,
             ambientCanvas.height,
             wavePhase,
-            'rgba(207, 171, 58, 0.012)', // Faint amber aura
-            ambientCanvas.height * 0.45,
-            65
+            'rgba(207, 171, 58, 0.015)', // Faint amber aura
+            ambientCanvas.height * 0.75, // Lowered to support the particle wave
+            120 // Larger amplitude
         );
 
         // Render Ribbon 2: Lichen Green (Backing layer)
@@ -432,9 +450,9 @@ document.addEventListener('DOMContentLoaded', () => {
             ambientCanvas.width,
             ambientCanvas.height,
             wavePhase + Math.PI,
-            'rgba(115, 140, 102, 0.016)', // Muted lichen green aura
-            ambientCanvas.height * 0.55,
-            85
+            'rgba(115, 140, 102, 0.018)', // Muted lichen green aura
+            ambientCanvas.height * 0.82,
+            90
         );
 
         // Render Volumetric Light Shaft (Breathing top-left spotlight beam cone overlay)
