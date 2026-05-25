@@ -486,15 +486,14 @@ document.addEventListener('DOMContentLoaded', () => {
     // Track previous mouse coordinates to enable path interpolation
     let prevMouse = { x: null, y: null };
 
-    // Eased trail objects for mouse and multi-touch tracking
+    // Trail objects for shooting star simulation
     const mouseTrail = {
         leadX: null,
         leadY: null,
         targetX: null,
         targetY: null,
         points: [],
-        speed: 0,
-        isActive: false
+        isMoving: false
     };
 
     const activeTouchTrails = {};
@@ -533,7 +532,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         mouseTrail.targetX = x;
         mouseTrail.targetY = y;
-        mouseTrail.isActive = true;
+        mouseTrail.isMoving = true;
 
         if (mouseTrail.leadX === null || mouseTrail.leadY === null) {
             mouseTrail.leadX = x;
@@ -547,18 +546,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (dist > 1.5) {
                 // Interpolate along the mouse movement path to guarantee continuous spore generation without gaps
-                const steps = Math.max(1, Math.floor(dist / 12)); // Sparse spawn spacing
+                const steps = Math.max(1, Math.floor(dist / 14)); // Sparse spawn spacing
                 for (let j = 0; j <= steps; j++) {
                     const ratio = j / steps;
                     const interpX = prevMouse.x + dx * ratio;
                     const interpY = prevMouse.y + dy * ratio;
-                    if (Math.random() > 0.78) { // Keep spores sparse and minimal
+                    if (Math.random() > 0.82) { // Keep spores sparse and minimal
                         spawnSpore(interpX, interpY);
                     }
                 }
             }
         } else {
-            if (Math.random() > 0.78) {
+            if (Math.random() > 0.82) {
                 spawnSpore(x, y);
             }
         }
@@ -577,7 +576,7 @@ document.addEventListener('DOMContentLoaded', () => {
         prevMouse.y = null;
         mouseTrail.targetX = null;
         mouseTrail.targetY = null;
-        mouseTrail.isActive = false;
+        mouseTrail.isMoving = false;
     });
 
     // Multi-Touch Event Listeners supporting multiple fingers concurrently
@@ -592,11 +591,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 targetX: touch.clientX,
                 targetY: touch.clientY,
                 points: [],
-                speed: 0,
-                isActive: true
+                isMoving: true
             };
 
-            if (Math.random() > 0.78) {
+            if (Math.random() > 0.82) {
                 spawnSpore(touch.clientX, touch.clientY);
             }
         }
@@ -617,8 +615,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     targetX: x,
                     targetY: y,
                     points: [],
-                    speed: 0,
-                    isActive: true
+                    isMoving: true
                 };
             }
 
@@ -627,7 +624,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             trail.targetX = x;
             trail.targetY = y;
-            trail.isActive = true;
+            trail.isMoving = true;
 
             // Spore spawning with interpolation
             if (prevX !== null && prevY !== null) {
@@ -636,18 +633,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 const dist = Math.sqrt(dx * dx + dy * dy);
 
                 if (dist > 1.5) {
-                    const steps = Math.max(1, Math.floor(dist / 12));
+                    const steps = Math.max(1, Math.floor(dist / 14));
                     for (let j = 0; j <= steps; j++) {
                         const ratio = j / steps;
                         const interpX = prevX + dx * ratio;
                         const interpY = prevY + dy * ratio;
-                        if (Math.random() > 0.78) {
+                        if (Math.random() > 0.82) {
                             spawnSpore(interpX, interpY);
                         }
                     }
                 }
             } else {
-                if (Math.random() > 0.78) {
+                if (Math.random() > 0.82) {
                     spawnSpore(x, y);
                 }
             }
@@ -663,7 +660,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const activeIds = Array.from(e.touches).map(t => t.identifier);
         for (const id in activeTouchTrails) {
             if (!activeIds.includes(parseInt(id))) {
-                activeTouchTrails[id].isActive = false;
+                activeTouchTrails[id].isMoving = false;
                 activeTouchTrails[id].targetX = null;
                 activeTouchTrails[id].targetY = null;
             }
@@ -679,39 +676,50 @@ document.addEventListener('DOMContentLoaded', () => {
     document.addEventListener('touchend', handleTouchEnd, { passive: true });
     document.addEventListener('touchcancel', handleTouchEnd, { passive: true });
 
-    function drawTrailRibbon(points, speed) {
-        if (points.length < 1) return;
+    function drawShootingStarTrail(points) {
+        if (points.length < 2) return;
 
-        // Fades out completely when speed is near 0
-        const velocityFactor = Math.min(1, speed / 3.0);
-        if (velocityFactor < 0.01) return;
-
-        const maxOpacity = 0.65; // High visibility core opacity
         const maxAge = 15;
+        const maxOpacity = 0.85; // Bright, luminous shooting star head
 
-        for (let i = 0; i < points.length; i++) {
-            const p = points[i];
-            const ratio = i / points.length; // 0 = head, 1 = tail
-            const lifeRatio = 1 - (p.age / maxAge);
+        for (let i = 1; i < points.length; i++) {
+            const p1 = points[i - 1];
+            const p2 = points[i];
 
-            if (lifeRatio <= 0) continue;
+            const ratio1 = (i - 1) / points.length;
+            const ratio2 = i / points.length;
 
-            // Beautiful, thicker discrete spots: 5.5px at the head tapering down to 1.5px
-            const size = (5.5 * (1 - ratio) + 1.5 * ratio) * lifeRatio;
-            const coreOpacity = maxOpacity * lifeRatio * velocityFactor;
-            const glowOpacity = coreOpacity * 0.16;
+            const lifeRatio1 = 1 - (p1.age / maxAge);
+            const lifeRatio2 = 1 - (p2.age / maxAge);
+            const avgLife = (lifeRatio1 + lifeRatio2) / 2;
 
-            // 1. Soft atmospheric glow backing
+            if (avgLife <= 0) continue;
+
+            // Width tapers from 3.6px at the head down to 0.4px at the tail
+            const w1 = 3.6 * (1 - ratio1) + 0.4 * ratio1;
+            const w2 = 3.6 * (1 - ratio2) + 0.4 * ratio2;
+            const avgWidth = ((w1 + w2) / 2) * avgLife;
+
+            const coreOpacity = maxOpacity * avgLife * (1 - ratio1 * 0.7);
+            const glowOpacity = coreOpacity * 0.18;
+
+            // 1. Soft atmospheric shooting star glow backing
             ctx.beginPath();
-            ctx.arc(p.x, p.y, size * 2.8, 0, Math.PI * 2);
-            ctx.fillStyle = `rgba(207, 171, 58, ${glowOpacity})`;
-            ctx.fill();
+            ctx.moveTo(p1.x, p1.y);
+            ctx.lineTo(p2.x, p2.y);
+            ctx.lineWidth = avgWidth * 5.0;
+            ctx.lineCap = 'round';
+            ctx.strokeStyle = `rgba(207, 171, 58, ${glowOpacity})`;
+            ctx.stroke();
 
-            // 2. Core bright circular ember spot
+            // 2. High-intensity core filament
             ctx.beginPath();
-            ctx.arc(p.x, p.y, size, 0, Math.PI * 2);
-            ctx.fillStyle = `rgba(207, 171, 58, ${coreOpacity})`;
-            ctx.fill();
+            ctx.moveTo(p1.x, p1.y);
+            ctx.lineTo(p2.x, p2.y);
+            ctx.lineWidth = avgWidth;
+            ctx.lineCap = 'round';
+            ctx.strokeStyle = `rgba(207, 171, 58, ${coreOpacity})`;
+            ctx.stroke();
         }
     }
 
@@ -721,58 +729,43 @@ document.addEventListener('DOMContentLoaded', () => {
         let hasActiveTrails = false;
 
         // Process mouse trail if active or has remaining points
-        if (mouseTrail.isActive || mouseTrail.points.length > 0) {
+        if (mouseTrail.points.length > 0 || mouseTrail.isMoving) {
             hasActiveTrails = true;
 
-            if (mouseTrail.isActive && mouseTrail.targetX !== null && mouseTrail.targetY !== null) {
-                // Easing (spring catchup damping)
-                const dx = mouseTrail.targetX - mouseTrail.leadX;
-                const dy = mouseTrail.targetY - mouseTrail.leadY;
-                
-                mouseTrail.leadX += dx * 0.28;
-                mouseTrail.leadY += dy * 0.28;
+            if (mouseTrail.isMoving && mouseTrail.targetX !== null && mouseTrail.targetY !== null) {
+                // High-performance spring catchup easing
+                mouseTrail.leadX += (mouseTrail.targetX - mouseTrail.leadX) * 0.45;
+                mouseTrail.leadY += (mouseTrail.targetY - mouseTrail.leadY) * 0.45;
 
-                const instSpeed = Math.sqrt(dx * dx + dy * dy);
-                mouseTrail.speed += (instSpeed - mouseTrail.speed) * 0.15;
-
-                // Add new point at head
+                // Only spawn points during active cursor movement (shooting star stream)
                 mouseTrail.points.unshift({ x: mouseTrail.leadX, y: mouseTrail.leadY, age: 0 });
-            } else {
-                // Decay speed to 0 if mouse out or inactive
-                mouseTrail.speed += (0 - mouseTrail.speed) * 0.15;
             }
 
             // Age existing points
             for (let p of mouseTrail.points) {
                 p.age++;
             }
-            // Filter out old points
             mouseTrail.points = mouseTrail.points.filter(p => p.age < 15);
 
-            // Draw mouse trail
-            drawTrailRibbon(mouseTrail.points, mouseTrail.speed);
+            // Reset motion state for next frame calculation
+            mouseTrail.isMoving = false;
+
+            // Draw shooting star
+            drawShootingStarTrail(mouseTrail.points);
         }
 
         // Process touch trails
         for (const id in activeTouchTrails) {
             const trail = activeTouchTrails[id];
             
-            if (trail.isActive || trail.points.length > 0) {
+            if (trail.points.length > 0 || trail.isMoving) {
                 hasActiveTrails = true;
 
-                if (trail.isActive && trail.targetX !== null && trail.targetY !== null) {
-                    const dx = trail.targetX - trail.leadX;
-                    const dy = trail.targetY - trail.leadY;
-
-                    trail.leadX += dx * 0.28;
-                    trail.leadY += dy * 0.28;
-
-                    const instSpeed = Math.sqrt(dx * dx + dy * dy);
-                    trail.speed += (instSpeed - trail.speed) * 0.15;
+                if (trail.isMoving && trail.targetX !== null && trail.targetY !== null) {
+                    trail.leadX += (trail.targetX - trail.leadX) * 0.45;
+                    trail.leadY += (trail.targetY - trail.leadY) * 0.45;
 
                     trail.points.unshift({ x: trail.leadX, y: trail.leadY, age: 0 });
-                } else {
-                    trail.speed += (0 - trail.speed) * 0.15;
                 }
 
                 for (let p of trail.points) {
@@ -780,7 +773,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 trail.points = trail.points.filter(p => p.age < 15);
 
-                drawTrailRibbon(trail.points, trail.speed);
+                trail.isMoving = false;
+
+                drawShootingStarTrail(trail.points);
             } else {
                 // Clean up fully decayed trail
                 delete activeTouchTrails[id];
