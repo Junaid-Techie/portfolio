@@ -679,7 +679,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function drawShootingStarTrail(points) {
         if (points.length < 2) return;
 
-        const maxAge = 15;
+        const maxAge = 9; // Shorter, punchier, highly kinetic shooting star trail
         const maxOpacity = 0.85;
 
         // Pad the points array to ensure Catmull-Rom spline can interpolate all segments
@@ -693,20 +693,22 @@ document.addEventListener('DOMContentLoaded', () => {
         // We will generate a list of interpolated curve points
         const curvePoints = [];
         
-        for (let i = 1; i < p.length - 2; i++) {
+        // High-performance subdivision limit (steps = 3 is perfect)
+        const steps = 3;
+        const pLength = p.length;
+        
+        for (let i = 1; i < pLength - 2; i++) {
             const p0 = p[i - 1];
             const p1 = p[i];
             const p2 = p[i + 1];
             const p3 = p[i + 2];
 
-            // Number of subdivisions per segment
-            const steps = 8;
             for (let j = 0; j < steps; j++) {
                 const t = j / steps;
                 const t2 = t * t;
                 const t3 = t2 * t;
 
-                // Catmull-Rom formula
+                // Optimized Catmull-Rom evaluation
                 const x = 0.5 * (
                     (2 * p1.x) +
                     (-p0.x + p2.x) * t +
@@ -720,8 +722,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     (-p0.y + 3 * p1.y - 3 * p2.y + p3.y) * t3
                 );
 
-                // Interpolate age and index ratio
-                const segmentIndex = i - 1; // 0 to points.length - 2
+                const segmentIndex = i - 1;
                 const globalIndex = segmentIndex + t;
                 const ratio = globalIndex / (points.length - 1);
 
@@ -734,7 +735,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        // Also add the very last point
+        // Add the tail point
         const lastPt = points[points.length - 1];
         const lastLife = 1 - (lastPt.age / maxAge);
         if (lastLife > 0) {
@@ -746,40 +747,56 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
-        // Now draw the curve using the dense interpolated points list
-        for (let i = 1; i < curvePoints.length; i++) {
+        const curveLength = curvePoints.length;
+        if (curveLength < 2) return;
+
+        // Hoist global canvas properties to avoid state-setting overhead inside loops
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+
+        // PASS 1: Draw all glowing backing strokes
+        for (let i = 1; i < curveLength; i++) {
             const c1 = curvePoints[i - 1];
             const c2 = curvePoints[i];
 
-            const avgLife = (c1.lifeRatio + c2.lifeRatio) / 2;
+            const avgLife = (c1.lifeRatio + c2.lifeRatio) * 0.5;
             if (avgLife <= 0) continue;
 
             const ratio1 = c1.ratio;
-            const ratio2 = c2.ratio;
-
-            // Width tapers from 3.6px at the head down to 0.4px at the tail
             const w1 = 3.6 * (1 - ratio1) + 0.4 * ratio1;
-            const w2 = 3.6 * (1 - ratio2) + 0.4 * ratio2;
-            const avgWidth = ((w1 + w2) / 2) * avgLife;
+            const w2 = 3.6 * (1 - c2.ratio) + 0.4 * c2.ratio;
+            const avgWidth = ((w1 + w2) * 0.5) * avgLife;
 
             const coreOpacity = maxOpacity * avgLife * (1 - ratio1 * 0.7);
             const glowOpacity = coreOpacity * 0.18;
 
-            // 1. Soft atmospheric shooting star glow backing
             ctx.beginPath();
             ctx.moveTo(c1.x, c1.y);
             ctx.lineTo(c2.x, c2.y);
             ctx.lineWidth = avgWidth * 5.0;
-            ctx.lineCap = 'round';
             ctx.strokeStyle = `rgba(207, 171, 58, ${glowOpacity})`;
             ctx.stroke();
+        }
 
-            // 2. High-intensity core filament
+        // PASS 2: Draw all high-intensity core filaments
+        for (let i = 1; i < curveLength; i++) {
+            const c1 = curvePoints[i - 1];
+            const c2 = curvePoints[i];
+
+            const avgLife = (c1.lifeRatio + c2.lifeRatio) * 0.5;
+            if (avgLife <= 0) continue;
+
+            const ratio1 = c1.ratio;
+            const w1 = 3.6 * (1 - ratio1) + 0.4 * ratio1;
+            const w2 = 3.6 * (1 - c2.ratio) + 0.4 * c2.ratio;
+            const avgWidth = ((w1 + w2) * 0.5) * avgLife;
+
+            const coreOpacity = maxOpacity * avgLife * (1 - ratio1 * 0.7);
+
             ctx.beginPath();
             ctx.moveTo(c1.x, c1.y);
             ctx.lineTo(c2.x, c2.y);
             ctx.lineWidth = avgWidth;
-            ctx.lineCap = 'round';
             ctx.strokeStyle = `rgba(207, 171, 58, ${coreOpacity})`;
             ctx.stroke();
         }
@@ -807,7 +824,7 @@ document.addEventListener('DOMContentLoaded', () => {
             for (let p of mouseTrail.points) {
                 p.age++;
             }
-            mouseTrail.points = mouseTrail.points.filter(p => p.age < 15);
+            mouseTrail.points = mouseTrail.points.filter(p => p.age < 9); // Matches maxAge of 9 for optimal performance
 
             // Reset motion state for next frame calculation
             mouseTrail.isMoving = false;
@@ -833,7 +850,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 for (let p of trail.points) {
                     p.age++;
                 }
-                trail.points = trail.points.filter(p => p.age < 15);
+                trail.points = trail.points.filter(p => p.age < 9); // Matches maxAge of 9
 
                 trail.isMoving = false;
 
