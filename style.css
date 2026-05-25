@@ -52,7 +52,7 @@ body::after {
 
 /* Custom Weathered Scrollbar */
 ::-webkit-scrollbar {
-    width: 8px;
+    width: 12px;
 }
 ::-webkit-scrollbar-track {
     background: var(--bg-color);
@@ -61,7 +61,7 @@ body::after {
 ::-webkit-scrollbar-thumb {
     background: rgba(207, 171, 58, 0.35); /* Amber/gold ember */
     border-radius: 6px;
-    border: 2px solid var(--bg-color); /* Creates a padded look */
+    border: 3px solid var(--bg-color); /* Creates a padded look */
     transition: var(--transition);
 }
 ::-webkit-scrollbar-thumb:hover {
