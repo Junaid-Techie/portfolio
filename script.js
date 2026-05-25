@@ -66,7 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Handle initial visible elements on load
-    setTimeout(() => {
+    window.triggerInitialReveal = function() {
         fadeElements.forEach(element => {
             const rect = element.getBoundingClientRect();
             if (rect.top <= window.innerHeight) {
@@ -74,7 +74,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 revealOnScroll.unobserve(element);
             }
         });
-    }, 100);
+    };
+
+    // If there is no boot screen, trigger immediately. Otherwise, the boot screen will trigger it.
+    if (!document.getElementById('fedra-boot-screen')) {
+        setTimeout(window.triggerInitialReveal, 100);
+    }
 
     // --- Ambient Spore Canvas Builder (PS5 Home Screen Background Spores in TLOU Theme) ---
     const ambientCanvas = document.createElement('canvas');
@@ -1251,20 +1256,36 @@ document.addEventListener('DOMContentLoaded', () => {
             "WELCOME, OPERATIVE."
         ];
         
-        let textContent = "";
+        let currentString = "";
         let lineIndex = 0;
+        let charIndex = 0;
         
-        function typeLine() {
+        function typeChar() {
             if (lineIndex < bootSequence.length) {
-                textContent += bootSequence[lineIndex] + "\n";
-                bootText.textContent = textContent;
-                lineIndex++;
-                setTimeout(typeLine, 150 + Math.random() * 200); // Random delay for retro feel
+                const targetLine = bootSequence[lineIndex];
+                
+                if (charIndex < targetLine.length) {
+                    currentString += targetLine.charAt(charIndex);
+                    bootText.textContent = currentString;
+                    charIndex++;
+                    setTimeout(typeChar, 15 + Math.random() * 25); // Fast, mechanical character typing
+                } else {
+                    currentString += "\n";
+                    bootText.textContent = currentString;
+                    lineIndex++;
+                    charIndex = 0;
+                    setTimeout(typeChar, 180 + Math.random() * 250); // Pause briefly at end of line
+                }
             } else {
                 // Boot complete, hold for a moment then fade out
                 setTimeout(() => {
                     bootScreen.classList.add('hidden');
                     document.body.style.overflow = ''; // Restore scrolling
+                    
+                    // Trigger the sleek fade-up of the hero content right as the boot screen fades
+                    if (typeof window.triggerInitialReveal === 'function') {
+                        window.triggerInitialReveal();
+                    }
                     
                     // Remove from DOM after fade completes to free memory
                     setTimeout(() => {
@@ -1277,7 +1298,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         
         // Start boot sequence shortly after load
-        setTimeout(typeLine, 200);
+        setTimeout(typeChar, 300);
     }
 
     // 3. Spore Burst Micro-Interaction on Buttons
