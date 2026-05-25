@@ -497,14 +497,12 @@ document.addEventListener('DOMContentLoaded', () => {
     document.head.appendChild(cursorStyle);
 
     const ctx = canvas.getContext('2d');
-    let points = [];  // Array of { x, y, life }
     let spores = [];  // Drifting Firefly spore particles
     let isAnimating = false;
 
-    let targetX = null;  // Last known actual mouse/touch X
-    let targetY = null;  // Last known actual mouse/touch Y
-    let activeX = null;  // Elastic tracker X
-    let activeY = null;  // Elastic tracker Y
+    // Track previous mouse and touch coordinates to enable path interpolation
+    let prevMouse = { x: null, y: null };
+    const activeTouches = {}; // Map of touch ID -> { x, y }
 
     function resizeCanvas() {
         canvas.width = window.innerWidth;
@@ -516,175 +514,123 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('resize', resizeCanvas);
     resizeCanvas();
 
-    const handleMove = (clientX, clientY) => {
-        targetX = clientX;
-        targetY = clientY;
-        
+    function spawnSpore(x, y) {
+        spores.push({
+            x: x,
+            y: y,
+            vx: (Math.random() - 0.5) * 1.5,
+            vy: (Math.random() - 0.5) * 1.2 - 0.9, // Upward drifting bias
+            size: Math.random() * 2.4 + 1.2,
+            life: 1.0,
+            decay: Math.random() * 0.014 + 0.008
+        });
+
         if (!isAnimating) {
             isAnimating = true;
             requestAnimationFrame(animatePixels);
         }
-    };
+    }
 
+    // Mouse Tracking Event Listeners
     window.addEventListener('mousemove', (e) => {
-        handleMove(e.clientX, e.clientY);
-    });
+        const x = e.clientX;
+        const y = e.clientY;
 
-    // Highly reliable multi-target touch capture bound on both window and document
-    const handleTouch = (e) => {
-        if (e.touches && e.touches.length > 0) {
-            handleMove(e.touches[0].clientX, e.touches[0].clientY);
-        }
-    };
-    window.addEventListener('touchstart', handleTouch, { passive: true });
-    window.addEventListener('touchmove', handleTouch, { passive: true });
-    document.addEventListener('touchstart', handleTouch, { passive: true });
-    document.addEventListener('touchmove', handleTouch, { passive: true });
-
-    // Instantly reset positions upon touch release or drag lift
-    const handleEnd = () => {
-        targetX = null;
-        targetY = null;
-        activeX = null;
-        activeY = null;
-    };
-    window.addEventListener('mouseout', handleEnd);
-    window.addEventListener('touchend', handleEnd, { passive: true });
-    window.addEventListener('touchcancel', handleEnd, { passive: true });
-    document.addEventListener('touchend', handleEnd, { passive: true });
-    document.addEventListener('touchcancel', handleEnd, { passive: true });
-
-    function processMouseMovement() {
-        if (targetX === null || targetY === null) return;
-
-        // Smooth elastic spring tracking so the path is incredibly liquid and responsive
-        if (activeX === null || activeY === null) {
-            activeX = targetX;
-            activeY = targetY;
-        } else {
-            activeX += (targetX - activeX) * 0.28;
-            activeY += (targetY - activeY) * 0.28;
-        }
-
-        let shouldAdd = false;
-        if (points.length === 0) {
-            shouldAdd = true;
-        } else {
-            const lastPoint = points[points.length - 1];
-            const dx = activeX - lastPoint.x;
-            const dy = activeY - lastPoint.y;
+        if (prevMouse.x !== null && prevMouse.y !== null) {
+            const dx = x - prevMouse.x;
+            const dy = y - prevMouse.y;
             const dist = Math.sqrt(dx * dx + dy * dy);
 
             if (dist > 1.5) {
-                // If the pointer jumps instantly across tabs, reset to prevent long streaks
-                if (dist > 250) {
-                    points = [];
-                }
-                
-                // Path steps interpolation: guarantees a perfectly continuous and unbroken ribbon under rapid sweeps
-                if (dist > 8) {
-                    const steps = Math.floor(dist / 6);
-                    for (let j = 1; j < steps; j++) {
-                        const ratio = j / steps;
-                        points.push({
-                            x: lastPoint.x + dx * ratio,
-                            y: lastPoint.y + dy * ratio,
-                            life: 1.0
-                        });
+                // Interpolate along the mouse movement path to guarantee continuous spore generation without gaps
+                const steps = Math.max(1, Math.floor(dist / 8));
+                for (let j = 0; j <= steps; j++) {
+                    const ratio = j / steps;
+                    const interpX = prevMouse.x + dx * ratio;
+                    const interpY = prevMouse.y + dy * ratio;
+                    if (Math.random() > 0.35) {
+                        spawnSpore(interpX, interpY);
                     }
                 }
-                
-                shouldAdd = true;
+            }
+        } else {
+            spawnSpore(x, y);
+        }
+
+        prevMouse.x = x;
+        prevMouse.y = y;
+    });
+
+    window.addEventListener('mouseout', () => {
+        prevMouse.x = null;
+        prevMouse.y = null;
+    });
+
+    // Multi-Touch Event Listeners supporting multiple fingers concurrently
+    const handleTouchStart = (e) => {
+        for (let i = 0; i < e.touches.length; i++) {
+            const touch = e.touches[i];
+            activeTouches[touch.identifier] = { x: touch.clientX, y: touch.clientY };
+            spawnSpore(touch.clientX, touch.clientY);
+        }
+    };
+
+    const handleTouchMove = (e) => {
+        for (let i = 0; i < e.touches.length; i++) {
+            const touch = e.touches[i];
+            const id = touch.identifier;
+            const x = touch.clientX;
+            const y = touch.clientY;
+
+            const prev = activeTouches[id];
+            if (prev) {
+                const dx = x - prev.x;
+                const dy = y - prev.y;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+
+                if (dist > 1.5) {
+                    // Interpolate touch swipes path for dense, fluid multi-finger tracking
+                    const steps = Math.max(1, Math.floor(dist / 8));
+                    for (let j = 0; j <= steps; j++) {
+                        const ratio = j / steps;
+                        const interpX = prev.x + dx * ratio;
+                        const interpY = prev.y + dy * ratio;
+                        if (Math.random() > 0.35) {
+                            spawnSpore(interpX, interpY);
+                        }
+                    }
+                }
+            } else {
+                spawnSpore(x, y);
+            }
+
+            // Update registered coordinate
+            activeTouches[id] = { x: x, y: y };
+        }
+    };
+
+    const handleTouchEnd = (e) => {
+        const activeIds = Array.from(e.touches).map(t => t.identifier);
+        for (const id in activeTouches) {
+            if (!activeIds.includes(parseInt(id))) {
+                delete activeTouches[id];
             }
         }
+    };
 
-        if (shouldAdd) {
-            points.push({ x: activeX, y: activeY, life: 1.0 });
+    window.addEventListener('touchstart', handleTouchStart, { passive: true });
+    window.addEventListener('touchmove', handleTouchMove, { passive: true });
+    window.addEventListener('touchend', handleTouchEnd, { passive: true });
+    window.addEventListener('touchcancel', handleTouchEnd, { passive: true });
+    document.addEventListener('touchstart', handleTouchStart, { passive: true });
+    document.addEventListener('touchmove', handleTouchMove, { passive: true });
+    document.addEventListener('touchend', handleTouchEnd, { passive: true });
+    document.addEventListener('touchcancel', handleTouchEnd, { passive: true });
 
-            // Spawn floating spores along the exact historical path
-            if (Math.random() > 0.45) {
-                spores.push({
-                    x: activeX,
-                    y: activeY,
-                    vx: (Math.random() - 0.5) * 1.5,
-                    vy: (Math.random() - 0.5) * 1.2 - 0.8, // Drifts upward
-                    size: Math.random() * 2.4 + 1.2,
-                    life: 1.0,
-                    decay: Math.random() * 0.014 + 0.008
-                });
-            }
-        }
-    }
+    function animatePixels() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    function drawTrail() {
-        if (points.length < 2) return;
-
-        // 1. Soft wide glowing backdrop
-        for (let i = 1; i < points.length; i++) {
-            const p1 = points[i - 1];
-            const p2 = points[i];
-
-            const life = (p1.life + p2.life) / 2;
-            if (life <= 0.01) continue;
-
-            const size = 0.8 + life * 3.7;
-
-            ctx.beginPath();
-            ctx.moveTo(p1.x, p1.y);
-            ctx.lineTo(p2.x, p2.y);
-            ctx.strokeStyle = `rgba(207, 171, 58, ${life * 0.22})`;
-            ctx.lineWidth = size * 2.8;
-            ctx.lineCap = 'round';
-            ctx.lineJoin = 'round';
-            ctx.stroke();
-        }
-
-        // 2. High-contrast glowing golden core
-        for (let i = 1; i < points.length; i++) {
-            const p1 = points[i - 1];
-            const p2 = points[i];
-
-            const life = (p1.life + p2.life) / 2;
-            if (life <= 0.01) continue;
-
-            const size = 0.8 + life * 3.7;
-
-            ctx.beginPath();
-            ctx.moveTo(p1.x, p1.y);
-            ctx.lineTo(p2.x, p2.y);
-            ctx.strokeStyle = `rgba(207, 171, 58, ${life * 0.85})`;
-            ctx.lineWidth = size;
-            ctx.lineCap = 'round';
-            ctx.lineJoin = 'round';
-            ctx.stroke();
-
-            // 3. Hot white center core for maximum cinematic brilliance
-            if (life > 0.45) {
-                const hotCoreOpacity = (life - 0.45) / 0.55;
-                ctx.beginPath();
-                ctx.moveTo(p1.x, p1.y);
-                ctx.lineTo(p2.x, p2.y);
-                ctx.strokeStyle = `rgba(255, 255, 255, ${hotCoreOpacity * 0.95})`;
-                ctx.lineWidth = size * 0.4;
-                ctx.lineCap = 'round';
-                ctx.lineJoin = 'round';
-                ctx.stroke();
-            }
-        }
-    }
-
-    function updatePointsAndSpores() {
-        // Decay active path coordinates
-        for (let i = 0; i < points.length; i++) {
-            points[i].life -= 0.022; // Nice longer-lasting trail
-        }
-
-        // Shift out decayed coordinates from the tail
-        while (points.length > 0 && points[0].life <= 0) {
-            points.shift();
-        }
-
-        // Draw and update active firefly spores
+        // Update and draw active firefly spores
         for (let i = spores.length - 1; i >= 0; i--) {
             const s = spores[i];
             s.x += s.vx;
@@ -708,21 +654,8 @@ document.addEventListener('DOMContentLoaded', () => {
             ctx.fillStyle = `rgba(207, 171, 58, ${s.life * 0.15})`;
             ctx.fill();
         }
-    }
 
-    function animatePixels() {
-        processMouseMovement();
-
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-        drawTrail();
-        updatePointsAndSpores();
-
-        // Keep loop running if points or spores are still active and decaying, or if active positions are still catching up to target
-        const isSpringCatchingUp = targetX !== null && targetY !== null && activeX !== null && activeY !== null && 
-                                   (Math.abs(targetX - activeX) > 0.5 || Math.abs(targetY - activeY) > 0.5);
-
-        if (points.length > 0 || spores.length > 0 || isSpringCatchingUp) {
+        if (spores.length > 0) {
             requestAnimationFrame(animatePixels);
         } else {
             isAnimating = false;
