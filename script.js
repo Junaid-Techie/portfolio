@@ -480,11 +480,12 @@ document.addEventListener('DOMContentLoaded', () => {
     document.body.appendChild(canvas);
 
     // Custom SVG Cursor: Iconic Fireflies Emblem from The Last of Us, styled and colored in gold (#cfab3a) with a soft backing glow
+    // SINGLE-ENCODED FIX: Using "#cfab3a" directly instead of "%23cfab3a" so that encodeURIComponent encodes it correctly to "%23cfab3a" exactly once.
     const cursorSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="24" viewBox="0 0 1024 763" fill="none">
         <!-- Glow Backing -->
         <path fill="rgba(207, 171, 58, 0.22)" fill-rule="evenodd" d="M 584.0,259.0 L 582.0,260.0 L 581.0,270.0 L 577.0,284.0 L 571.0,297.0 L 567.0,303.0 L 554.0,316.0 L 548.0,320.0 L 536.0,325.0 L 535.0,752.0 L 537.0,752.0 L 546.0,736.0 L 546.0,734.0 L 554.0,721.0 L 576.0,679.0 L 577.0,402.0 L 583.0,409.0 L 632.0,479.0 L 637.0,485.0 L 639.0,485.0 L 611.0,397.0 L 608.0,391.0 L 589.0,333.0 L 590.0,327.0 L 696.0,403.0 L 698.0,403.0 L 698.0,401.0 Z M 445.0,259.0 L 440.0,264.0 L 332.0,399.0 L 331.0,403.0 L 333.0,403.0 L 433.0,331.0 L 440.0,330.0 L 390.0,482.0 L 390.0,485.0 L 393.0,484.0 L 450.0,403.0 L 453.0,403.0 L 453.0,680.0 L 473.0,716.0 L 473.0,718.0 L 481.0,731.0 L 487.0,744.0 L 489.0,746.0 L 491.0,751.0 L 494.0,752.0 L 493.0,325.0 L 484.0,322.0 L 476.0,317.0 L 461.0,302.0 L 452.0,285.0 L 448.0,272.0 L 447.0,262.0 Z M 533.0,164.0 L 693.0,335.0 L 714.0,335.0 L 832.0,277.0 L 832.0,256.0 L 575.0,155.0 L 575.0,134.0 L 692.0,160.0 L 696.0,162.0 L 709.0,164.0 L 878.0,204.0 L 906.0,205.0 L 1013.0,94.0 L 1014.0,90.0 L 1004.0,66.0 L 565.0,63.0 L 601.0,7.0 L 598.0,6.0 L 533.0,59.0 Z M 496.0,163.0 L 496.0,60.0 L 429.0,5.0 L 428.0,8.0 L 461.0,58.0 L 463.0,65.0 L 25.0,65.0 L 15.0,90.0 L 15.0,93.0 L 123.0,205.0 L 151.0,204.0 L 450.0,134.0 L 454.0,135.0 L 454.0,154.0 L 452.0,156.0 L 196.0,256.0 L 196.0,276.0 L 198.0,278.0 L 315.0,335.0 L 336.0,335.0 Z" />
         <!-- Sharp Foreground -->
-        <path fill="%23cfab3a" fill-rule="evenodd" d="M 584.0,259.0 L 582.0,260.0 L 581.0,270.0 L 577.0,284.0 L 571.0,297.0 L 567.0,303.0 L 554.0,316.0 L 548.0,320.0 L 536.0,325.0 L 535.0,752.0 L 537.0,752.0 L 546.0,736.0 L 546.0,734.0 L 554.0,721.0 L 576.0,679.0 L 577.0,402.0 L 583.0,409.0 L 632.0,479.0 L 637.0,485.0 L 639.0,485.0 L 611.0,397.0 L 608.0,391.0 L 589.0,333.0 L 590.0,327.0 L 696.0,403.0 L 698.0,403.0 L 698.0,401.0 Z M 445.0,259.0 L 440.0,264.0 L 332.0,399.0 L 331.0,403.0 L 333.0,403.0 L 433.0,331.0 L 440.0,330.0 L 390.0,482.0 L 390.0,485.0 L 393.0,484.0 L 450.0,403.0 L 453.0,403.0 L 453.0,680.0 L 473.0,716.0 L 473.0,718.0 L 481.0,731.0 L 487.0,744.0 L 489.0,746.0 L 491.0,751.0 L 494.0,752.0 L 493.0,325.0 L 484.0,322.0 L 476.0,317.0 L 461.0,302.0 L 452.0,285.0 L 448.0,272.0 L 447.0,262.0 Z M 533.0,164.0 L 693.0,335.0 L 714.0,335.0 L 832.0,277.0 L 832.0,256.0 L 575.0,155.0 L 575.0,134.0 L 692.0,160.0 L 696.0,162.0 L 709.0,164.0 L 878.0,204.0 L 906.0,205.0 L 1013.0,94.0 L 1014.0,90.0 L 1004.0,66.0 L 565.0,63.0 L 601.0,7.0 L 598.0,6.0 L 533.0,59.0 Z M 496.0,163.0 L 496.0,60.0 L 429.0,5.0 L 428.0,8.0 L 461.0,58.0 L 463.0,65.0 L 25.0,65.0 L 15.0,90.0 L 15.0,93.0 L 123.0,205.0 L 151.0,204.0 L 450.0,134.0 L 454.0,135.0 L 454.0,154.0 L 452.0,156.0 L 196.0,256.0 L 196.0,276.0 L 198.0,278.0 L 315.0,335.0 L 336.0,335.0 Z" />
+        <path fill="#cfab3a" fill-rule="evenodd" d="M 584.0,259.0 L 582.0,260.0 L 581.0,270.0 L 577.0,284.0 L 571.0,297.0 L 567.0,303.0 L 554.0,316.0 L 548.0,320.0 L 536.0,325.0 L 535.0,752.0 L 537.0,752.0 L 546.0,736.0 L 546.0,734.0 L 554.0,721.0 L 576.0,679.0 L 577.0,402.0 L 583.0,409.0 L 632.0,479.0 L 637.0,485.0 L 639.0,485.0 L 611.0,397.0 L 608.0,391.0 L 589.0,333.0 L 590.0,327.0 L 696.0,403.0 L 698.0,403.0 L 698.0,401.0 Z M 445.0,259.0 L 440.0,264.0 L 332.0,399.0 L 331.0,403.0 L 333.0,403.0 L 433.0,331.0 L 440.0,330.0 L 390.0,482.0 L 390.0,485.0 L 393.0,484.0 L 450.0,403.0 L 453.0,403.0 L 453.0,680.0 L 473.0,716.0 L 473.0,718.0 L 481.0,731.0 L 487.0,744.0 L 489.0,746.0 L 491.0,751.0 L 494.0,752.0 L 493.0,325.0 L 484.0,322.0 L 476.0,317.0 L 461.0,302.0 L 452.0,285.0 L 448.0,272.0 L 447.0,262.0 Z M 533.0,164.0 L 693.0,335.0 L 714.0,335.0 L 832.0,277.0 L 832.0,256.0 L 575.0,155.0 L 575.0,134.0 L 692.0,160.0 L 696.0,162.0 L 709.0,164.0 L 878.0,204.0 L 906.0,205.0 L 1013.0,94.0 L 1014.0,90.0 L 1004.0,66.0 L 565.0,63.0 L 601.0,7.0 L 598.0,6.0 L 533.0,59.0 Z M 496.0,163.0 L 496.0,60.0 L 429.0,5.0 L 428.0,8.0 L 461.0,58.0 L 463.0,65.0 L 25.0,65.0 L 15.0,90.0 L 15.0,93.0 L 123.0,205.0 L 151.0,204.0 L 450.0,134.0 L 454.0,135.0 L 454.0,154.0 L 452.0,156.0 L 196.0,256.0 L 196.0,276.0 L 198.0,278.0 L 315.0,335.0 L 336.0,335.0 Z" />
     </svg>`;
     const cursorUrl = `url("data:image/svg+xml,${encodeURIComponent(cursorSvg.replace(/\n\s*/g, ''))}") 16 12, auto`;
 
@@ -496,19 +497,14 @@ document.addEventListener('DOMContentLoaded', () => {
     document.head.appendChild(cursorStyle);
 
     const ctx = canvas.getContext('2d');
-    const numNodes = 28; // Highly detailed nodes for ultra-fluid winding ribbon
-    let nodes = [];
-    for (let i = 0; i < numNodes; i++) {
-        nodes.push({ x: 0, y: 0, vx: 0, vy: 0 });
-    }
-
+    let points = [];  // Array of { x, y, life }
     let spores = [];  // Drifting Firefly spore particles
     let isAnimating = false;
 
     let targetX = null;  // Last known actual mouse/touch X
     let targetY = null;  // Last known actual mouse/touch Y
-    let trailAlpha = 0.0;
-    let idleFrames = 0;
+    let activeX = null;  // Elastic tracker X
+    let activeY = null;  // Elastic tracker Y
 
     function resizeCanvas() {
         canvas.width = window.innerWidth;
@@ -523,8 +519,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const handleMove = (clientX, clientY) => {
         targetX = clientX;
         targetY = clientY;
-        idleFrames = 0;
-        trailAlpha = Math.min(1.0, trailAlpha + 0.15); // Quick fade-in when moving
         
         if (!isAnimating) {
             isAnimating = true;
@@ -551,6 +545,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const handleEnd = () => {
         targetX = null;
         targetY = null;
+        activeX = null;
+        activeY = null;
     };
     window.addEventListener('mouseout', handleEnd);
     window.addEventListener('touchend', handleEnd, { passive: true });
@@ -561,159 +557,113 @@ document.addEventListener('DOMContentLoaded', () => {
     function processMouseMovement() {
         if (targetX === null || targetY === null) return;
 
-        // Initialize all nodes to cursor position on first movement
-        if (nodes[0].x === 0 && nodes[0].y === 0) {
-            for (let i = 0; i < numNodes; i++) {
-                nodes[i].x = targetX;
-                nodes[i].y = targetY;
-                nodes[i].vx = 0;
-                nodes[i].vy = 0;
+        // Smooth elastic spring tracking so the path is incredibly liquid and responsive
+        if (activeX === null || activeY === null) {
+            activeX = targetX;
+            activeY = targetY;
+        } else {
+            activeX += (targetX - activeX) * 0.28;
+            activeY += (targetY - activeY) * 0.28;
+        }
+
+        let shouldAdd = false;
+        if (points.length === 0) {
+            shouldAdd = true;
+        } else {
+            const lastPoint = points[points.length - 1];
+            const dx = activeX - lastPoint.x;
+            const dy = activeY - lastPoint.y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+
+            if (dist > 1.5) {
+                // If the pointer jumps instantly across tabs, reset to prevent long streaks
+                if (dist > 250) {
+                    points = [];
+                }
+                
+                // Path steps interpolation: guarantees a perfectly continuous and unbroken ribbon under rapid sweeps
+                if (dist > 8) {
+                    const steps = Math.floor(dist / 6);
+                    for (let j = 1; j < steps; j++) {
+                        const ratio = j / steps;
+                        points.push({
+                            x: lastPoint.x + dx * ratio,
+                            y: lastPoint.y + dy * ratio,
+                            life: 1.0
+                        });
+                    }
+                }
+                
+                shouldAdd = true;
             }
         }
 
-        // Node 0 is the head: Eased toward target position for organic lag
-        nodes[0].x += (targetX - nodes[0].x) * 0.45;
-        nodes[0].y += (targetY - nodes[0].y) * 0.45;
+        if (shouldAdd) {
+            points.push({ x: activeX, y: activeY, life: 1.0 });
 
-        // Pull the rest of the nodes with physical spring damping
-        for (let i = 1; i < numNodes; i++) {
-            const prev = nodes[i - 1];
-            const curr = nodes[i];
-
-            // Taper spring tension and damping along the tail for premium lag-momentum
-            const tension = 0.55 - (i / numNodes) * 0.22;
-            const damping = 0.52 - (i / numNodes) * 0.15;
-
-            const dx = prev.x - curr.x;
-            const dy = prev.y - curr.y;
-
-            curr.vx += dx * tension;
-            curr.vy += dy * tension;
-            
-            // Subtle upward lift to make the tail of the ribbon drift slightly upward like warm smoke
-            curr.vy -= 0.012;
-
-            curr.vx *= damping;
-            curr.vy *= damping;
-
-            curr.x += curr.vx;
-            curr.y += curr.vy;
-        }
-
-        // Spawn floating spores along the path with slow drift
-        if (trailAlpha > 0.15 && Math.random() > 0.48) {
-            // Select a random node in the first half of the chain
-            const randIndex = Math.floor(Math.random() * (numNodes / 2));
-            const n = nodes[randIndex];
-            spores.push({
-                x: n.x,
-                y: n.y,
-                vx: (Math.random() - 0.5) * 1.5,
-                vy: (Math.random() - 0.5) * 1.2 - 0.8, // Drifts upward
-                size: Math.random() * 2.4 + 1.2,
-                life: 1.0,
-                decay: Math.random() * 0.014 + 0.008
-            });
+            // Spawn floating spores along the exact historical path
+            if (Math.random() > 0.45) {
+                spores.push({
+                    x: activeX,
+                    y: activeY,
+                    vx: (Math.random() - 0.5) * 1.5,
+                    vy: (Math.random() - 0.5) * 1.2 - 0.8, // Drifts upward
+                    size: Math.random() * 2.4 + 1.2,
+                    life: 1.0,
+                    decay: Math.random() * 0.014 + 0.008
+                });
+            }
         }
     }
 
     function drawTrail() {
-        if (nodes.length < 3 || trailAlpha <= 0.01) return;
+        if (points.length < 2) return;
 
-        // Connect head node (Node 0) to first segment
-        const headXc = (nodes[0].x + nodes[1].x) / 2;
-        const headYc = (nodes[0].y + nodes[1].y) / 2;
-        const headSize = 0.8 + trailAlpha * 4.2;
+        // 1. Soft wide glowing backdrop
+        for (let i = 1; i < points.length; i++) {
+            const p1 = points[i - 1];
+            const p2 = points[i];
 
-        // Head segment: atmospheric glow
-        ctx.beginPath();
-        ctx.moveTo(nodes[0].x, nodes[0].y);
-        ctx.lineTo(headXc, headYc);
-        ctx.strokeStyle = `rgba(207, 171, 58, ${trailAlpha * 0.18})`;
-        ctx.lineWidth = headSize * 2.8;
-        ctx.lineCap = 'round';
-        ctx.stroke();
+            const life = (p1.life + p2.life) / 2;
+            if (life <= 0.01) continue;
 
-        // Head segment: glowing core
-        ctx.beginPath();
-        ctx.moveTo(nodes[0].x, nodes[0].y);
-        ctx.lineTo(headXc, headYc);
-        ctx.strokeStyle = `rgba(207, 171, 58, ${trailAlpha * 0.85})`;
-        ctx.lineWidth = headSize;
-        ctx.lineCap = 'round';
-        ctx.stroke();
+            const size = 0.8 + life * 3.7;
 
-        // Head segment: hot center core
-        if (trailAlpha > 0.45) {
             ctx.beginPath();
-            ctx.moveTo(nodes[0].x, nodes[0].y);
-            ctx.lineTo(headXc, headYc);
-            ctx.strokeStyle = `rgba(255, 255, 255, ${(trailAlpha - 0.45) / 0.55 * 0.95})`;
-            ctx.lineWidth = headSize * 0.4;
-            ctx.lineCap = 'round';
-            ctx.stroke();
-        }
-
-        // Draw the rest of the glowing background aura (wide and low opacity)
-        for (let i = 1; i < nodes.length - 1; i++) {
-            const p1 = nodes[i];
-            const p2 = nodes[i + 1];
-            const xc = (p1.x + p2.x) / 2;
-            const yc = (p1.y + p2.y) / 2;
-            const prevXc = (nodes[i - 1].x + p1.x) / 2;
-            const prevYc = (nodes[i - 1].y + p1.y) / 2;
-
-            // age goes from 1.0 (head) to 0.0 (tail)
-            const ratio = (nodes.length - i) / nodes.length; 
-            const age = ratio * trailAlpha;
-
-            if (age <= 0.01) continue;
-
-            const size = 0.8 + age * 4.2;
-
-            // Wide golden atmospheric glow
-            ctx.beginPath();
-            ctx.moveTo(prevXc, prevYc);
-            ctx.quadraticCurveTo(p1.x, p1.y, xc, yc);
-            ctx.strokeStyle = `rgba(207, 171, 58, ${age * 0.16})`;
+            ctx.moveTo(p1.x, p1.y);
+            ctx.lineTo(p2.x, p2.y);
+            ctx.strokeStyle = `rgba(207, 171, 58, ${life * 0.22})`;
             ctx.lineWidth = size * 2.8;
             ctx.lineCap = 'round';
             ctx.lineJoin = 'round';
             ctx.stroke();
         }
 
-        // Draw the main glowing core
-        for (let i = 1; i < nodes.length - 1; i++) {
-            const p1 = nodes[i];
-            const p2 = nodes[i + 1];
-            const xc = (p1.x + p2.x) / 2;
-            const yc = (p1.y + p2.y) / 2;
-            const prevXc = (nodes[i - 1].x + p1.x) / 2;
-            const prevYc = (nodes[i - 1].y + p1.y) / 2;
+        // 2. High-contrast glowing golden core
+        for (let i = 1; i < points.length; i++) {
+            const p1 = points[i - 1];
+            const p2 = points[i];
 
-            const ratio = (nodes.length - i) / nodes.length;
-            const age = ratio * trailAlpha;
+            const life = (p1.life + p2.life) / 2;
+            if (life <= 0.01) continue;
 
-            if (age <= 0.01) continue;
+            const size = 0.8 + life * 3.7;
 
-            const size = 0.8 + age * 4.2;
-
-            // Core glowing line
             ctx.beginPath();
-            ctx.moveTo(prevXc, prevYc);
-            ctx.quadraticCurveTo(p1.x, p1.y, xc, yc);
-            ctx.strokeStyle = `rgba(207, 171, 58, ${age * 0.85})`;
+            ctx.moveTo(p1.x, p1.y);
+            ctx.lineTo(p2.x, p2.y);
+            ctx.strokeStyle = `rgba(207, 171, 58, ${life * 0.85})`;
             ctx.lineWidth = size;
             ctx.lineCap = 'round';
             ctx.lineJoin = 'round';
             ctx.stroke();
 
-            // Ultra-bright hot center core
-            if (age > 0.45) {
-                const hotCoreOpacity = (age - 0.45) / 0.55;
+            // 3. Hot white center core for maximum cinematic brilliance
+            if (life > 0.45) {
+                const hotCoreOpacity = (life - 0.45) / 0.55;
                 ctx.beginPath();
-                ctx.moveTo(prevXc, prevYc);
-                ctx.quadraticCurveTo(p1.x, p1.y, xc, yc);
+                ctx.moveTo(p1.x, p1.y);
+                ctx.lineTo(p2.x, p2.y);
                 ctx.strokeStyle = `rgba(255, 255, 255, ${hotCoreOpacity * 0.95})`;
                 ctx.lineWidth = size * 0.4;
                 ctx.lineCap = 'round';
@@ -724,6 +674,16 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function updatePointsAndSpores() {
+        // Decay active path coordinates
+        for (let i = 0; i < points.length; i++) {
+            points[i].life -= 0.022; // Nice longer-lasting trail
+        }
+
+        // Shift out decayed coordinates from the tail
+        while (points.length > 0 && points[0].life <= 0) {
+            points.shift();
+        }
+
         // Draw and update active firefly spores
         for (let i = spores.length - 1; i >= 0; i--) {
             const s = spores[i];
@@ -753,40 +713,16 @@ document.addEventListener('DOMContentLoaded', () => {
     function animatePixels() {
         processMouseMovement();
 
-        // Increment idle frames if mouse is stationary
-        if (targetX !== null && targetY !== null) {
-            const distToTarget = Math.sqrt(Math.pow(targetX - nodes[0].x, 2) + Math.pow(targetY - nodes[0].y, 2));
-            if (distToTarget < 2.0) {
-                idleFrames++;
-            } else {
-                idleFrames = 0;
-                trailAlpha = Math.min(1.0, trailAlpha + 0.08);
-            }
-        } else {
-            idleFrames++;
-        }
-
-        // Decay trail alpha when idle
-        if (idleFrames > 12) {
-            trailAlpha -= 0.04;
-            if (trailAlpha < 0.0) trailAlpha = 0.0;
-        }
-
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
         drawTrail();
         updatePointsAndSpores();
 
-        // Keep animating if trail is still visible, spores are active, or nodes are still moving
-        let isMoving = false;
-        if (nodes.length > 0) {
-            const tailDist = Math.sqrt(Math.pow(nodes[0].x - nodes[nodes.length - 1].x, 2) + Math.pow(nodes[0].y - nodes[nodes.length - 1].y, 2));
-            if (tailDist > 1.5) {
-                isMoving = true;
-            }
-        }
+        // Keep loop running if points or spores are still active and decaying, or if active positions are still catching up to target
+        const isSpringCatchingUp = targetX !== null && targetY !== null && activeX !== null && activeY !== null && 
+                                   (Math.abs(targetX - activeX) > 0.5 || Math.abs(targetY - activeY) > 0.5);
 
-        if (trailAlpha > 0.0 || spores.length > 0 || isMoving) {
+        if (points.length > 0 || spores.length > 0 || isSpringCatchingUp) {
             requestAnimationFrame(animatePixels);
         } else {
             isAnimating = false;
