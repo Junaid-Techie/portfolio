@@ -50,19 +50,22 @@ body::after {
     z-index: 50; /* Lowered from 9999 to stay below modals and nav mobile menus */
 }
 
-/* Custom Scrollbar */
+/* Custom Weathered Scrollbar */
 ::-webkit-scrollbar {
-    width: 10px;
+    width: 12px;
 }
 ::-webkit-scrollbar-track {
     background: var(--bg-color);
+    border-left: 1px solid rgba(207, 171, 58, 0.05);
 }
 ::-webkit-scrollbar-thumb {
-    background: #334155;
-    border-radius: 5px;
+    background: rgba(207, 171, 58, 0.35); /* Amber/gold ember */
+    border-radius: 6px;
+    border: 3px solid var(--bg-color); /* Creates a padded look */
+    transition: var(--transition);
 }
 ::-webkit-scrollbar-thumb:hover {
-    background: var(--primary);
+    background: rgba(207, 171, 58, 0.7);
 }
 
 /* Custom Text Selection */
@@ -255,20 +258,49 @@ ul {
     background: linear-gradient(90deg, var(--glass-border), transparent);
 }
 
-/* Glassmorphism utility */
+/* Glassmorphism utility with Flashlight Hover Effect */
 .glass-card {
     background: var(--glass-bg);
     border: 1px solid var(--glass-border);
     border-radius: 16px;
     padding: 2rem;
     transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Flashlight Beam Hover Effect (Variables updated via JS) */
+.glass-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(
+        600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), 
+        rgba(207, 171, 58, 0.06),
+        transparent 40%
+    );
+    opacity: 0;
+    transition: opacity 0.5s;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.glass-card > * {
+    position: relative;
+    z-index: 1; /* Keep content above flashlight beam */
+}
+
+.glass-card:hover::before {
+    opacity: 1;
 }
 
 .glass-card:hover {
-    background: var(--glass-hover);
     border-color: rgba(207, 171, 58, 0.35); /* Warm weathered brass glow */
     transform: translateY(-5px);
-    box-shadow: 0 10px 30px rgba(74, 90, 65, 0.2); /* Warm mossy shadow */
+    box-shadow: 0 10px 30px rgba(5, 8, 15, 0.5); /* Deep shadow */
 }
 
 /* Minimalist List (Side Quests - Inspired by Amyxhsieh) */
@@ -2147,5 +2179,73 @@ ul {
     box-sizing: border-box;
 }
 
+/* FEDRA Terminal Boot Sequence */
+.fedra-boot-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: #020305;
+    z-index: 99999;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    padding: 3rem;
+    font-family: 'Courier New', Courier, monospace;
+    color: var(--primary);
+    overflow: hidden;
+    transition: opacity 0.8s ease-out, visibility 0.8s ease-out;
+}
 
+.fedra-boot-screen.hidden {
+    opacity: 0;
+    visibility: hidden;
+}
 
+.fedra-scanlines {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: linear-gradient(
+        to bottom,
+        rgba(255, 255, 255, 0),
+        rgba(255, 255, 255, 0) 50%,
+        rgba(0, 0, 0, 0.2) 50%,
+        rgba(0, 0, 0, 0.2)
+    );
+    background-size: 100% 4px;
+    pointer-events: none;
+    z-index: 2;
+}
+
+.fedra-terminal-content {
+    position: relative;
+    z-index: 3;
+    font-size: 1.1rem;
+    line-height: 1.8;
+    text-shadow: 0 0 5px var(--primary-glow);
+    white-space: pre-wrap;
+}
+
+.fedra-terminal-content::after {
+    content: '_';
+    animation: blinkCursor 1s step-end infinite;
+}
+
+@keyframes blinkCursor {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+}
+
+/* Cinematic Image Treatment */
+.cinematic-img {
+    filter: sepia(0.4) contrast(1.1) brightness(0.9) saturate(0.8);
+    transition: filter 0.5s ease;
+}
+
+.cinematic-img:hover {
+    filter: sepia(0) contrast(1) brightness(1) saturate(1);
+}

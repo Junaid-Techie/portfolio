@@ -28,6 +28,12 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <!-- FEDRA Terminal Boot Sequence Overlay -->
+    <div id="fedra-boot-screen" class="fedra-boot-screen">
+        <div class="fedra-scanlines"></div>
+        <div class="fedra-terminal-content" id="fedra-text"></div>
+    </div>
+
     <!-- Scroll Progress Indicator -->
     <div class="scroll-progress-bar" id="scrollProgress"></div>
 
@@ -153,7 +159,7 @@
             <h3 class="section-title fade-up">About Me</h3>
             <div class="about-content fade-up">
                 <div class="about-text">
-                    <img src="profile.jpg" alt="Junaid Ahmed Mohammed" loading="lazy" style="float: left; width: 180px; height: 180px; object-fit: cover; border-radius: 16px; border: 2px solid var(--glass-border); box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3); margin: 0 2rem 1.5rem 0; background: var(--glass-bg);">
+                    <img src="profile.jpg" alt="Junaid Ahmed Mohammed" class="cinematic-img" loading="lazy" style="float: left; width: 180px; height: 180px; object-fit: cover; border-radius: 16px; border: 2px solid var(--glass-border); box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3); margin: 0 2rem 1.5rem 0; background: var(--glass-bg);">
                     <p>
                         I grew up fascinated by systems &mdash; how things connect, how information flows, and how the right structure can turn noise into clarity. That curiosity led me into data engineering, where I've spent the last 5+ years building the kind of <strong>reliable, scalable data platforms</strong> that let teams stop worrying about the pipes and start focusing on what the data is actually telling them.
                     </p>

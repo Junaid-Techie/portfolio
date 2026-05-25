@@ -1215,5 +1215,92 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // Start the loop after a 3s initial delay
         setTimeout(appendTerminalLine, 3000);
+    } // End of retro terminal
+
+    // ----------------------------------------------------
+    // Phase 9: Professional TLOU Enhancements
+    // ----------------------------------------------------
+
+    // 1. Interactive "Flashlight" Hover on Cards
+    const glassCards = document.querySelectorAll('.glass-card');
+    glassCards.forEach(card => {
+        card.addEventListener('mousemove', (e) => {
+            const rect = card.getBoundingClientRect();
+            // Calculate mouse position relative to the card, as a percentage
+            const x = ((e.clientX - rect.left) / rect.width) * 100;
+            const y = ((e.clientY - rect.top) / rect.height) * 100;
+            
+            card.style.setProperty('--mouse-x', `${x}%`);
+            card.style.setProperty('--mouse-y', `${y}%`);
+        }, { passive: true });
+    });
+
+    // 2. FEDRA Terminal Boot Sequence Overlay
+    const bootScreen = document.getElementById('fedra-boot-screen');
+    const bootText = document.getElementById('fedra-text');
+    
+    if (bootScreen && bootText) {
+        // Prevent scrolling while booting
+        document.body.style.overflow = 'hidden';
+        
+        const bootSequence = [
+            "INITIALIZING FEDRA MAINFRAME...",
+            "VERIFYING LOCAL NODE INTEGRITY... [OK]",
+            "DECRYPTING FIREFLY ARCHIVES...",
+            "PIPELINE SYNCS: ESTABLISHED",
+            "WELCOME, OPERATIVE."
+        ];
+        
+        let textContent = "";
+        let lineIndex = 0;
+        
+        function typeLine() {
+            if (lineIndex < bootSequence.length) {
+                textContent += bootSequence[lineIndex] + "\n";
+                bootText.textContent = textContent;
+                lineIndex++;
+                setTimeout(typeLine, 150 + Math.random() * 200); // Random delay for retro feel
+            } else {
+                // Boot complete, hold for a moment then fade out
+                setTimeout(() => {
+                    bootScreen.classList.add('hidden');
+                    document.body.style.overflow = ''; // Restore scrolling
+                    
+                    // Remove from DOM after fade completes to free memory
+                    setTimeout(() => {
+                        if (bootScreen.parentNode) {
+                            bootScreen.parentNode.removeChild(bootScreen);
+                        }
+                    }, 800);
+                }, 600);
+            }
+        }
+        
+        // Start boot sequence shortly after load
+        setTimeout(typeLine, 200);
     }
+
+    // 3. Spore Burst Micro-Interaction on Buttons
+    const primaryBtns = document.querySelectorAll('.btn-primary');
+    primaryBtns.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            // Ensure spawnSpore is available (it should be since we are in the same scope)
+            if (typeof spawnSpore === 'function' && typeof requestAnimationFrame === 'function') {
+                const burstCount = 12;
+                for (let i = 0; i < burstCount; i++) {
+                    // Slight randomization around the click coordinate
+                    const offsetX = (Math.random() - 0.5) * 20;
+                    const offsetY = (Math.random() - 0.5) * 20;
+                    spawnSpore(e.clientX + offsetX, e.clientY + offsetY);
+                }
+                
+                // Wake up animation loop if it was asleep
+                if (typeof isAnimating !== 'undefined' && !isAnimating) {
+                    isAnimating = true;
+                    requestAnimationFrame(animatePixels); // Requires animatePixels to be in scope
+                }
+            }
+        });
+    });
+
 });
