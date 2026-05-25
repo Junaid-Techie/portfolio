@@ -414,19 +414,31 @@ ul {
     width: 32px;
     height: 24px;
     color: #eab308 !important; /* Yellow/Gold */
-    animation: fireflyPulse 4s ease-in-out infinite alternate;
+    animation: fireflyFloat 6s ease-in-out infinite;
+    transform-origin: center;
     will-change: transform, opacity;
 }
 
-@keyframes fireflyPulse {
-    0% { opacity: 0.3; transform: scale(0.95); }
-    100% { opacity: 1; transform: scale(1.05); }
+@keyframes fireflyFloat {
+    0%, 100% { 
+        transform: translateY(0) rotate(0deg); 
+        opacity: 0.4; 
+    }
+    25% { 
+        transform: translateY(-3px) rotate(-3deg); 
+        opacity: 0.7; 
+    }
+    75% { 
+        transform: translateY(2px) rotate(3deg); 
+        opacity: 1; 
+    }
 }
 
 .tlou-wolf {
     width: 32px;
     height: 32px;
     color: var(--text-muted);
+    margin-left: 1rem; /* Clear space between Firefly and Wolf logo */
     animation: wolfFloat 6s ease-in-out infinite alternate;
     transform-origin: center;
     will-change: transform, opacity;
