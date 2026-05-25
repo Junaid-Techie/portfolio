@@ -91,7 +91,6 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
     background: radial-gradient(circle, rgba(207, 171, 58, 0.16) 0%, rgba(5, 8, 15, 0) 70%);
     border-radius: 50%;
     z-index: -2;
-    filter: blur(80px);
     animation: auraShiftGold 32s ease-in-out infinite alternate;
     will-change: transform, opacity;
     backface-visibility: hidden;
@@ -107,7 +106,6 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
     background: radial-gradient(circle, rgba(115, 140, 102, 0.22) 0%, rgba(5, 8, 15, 0) 75%);
     border-radius: 50%;
     z-index: -2;
-    filter: blur(100px);
     animation: auraShiftMoss 40s ease-in-out infinite alternate;
     will-change: transform, opacity;
     backface-visibility: hidden;
@@ -418,12 +416,12 @@ ul {
     height: 24px;
     color: #eab308 !important; /* Yellow/Gold */
     animation: fireflyPulse 4s ease-in-out infinite alternate;
-    filter: drop-shadow(0 0 6px rgba(234, 179, 8, 0.65));
+    will-change: transform, opacity;
 }
 
 @keyframes fireflyPulse {
-    0% { opacity: 0.2; filter: drop-shadow(0 0 2px rgba(234, 179, 8, 0.2)); transform: scale(0.95); }
-    100% { opacity: 1; filter: drop-shadow(0 0 12px rgba(234, 179, 8, 0.9)); transform: scale(1.05); }
+    0% { opacity: 0.3; transform: scale(0.95); }
+    100% { opacity: 1; transform: scale(1.05); }
 }
 
 .tlou-wolf {
@@ -432,11 +430,12 @@ ul {
     color: var(--text-muted);
     animation: wolfFloat 6s ease-in-out infinite alternate;
     transform-origin: center;
+    will-change: transform, opacity;
 }
 
 @keyframes wolfFloat {
-    0% { transform: translateY(0) rotate(0deg); opacity: 0.6; filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.1)); }
-    100% { transform: translateY(-3px) rotate(2deg); opacity: 1; filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.4)); }
+    0% { transform: translateY(0) rotate(0deg); opacity: 0.6; }
+    100% { transform: translateY(-3px) rotate(2deg); opacity: 1; }
 }
 
 .nav-links {
