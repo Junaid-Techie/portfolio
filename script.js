@@ -680,20 +680,82 @@ document.addEventListener('DOMContentLoaded', () => {
         if (points.length < 2) return;
 
         const maxAge = 15;
-        const maxOpacity = 0.85; // Bright, luminous shooting star head
+        const maxOpacity = 0.85;
 
-        for (let i = 1; i < points.length; i++) {
-            const p1 = points[i - 1];
-            const p2 = points[i];
+        // Pad the points array to ensure Catmull-Rom spline can interpolate all segments
+        const p = [];
+        p.push(points[0]); // Duplicate head for tangent
+        for (let i = 0; i < points.length; i++) {
+            p.push(points[i]);
+        }
+        p.push(points[points.length - 1]); // Duplicate tail for tangent
 
-            const ratio1 = (i - 1) / points.length;
-            const ratio2 = i / points.length;
+        // We will generate a list of interpolated curve points
+        const curvePoints = [];
+        
+        for (let i = 1; i < p.length - 2; i++) {
+            const p0 = p[i - 1];
+            const p1 = p[i];
+            const p2 = p[i + 1];
+            const p3 = p[i + 2];
 
-            const lifeRatio1 = 1 - (p1.age / maxAge);
-            const lifeRatio2 = 1 - (p2.age / maxAge);
-            const avgLife = (lifeRatio1 + lifeRatio2) / 2;
+            // Number of subdivisions per segment
+            const steps = 8;
+            for (let j = 0; j < steps; j++) {
+                const t = j / steps;
+                const t2 = t * t;
+                const t3 = t2 * t;
 
+                // Catmull-Rom formula
+                const x = 0.5 * (
+                    (2 * p1.x) +
+                    (-p0.x + p2.x) * t +
+                    (2 * p0.x - 5 * p1.x + 4 * p2.x - p3.x) * t2 +
+                    (-p0.x + 3 * p1.x - 3 * p2.x + p3.x) * t3
+                );
+                const y = 0.5 * (
+                    (2 * p1.y) +
+                    (-p0.y + p2.y) * t +
+                    (2 * p0.y - 5 * p1.y + 4 * p2.y - p3.y) * t2 +
+                    (-p0.y + 3 * p1.y - 3 * p2.y + p3.y) * t3
+                );
+
+                // Interpolate age and index ratio
+                const segmentIndex = i - 1; // 0 to points.length - 2
+                const globalIndex = segmentIndex + t;
+                const ratio = globalIndex / (points.length - 1);
+
+                const age = p1.age * (1 - t) + p2.age * t;
+                const lifeRatio = 1 - (age / maxAge);
+
+                if (lifeRatio > 0) {
+                    curvePoints.push({ x, y, ratio, lifeRatio });
+                }
+            }
+        }
+
+        // Also add the very last point
+        const lastPt = points[points.length - 1];
+        const lastLife = 1 - (lastPt.age / maxAge);
+        if (lastLife > 0) {
+            curvePoints.push({
+                x: lastPt.x,
+                y: lastPt.y,
+                ratio: 1.0,
+                lifeRatio: lastLife
+            });
+        }
+
+        // Now draw the curve using the dense interpolated points list
+        for (let i = 1; i < curvePoints.length; i++) {
+            const c1 = curvePoints[i - 1];
+            const c2 = curvePoints[i];
+
+            const avgLife = (c1.lifeRatio + c2.lifeRatio) / 2;
             if (avgLife <= 0) continue;
+
+            const ratio1 = c1.ratio;
+            const ratio2 = c2.ratio;
 
             // Width tapers from 3.6px at the head down to 0.4px at the tail
             const w1 = 3.6 * (1 - ratio1) + 0.4 * ratio1;
@@ -705,8 +767,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // 1. Soft atmospheric shooting star glow backing
             ctx.beginPath();
-            ctx.moveTo(p1.x, p1.y);
-            ctx.lineTo(p2.x, p2.y);
+            ctx.moveTo(c1.x, c1.y);
+            ctx.lineTo(c2.x, c2.y);
             ctx.lineWidth = avgWidth * 5.0;
             ctx.lineCap = 'round';
             ctx.strokeStyle = `rgba(207, 171, 58, ${glowOpacity})`;
@@ -714,8 +776,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // 2. High-intensity core filament
             ctx.beginPath();
-            ctx.moveTo(p1.x, p1.y);
-            ctx.lineTo(p2.x, p2.y);
+            ctx.moveTo(c1.x, c1.y);
+            ctx.lineTo(c2.x, c2.y);
             ctx.lineWidth = avgWidth;
             ctx.lineCap = 'round';
             ctx.strokeStyle = `rgba(207, 171, 58, ${coreOpacity})`;
