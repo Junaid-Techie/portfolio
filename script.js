@@ -676,6 +676,46 @@ document.addEventListener('DOMContentLoaded', () => {
     document.addEventListener('touchend', handleTouchEnd, { passive: true });
     document.addEventListener('touchcancel', handleTouchEnd, { passive: true });
 
+    // Scroll coordinate compensation: keeps active trail points and spores locked to scrolling page content
+    let lastScrollY = window.scrollY;
+    window.addEventListener('scroll', () => {
+        const currentScrollY = window.scrollY;
+        const dScrollY = currentScrollY - lastScrollY;
+        lastScrollY = currentScrollY;
+
+        if (dScrollY !== 0) {
+            // Shift active spores
+            const sporesLength = spores.length;
+            for (let i = 0; i < sporesLength; i++) {
+                spores[i].y -= dScrollY;
+            }
+
+            // Shift active mouse trail points
+            const mtPointsLength = mouseTrail.points.length;
+            for (let i = 0; i < mtPointsLength; i++) {
+                mouseTrail.points[i].y -= dScrollY;
+            }
+            if (mouseTrail.leadY !== null) mouseTrail.leadY -= dScrollY;
+            if (mouseTrail.targetY !== null) mouseTrail.targetY -= dScrollY;
+
+            // Shift active touch trail points
+            for (const id in activeTouchTrails) {
+                const trail = activeTouchTrails[id];
+                const tPointsLength = trail.points.length;
+                for (let i = 0; i < tPointsLength; i++) {
+                    trail.points[i].y -= dScrollY;
+                }
+                if (trail.leadY !== null) trail.leadY -= dScrollY;
+                if (trail.targetY !== null) trail.targetY -= dScrollY;
+            }
+
+            if (!isAnimating) {
+                isAnimating = true;
+                requestAnimationFrame(animatePixels);
+            }
+        }
+    }, { passive: true });
+
     function drawShootingStarTrail(points) {
         if (points.length < 2) return;
 
