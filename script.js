@@ -680,58 +680,38 @@ document.addEventListener('DOMContentLoaded', () => {
     document.addEventListener('touchcancel', handleTouchEnd, { passive: true });
 
     function drawTrailRibbon(points, speed) {
-        if (points.length < 2) return;
+        if (points.length < 1) return;
 
         // Fades out completely when speed is near 0
         const velocityFactor = Math.min(1, speed / 3.0);
         if (velocityFactor < 0.01) return;
 
-        const maxOpacity = 0.48; // Max core opacity requested
-        const glowOpacityMax = 0.08; // Max glow opacity requested
+        const maxOpacity = 0.65; // High visibility core opacity
         const maxAge = 15;
 
-        for (let i = 1; i < points.length; i++) {
-            const p1 = points[i - 1];
-            const p2 = points[i];
+        for (let i = 0; i < points.length; i++) {
+            const p = points[i];
+            const ratio = i / points.length; // 0 = head, 1 = tail
+            const lifeRatio = 1 - (p.age / maxAge);
 
-            // Ratios along the trail
-            const ratio1 = (i - 1) / points.length;
-            const ratio2 = i / points.length;
+            if (lifeRatio <= 0) continue;
 
-            const age1 = p1.age;
-            const age2 = p2.age;
+            // Beautiful, thicker discrete spots: 5.5px at the head tapering down to 1.5px
+            const size = (5.5 * (1 - ratio) + 1.5 * ratio) * lifeRatio;
+            const coreOpacity = maxOpacity * lifeRatio * velocityFactor;
+            const glowOpacity = coreOpacity * 0.16;
 
-            const lifeRatio1 = 1 - (age1 / maxAge);
-            const lifeRatio2 = 1 - (age2 / maxAge);
-            const avgLife = (lifeRatio1 + lifeRatio2) / 2;
-
-            if (avgLife <= 0) continue;
-
-            // Width tapers from 1.5px at the head to 0.4px at the tail
-            const w1 = 1.5 * (1 - ratio1) + 0.4 * ratio1;
-            const w2 = 1.5 * (1 - ratio2) + 0.4 * ratio2;
-            const avgWidth = (w1 + w2) / 2;
-
-            const coreOpacity = maxOpacity * avgLife * velocityFactor;
-            const glowOpacity = glowOpacityMax * avgLife * velocityFactor;
-
-            // 1. Draw glowing background
+            // 1. Soft atmospheric glow backing
             ctx.beginPath();
-            ctx.moveTo(p1.x, p1.y);
-            ctx.lineTo(p2.x, p2.y);
-            ctx.lineWidth = avgWidth * 4.5;
-            ctx.lineCap = 'round';
-            ctx.strokeStyle = `rgba(207, 171, 58, ${glowOpacity})`;
-            ctx.stroke();
+            ctx.arc(p.x, p.y, size * 2.8, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(207, 171, 58, ${glowOpacity})`;
+            ctx.fill();
 
-            // 2. Draw core filament
+            // 2. Core bright circular ember spot
             ctx.beginPath();
-            ctx.moveTo(p1.x, p1.y);
-            ctx.lineTo(p2.x, p2.y);
-            ctx.lineWidth = avgWidth;
-            ctx.lineCap = 'round';
-            ctx.strokeStyle = `rgba(207, 171, 58, ${coreOpacity})`;
-            ctx.stroke();
+            ctx.arc(p.x, p.y, size, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(207, 171, 58, ${coreOpacity})`;
+            ctx.fill();
         }
     }
 
