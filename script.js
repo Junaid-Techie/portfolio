@@ -705,10 +705,7 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('touchmove', handleTouchMove, { passive: true });
     window.addEventListener('touchend', handleTouchEnd, { passive: true });
     window.addEventListener('touchcancel', handleTouchEnd, { passive: true });
-    document.addEventListener('touchstart', handleTouchStart, { passive: true });
-    document.addEventListener('touchmove', handleTouchMove, { passive: true });
-    document.addEventListener('touchend', handleTouchEnd, { passive: true });
-    document.addEventListener('touchcancel', handleTouchEnd, { passive: true });
+    // Note: listeners registered on window only — registering on document too would fire handlers twice
 
     // Break the trail completely on scroll to prevent streaks, and don't shift particles abruptly
     window.addEventListener('scroll', () => {
@@ -944,8 +941,7 @@ document.addEventListener('DOMContentLoaded', () => {
             ctx.clearRect(0, 0, canvas.width, canvas.height); // Final clear
         }
     }
-
-    animatePixels();
+    // animatePixels() is started on-demand via spawnSpore() and mousemove — no idle loop needed
 
     // Contact Form Validation and Submission
     const contactForm = document.querySelector('.contact-form');
