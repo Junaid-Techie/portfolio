@@ -96,46 +96,42 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const actx = ambientCanvas.getContext('2d');
     let ambientParticles = [];
-    const maxAmbientParticles = 550; // Massively raised density for a rich, immersive PS5 wave
-    let wavePhase = 0; // Wave timing index for ambient auroral ribbons and god rays
+    const maxAmbientParticles = 320; // Optimized count for PS5-style sparse premium look
+    let wavePhase = 0; // Global time phase
 
-    // Stable viewport dimensions to prevent layout jumping on mobile scroll (e.g. from address bar hiding/showing)
+    // Stable viewport dimensions — decoupled from scroll-triggered resize events
     let referenceWidth = window.innerWidth;
     let referenceHeight = window.innerHeight;
 
-    // High-performance offscreen bokeh templates to avoid heavy canvas blur filtering on every frame
+    // Pre-rendered warm-gold bokeh orb templates — the PS5 signature visual element
     const bokehTemplates = {};
     function createBokehTemplates() {
+        // Only warm gold/cream tones — exactly like PS5 homescreen
         const colors = [
-            { name: 'gold', color: 'rgba(207, 171, 58, 0.42)' },
-            { name: 'green', color: 'rgba(115, 140, 102, 0.32)' }
+            { name: 'gold_bright', color: 'rgba(255, 235, 170, 0.50)' },
+            { name: 'gold_warm',   color: 'rgba(220, 185, 100, 0.45)' },
+            { name: 'gold_deep',   color: 'rgba(207, 171,  58, 0.40)' }
         ];
-        
+        // Multiple sizes for photographic depth of field — large orbs are KEY
+        const sizes = [
+            { name: 'xl',     radius: 38, blur: 28 },
+            { name: 'large',  radius: 22, blur: 16 },
+            { name: 'medium', radius: 12, blur: 10 },
+            { name: 'small',  radius:  5, blur:  5 }
+        ];
         colors.forEach(c => {
-            // We'll create small, medium, and large pre-blurred bokeh canvases
-            const sizes = [
-                { name: 'large', radius: 24, blur: 18 },
-                { name: 'medium', radius: 12, blur: 10 },
-                { name: 'small', radius: 6, blur: 6 }
-            ];
-            
             sizes.forEach(s => {
                 const offscreen = document.createElement('canvas');
-                const pad = (s.radius + s.blur) * 2 + 10;
+                const pad = (s.radius + s.blur) * 2 + 12;
                 offscreen.width = pad;
                 offscreen.height = pad;
                 const octx = offscreen.getContext('2d');
-                
                 octx.filter = `blur(${s.blur}px)`;
                 octx.fillStyle = c.color;
                 octx.beginPath();
                 octx.arc(pad / 2, pad / 2, s.radius, 0, Math.PI * 2);
                 octx.fill();
-                
-                bokehTemplates[`${c.name}_${s.name}`] = {
-                    canvas: offscreen,
-                    halfSize: pad / 2
-                };
+                bokehTemplates[`${c.name}_${s.name}`] = { canvas: offscreen, halfSize: pad / 2 };
             });
         });
     }
@@ -143,227 +139,147 @@ document.addEventListener('DOMContentLoaded', () => {
 
     class AmbientParticle {
         constructor(isInit = false) {
-            // Distribute across the sweeping wave
-            this.x = isInit 
-                ? Math.random() * referenceWidth 
-                : -40 - Math.random() * 100; // Spawn slightly off-screen left when recycled
-                
-            this.z = Math.random() * 0.84 + 0.16; // 3D Depth Layer factor
-            
-            // Choose ribbon assignment based on depth (z) to match color rendering
-            this.ribbonType = this.z > 0.55 ? 1 : 2; 
+            this.z = Math.random(); // Depth: 0=far, 1=close
 
-            // Calculate base curve position based on ribbon assignment (exact PS5 homescreen overlapping shape)
-            let curveBaseY = 0;
-            if (this.ribbonType === 1) {
-                curveBaseY = (referenceHeight * 0.73) + Math.sin(this.x * 0.0015 + wavePhase) * 100 + Math.cos(this.x * 0.003 - wavePhase * 0.5) * 30;
+            if (isInit) {
+                // On page load: scatter particles across the diagonal stream band
+                this.x = Math.random() * referenceWidth;
+                // Diagonal band: from bottom-left to upper-right
+                const streamY = referenceHeight * 0.80 - (this.x / referenceWidth) * (referenceHeight * 0.50);
+                this.y = streamY + (Math.random() * 2 - 1) * referenceHeight * 0.30;
             } else {
-                curveBaseY = (referenceHeight * 0.80) + Math.sin(this.x * 0.0015 + wavePhase + Math.PI) * 80 + Math.cos(this.x * 0.003 - (wavePhase + Math.PI) * 0.5) * 24;
-            }
-            
-            // Create a dense cluster around the curve with Gaussian-like spread
-            const spreadFactor = (Math.random() + Math.random() + Math.random() - 1.5); 
-            const spreadAmplitude = referenceHeight * 0.28; // Tighter cluster for highly defined ribbon shape
-            this.offsetY = spreadFactor * spreadAmplitude;
-            this.y = curveBaseY + this.offsetY;
-            
-            // Build three highly focused depth-of-field layers for the wave
-            if (this.z < 0.38) {
-                // Background Spores: Small, slow, distant spores
-                this.isBokeh = Math.random() > 0.5; // 50% are beautiful soft background bokeh
-                this.isFilament = false;
-                this.size = (Math.random() * 4.0 + 2.0) * this.z; // Distant background particles
-                this.baseSpeedX = (Math.random() * 0.06 + 0.02); // Drift right lazily
-            } else if (this.z > 0.76) {
-                // Foreground Embers: Tiny, bright, sharp specs of gold
-                this.isBokeh = false;
-                this.isFilament = false;
-                this.isShiny = Math.random() > 0.3; // 70% of foreground are intensely shiny
-                this.size = (Math.random() * 1.5 + 0.8) * this.z;
-                this.baseSpeedX = (Math.random() * 0.3 + 0.15); // Faster foreground sweep
-            } else {
-                // Midground: Classic spores, rotating curved filaments, and floating out-of-focus bokeh orbs
-                this.isBokeh = Math.random() < 0.20; // 20% are gorgeous out-of-focus bokeh orbs
-                this.isFilament = !this.isBokeh && Math.random() < 0.08;
-                this.size = this.isBokeh 
-                    ? (Math.random() * 14.0 + 8.0) * this.z // Larger size for premium large bokeh orbs
-                    : (Math.random() * 5.0 + 2.0) * this.z;
-                this.baseSpeedX = (Math.random() * 0.15 + 0.08); // Steady midground sweep
+                // Respawn: from left edge (mostly) or bottom-left corner
+                if (Math.random() < 0.70) {
+                    this.x = -30 - Math.random() * 80;
+                    this.y = referenceHeight * 0.40 + Math.random() * referenceHeight * 0.60;
+                } else {
+                    this.x = Math.random() * referenceWidth * 0.40;
+                    this.y = referenceHeight + 40;
+                }
             }
 
-            this.speedX = this.baseSpeedX * this.z;
-            this.speedY = (Math.random() - 0.5) * 0.04; 
-            
-            this.angle = Math.random() * Math.PI * 2;
-            this.angleSpeed = Math.random() * 0.008 + 0.003;
-            
-            // Gentle slow vertical bobbing to simulate PS5 background wave float
-            this.bobPhase = Math.random() * Math.PI * 2;
-            this.bobSpeed = Math.random() * 0.005 + 0.002; // Extremely slow and hypnotic
-            this.bobAmplitude = (Math.random() * 0.4 + 0.2) * this.z; // Subtle vertical bobbing
+            // Particle type — PS5 is dominated by large soft bokeh orbs
+            const roll = Math.random();
+            if (roll < 0.58) {
+                this.type = 'bokeh';  // Large soft out-of-focus orb
+                this.radius = (7 + Math.random() * 25) * (this.z * 0.55 + 0.45);
+                // Pick a warm colour key
+                const ck = Math.random();
+                this.colorKey = ck < 0.4 ? 'gold_bright' : (ck < 0.75 ? 'gold_warm' : 'gold_deep');
+            } else if (roll < 0.85) {
+                this.type = 'spore'; // Medium glowing dot
+                this.radius = (1.5 + Math.random() * 4.5) * (this.z * 0.5 + 0.5);
+            } else {
+                this.type = 'ember'; // Tiny sharp pinpoint
+                this.radius = 0.5 + Math.random() * 1.5;
+            }
 
-            // Curved filaments rotation
-            this.rot = Math.random() * Math.PI * 2;
-            this.rotSpeed = (Math.random() - 0.5) * 0.012;
+            // PS5 movement: very slow diagonal drift (upward-right)
+            const depthFactor = this.z * 0.65 + 0.35;
+            this.speedX = (0.025 + Math.random() * 0.08) * depthFactor;
+            this.speedY = -(0.015 + Math.random() * 0.055) * depthFactor;
 
-            this.baseOpacity = (Math.random() * 0.25 + 0.12) * this.z;
-            this.opacity = 0; // Fade in gently
+            // Organic micro-wobble — barely perceptible, like dust in still air
+            this.wobblePhase = Math.random() * Math.PI * 2;
+            this.wobbleSpeed = 0.0015 + Math.random() * 0.003;
+            this.wobbleAmpX = 0.06 + Math.random() * 0.12;
+            this.wobbleAmpY = 0.03 + Math.random() * 0.08;
+
+            // Opacity
+            let maxOp = 0.12 + Math.random() * 0.52;
+            if (this.type === 'bokeh') maxOp *= 0.60; // bokeh are soft and transparent
+            if (this.type === 'ember') maxOp = Math.min(1.0, maxOp * 1.5);
+            this.maxOpacity = maxOp * (this.z * 0.55 + 0.45);
+            this.opacity = isInit ? Math.random() * this.maxOpacity : 0;
+
+            // Breathing pulse
             this.pulsePhase = Math.random() * Math.PI * 2;
-            this.pulseSpeed = Math.random() * 0.006 + 0.002; 
+            this.pulseSpeed = 0.003 + Math.random() * 0.007;
+            this.renderOpacity = this.opacity;
         }
 
         update() {
-            // Calculate continuous organic fluid turbulence currents
-            const time = wavePhase * 8;
-            const noiseX = Math.sin(this.y * 0.006 + time * 0.15) * Math.cos(this.x * 0.004 - time * 0.08) * 0.25;
-            const noiseY = Math.cos(this.x * 0.005 + time * 0.12) * Math.sin(this.y * 0.003 - time * 0.05) * 0.35;
+            // Advance micro-wobble
+            this.wobblePhase += this.wobbleSpeed;
+            this.x += this.speedX + Math.sin(this.wobblePhase)          * this.wobbleAmpX;
+            this.y += this.speedY + Math.cos(this.wobblePhase * 0.73)   * this.wobbleAmpY;
 
-            // Apply turbulence + sweeping vector
-            this.x += this.speedX + noiseX;
-            
-            // Ride their assigned ribbon wave in perfect sync with the PS5 ribbon's phase undulations
-            let curveBaseY = 0;
-            if (this.ribbonType === 1) {
-                curveBaseY = (referenceHeight * 0.73) + Math.sin(this.x * 0.0015 + wavePhase) * 100 + Math.cos(this.x * 0.003 - wavePhase * 0.5) * 30;
-            } else {
-                curveBaseY = (referenceHeight * 0.80) + Math.sin(this.x * 0.0015 + wavePhase + Math.PI) * 80 + Math.cos(this.x * 0.003 - (wavePhase + Math.PI) * 0.5) * 24;
-            }
-            
-            this.bobPhase += this.bobSpeed;
-            this.y = curveBaseY + this.offsetY + Math.sin(this.bobPhase) * this.bobAmplitude;
-
-            // Slowly rotate filaments
-            if (this.isFilament) {
-                this.rot += this.rotSpeed;
+            // Gentle fade-in from nothing
+            if (this.opacity < this.maxOpacity) {
+                this.opacity = Math.min(this.maxOpacity, this.opacity + 0.002);
             }
 
-            // Muted organic breathing pulse + firefly shimmering twinkles
+            // Calm breathing pulse
             this.pulsePhase += this.pulseSpeed;
-            let pulseFactor = (Math.sin(this.pulsePhase) + 1) / 2; // 0 to 1
-            let shimmer = Math.sin(this.pulsePhase * 3.6) * 0.18; // Twitch sparkle
-            
-            if (this.isShiny) {
-                // Intense chaotic twinkling for shiny PS5 particles
-                pulseFactor = (Math.sin(this.pulsePhase * 8.0) + 1) / 2;
-                shimmer = Math.sin(this.pulsePhase * 15.0) * 0.5;
-            }
-            
-            this.opacity = Math.max(0, this.baseOpacity * (0.65 + pulseFactor * 0.35) + shimmer);
+            const pulse = Math.sin(this.pulsePhase) * (this.type === 'ember' ? 0.22 : 0.09);
+            this.renderOpacity = Math.max(0, this.opacity + pulse);
 
-            // Recycle if particle drifts far outside bounds (off right side, or too far up/down)
-            if (this.x > referenceWidth + 120 || this.y < -100 || this.y > referenceHeight + 100) {
+            // Recycle when off-screen
+            if (this.x > referenceWidth + 60 || this.y < -60 || this.y > referenceHeight + 60) {
                 const index = ambientParticles.indexOf(this);
-                if (index > -1) {
-                    ambientParticles[index] = new AmbientParticle(false);
-                }
+                if (index > -1) ambientParticles[index] = new AmbientParticle(false);
             }
         }
 
         draw() {
-            // Soft fading at all borders (top, bottom, left, right) so particles blend seamlessly in the atmosphere
+            // Soft edge fading on all four sides
             let edgeFade = 1.0;
-            const topFadeDist = 120;
-            const bottomFadeDist = 120;
-            const sideFadeDist = 80;
+            const fade = 110;
+            if (this.x < fade)                          edgeFade *= Math.max(0, this.x / fade);
+            if (this.y < fade)                          edgeFade *= Math.max(0, this.y / fade);
+            if (this.y > referenceHeight - fade)        edgeFade *= Math.max(0, (referenceHeight - this.y) / fade);
+            if (this.x > referenceWidth  - fade)        edgeFade *= Math.max(0, (referenceWidth  - this.x) / fade);
 
-            if (this.y < topFadeDist) {
-                edgeFade *= Math.max(0, this.y / topFadeDist);
-            } else if (this.y > referenceHeight - bottomFadeDist) {
-                edgeFade *= Math.max(0, (referenceHeight - this.y) / bottomFadeDist);
-            }
+            const alpha = this.renderOpacity * edgeFade;
+            if (alpha <= 0.005) return;
 
-            if (this.x < sideFadeDist) {
-                edgeFade *= Math.max(0, this.x / sideFadeDist);
-            } else if (this.x > referenceWidth - sideFadeDist) {
-                edgeFade *= Math.max(0, (referenceWidth - this.x) / sideFadeDist);
-            }
-            
-            const renderOpacity = this.opacity * edgeFade;
-            if (renderOpacity <= 0.01) return; // Skip drawing if faded out
-
-            // Curated forest-lichen moss green (#738c66) and warm amber fireflies gold (#cfab3a)
-            const color = this.z > 0.55
-                ? `rgba(207, 171, 58, ${renderOpacity})` // Gold spores
-                : `rgba(115, 140, 102, ${renderOpacity * 0.65})`; // Lichen Green spores
-
-            if (this.isBokeh) {
-                // TRUE Photographic Lens Bokeh using high-performance offscreen templates
-                const colorType = this.z > 0.28 ? 'gold' : 'green';
-                let sizeType = 'small';
-                if (this.size > 14) {
-                    sizeType = 'large';
-                } else if (this.size > 10) {
-                    sizeType = 'medium';
-                }
-                
-                const template = bokehTemplates[`${colorType}_${sizeType}`];
+            if (this.type === 'bokeh') {
+                // Photographic bokeh — use pre-rendered blurred template for zero per-frame GPU cost
+                let sizeKey = 'small';
+                if      (this.radius > 22) sizeKey = 'xl';
+                else if (this.radius > 13) sizeKey = 'large';
+                else if (this.radius >  7) sizeKey = 'medium';
+                const template = bokehTemplates[`${this.colorKey}_${sizeKey}`];
                 if (template) {
                     actx.save();
-                    actx.globalAlpha = renderOpacity;
-                    actx.drawImage(
-                        template.canvas, 
-                        this.x - template.halfSize, 
-                        this.y - template.halfSize
-                    );
+                    actx.globalAlpha = alpha * 0.88;
+                    actx.drawImage(template.canvas, this.x - template.halfSize, this.y - template.halfSize);
                     actx.restore();
-                }
-            } else if (this.isFilament) {
-                // High-fidelity drifting curved line filaments
-                actx.beginPath();
-                actx.strokeStyle = color;
-                actx.lineWidth = Math.max(0.6, this.size * 0.22);
-                actx.lineCap = 'round';
-                
-                const length = this.size * 2.2;
-                const x1 = this.x - length * Math.cos(this.rot);
-                const y1 = this.y - length * Math.sin(this.rot);
-                const x2 = this.x + length * Math.cos(this.rot);
-                const y2 = this.y + length * Math.sin(this.rot);
-                const cx = this.x + length * 0.4 * Math.sin(this.rot);
-                const cy = this.y - length * 0.4 * Math.cos(this.rot);
-                
-                actx.moveTo(x1, y1);
-                actx.quadraticCurveTo(cx, cy, x2, y2);
-                actx.stroke();
-            } else {
-                // Glowing radial bokeh spore circles
-                const gradient = actx.createRadialGradient(
-                    this.x, this.y, 0,
-                    this.x, this.y, this.size * 2.5
-                );
-                gradient.addColorStop(0, color);
-                gradient.addColorStop(0.35, color);
-                gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
-
-                actx.fillStyle = gradient;
-                actx.beginPath();
-                actx.arc(this.x, this.y, this.size * 2.5, 0, Math.PI * 2);
-                actx.fill();
-                
-                // Pure white hot core for shiny particles
-                if (this.isShiny) {
-                    actx.fillStyle = `rgba(255, 255, 255, ${renderOpacity * 1.5})`;
+                } else {
+                    // Fallback radial gradient
+                    const g = actx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.radius);
+                    g.addColorStop(0,   `rgba(255, 235, 170, ${alpha * 0.75})`);
+                    g.addColorStop(0.5, `rgba(207, 171,  58, ${alpha * 0.35})`);
+                    g.addColorStop(1,   'rgba(0,0,0,0)');
+                    actx.fillStyle = g;
                     actx.beginPath();
-                    actx.arc(this.x, this.y, this.size * 0.8, 0, Math.PI * 2);
+                    actx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
                     actx.fill();
                 }
-
-                // AAA Premium Menu Detail: Render soft golden cross-hair lens flares on the brightest foreground specifications when they peak
-                if ((this.isShiny || this.z > 0.8) && renderOpacity > 0.5) {
-                    actx.beginPath();
-                    actx.strokeStyle = `rgba(255, 255, 255, ${(renderOpacity - 0.5) * 1.5})`;
-                    actx.lineWidth = 0.5;
-                    
-                    // Horizontal flare line
-                    actx.moveTo(this.x - this.size * 2.2, this.y);
-                    actx.lineTo(this.x + this.size * 2.2, this.y);
-                    
-                    // Vertical flare line
-                    actx.moveTo(this.x, this.y - this.size * 2.2);
-                    actx.lineTo(this.x, this.y + this.size * 2.2);
-                    
-                    actx.stroke();
-                }
+            } else if (this.type === 'spore') {
+                // Medium glowing spore — warm gold halo
+                const g = actx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.radius * 3.5);
+                g.addColorStop(0,    `rgba(255, 245, 200, ${alpha})`);
+                g.addColorStop(0.20, `rgba(230, 195, 120, ${alpha * 0.80})`);
+                g.addColorStop(0.60, `rgba(207, 171,  58, ${alpha * 0.35})`);
+                g.addColorStop(1,    'rgba(0,0,0,0)');
+                actx.fillStyle = g;
+                actx.beginPath();
+                actx.arc(this.x, this.y, this.radius * 3.5, 0, Math.PI * 2);
+                actx.fill();
+            } else {
+                // Tiny sharp ember — bright white-gold pinpoint with soft halo
+                actx.fillStyle = `rgba(255, 252, 230, ${alpha})`;
+                actx.beginPath();
+                actx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                actx.fill();
+                const g = actx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.radius * 5);
+                g.addColorStop(0,   `rgba(255, 240, 190, ${alpha * 0.45})`);
+                g.addColorStop(1,   'rgba(0,0,0,0)');
+                actx.fillStyle = g;
+                actx.beginPath();
+                actx.arc(this.x, this.y, this.radius * 5, 0, Math.PI * 2);
+                actx.fill();
             }
         }
     }
@@ -409,105 +325,72 @@ document.addEventListener('DOMContentLoaded', () => {
         mouseY = null;
     }, { passive: true });
 
-    // Helper: Draw faint, wavy, slow-moving auroral ribbon light bands
-    function drawAuroralRibbon(ctx, width, height, phase, color, baseY, amplitude) {
-        ctx.beginPath();
-        ctx.strokeStyle = color;
-        ctx.lineWidth = 140; // Wide and soft
-        ctx.lineCap = 'round';
-        ctx.lineJoin = 'round';
-        
-        for (let x = 0; x <= width; x += 30) {
-            const y = baseY + Math.sin(x * 0.0015 + phase) * amplitude + Math.cos(x * 0.003 - phase * 0.5) * (amplitude * 0.3);
-            if (x === 0) {
-                ctx.moveTo(x, y);
-            } else {
-                ctx.lineTo(x, y);
-            }
-        }
-        ctx.stroke();
-    }
-
-    // Helper: Draw volumetric spotlight beam fanning from top-left diagonally down-right
+    // Volumetric light cone from top-left corner — the dominant PS5 visual signature
     function drawVolumetricLight(ctx, width, height, phase) {
         ctx.save();
-        
-        // Project diagonal beam originating from (0, 0)
-        const beamAngle = Math.sin(phase * 0.1) * 0.04 + 0.65; // Slow, elegant angular sway
-        const endX = Math.cos(beamAngle) * width * 1.8; // Extended reach
-        const endY = Math.sin(beamAngle) * height * 1.8;
-        
-        // Slightly reduced blur for a sharper, more prominent PS5-style god ray beam
-        ctx.filter = 'blur(65px)';
-        
-        const gradient = ctx.createLinearGradient(0, 0, endX, endY);
-        
-        // Massive volumetric light gradient stops (gold spotlight beam fading diagonally)
-        // Significantly brighter base opacity to match the intense PS5 top-left glow
-        const baseOpacity = 0.15 + Math.sin(phase * 0.4) * 0.03; 
-        gradient.addColorStop(0, `rgba(207, 171, 58, ${baseOpacity * 3.5})`);
-        gradient.addColorStop(0.3, `rgba(207, 171, 58, ${baseOpacity * 1.8})`);
-        gradient.addColorStop(0.7, `rgba(207, 171, 58, ${baseOpacity * 0.3})`);
-        gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
-        
-        ctx.fillStyle = gradient;
-        
-        // Volumetric beam cone path fanning outward
+
+        // Very slow angular sway — barely perceptible
+        const beamAngle = Math.sin(phase * 0.07) * 0.03 + 0.62;
+        const beamLen = Math.max(width, height) * 2.0;
+        const endX = Math.cos(beamAngle) * beamLen;
+        const endY = Math.sin(beamAngle) * beamLen;
+        const spread = width * 1.0;
+
+        // PASS 1: Wide outer haze — very soft foggy glow
+        ctx.filter = 'blur(90px)';
+        const breathe = 0.05 + Math.sin(phase * 0.30) * 0.008;
+        const outerGrad = ctx.createLinearGradient(0, 0, endX * 0.55, endY * 0.55);
+        outerGrad.addColorStop(0,   `rgba(255, 248, 225, ${breathe * 5.0})`);
+        outerGrad.addColorStop(0.15,`rgba(240, 225, 185, ${breathe * 3.0})`);
+        outerGrad.addColorStop(0.45,`rgba(200, 180, 140, ${breathe * 1.0})`);
+        outerGrad.addColorStop(1,   'rgba(0,0,0,0)');
+        ctx.fillStyle = outerGrad;
         ctx.beginPath();
         ctx.moveTo(0, 0);
-        // Wider spread for a more enveloping god ray
-        const spread = width * 0.85;
-        const p1x = endX - spread * Math.sin(beamAngle);
-        const p1y = endY + spread * Math.cos(beamAngle);
-        const p2x = endX + spread * Math.sin(beamAngle);
-        const p2y = endY - spread * Math.cos(beamAngle);
-        
-        ctx.lineTo(p1x, p1y);
-        ctx.lineTo(p2x, p2y);
+        ctx.lineTo(endX - spread * Math.sin(beamAngle), endY + spread * Math.cos(beamAngle));
+        ctx.lineTo(endX + spread * Math.sin(beamAngle), endY - spread * Math.cos(beamAngle));
         ctx.closePath();
         ctx.fill();
-        
+
+        // PASS 2: Bright tight inner core of the beam
+        ctx.filter = 'blur(45px)';
+        const innerSpread = width * 0.38;
+        const innerGrad = ctx.createLinearGradient(0, 0, endX * 0.35, endY * 0.35);
+        innerGrad.addColorStop(0,    `rgba(255, 255, 240, ${breathe * 8.0})`);
+        innerGrad.addColorStop(0.25, `rgba(255, 240, 200, ${breathe * 4.0})`);
+        innerGrad.addColorStop(0.70, `rgba(220, 200, 155, ${breathe * 0.8})`);
+        innerGrad.addColorStop(1,    'rgba(0,0,0,0)');
+        ctx.fillStyle = innerGrad;
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.lineTo(endX - innerSpread * Math.sin(beamAngle), endY + innerSpread * Math.cos(beamAngle));
+        ctx.lineTo(endX + innerSpread * Math.sin(beamAngle), endY - innerSpread * Math.cos(beamAngle));
+        ctx.closePath();
+        ctx.fill();
+
         ctx.restore();
     }
 
     function animateAmbientSpores() {
         actx.clearRect(0, 0, ambientCanvas.width, ambientCanvas.height);
 
-        // Increment wave phase for slow auroral ribbon breathing motion and particle flow
-        wavePhase += 0.0015;
+        // Advance global time — very slow, like PS5
+        wavePhase += 0.0008;
 
-        // Render Ribbon 1: Amber Gold (Backing layer)
-        // Positioned along the particle wave path
-        drawAuroralRibbon(
-            actx,
-            referenceWidth,
-            referenceHeight,
-            wavePhase,
-            'rgba(207, 171, 58, 0.018)', // Slightly increased aura opacity for high-fidelity shape
-            referenceHeight * 0.73, // Lowered to support the particle wave
-            100 // Aligned amplitude
-        );
+        // Soft atmospheric floor haze — replicates the dark foggy base in the PS5 screenshot
+        const hazeGrad = actx.createLinearGradient(0, referenceHeight * 0.60, 0, referenceHeight);
+        hazeGrad.addColorStop(0, 'rgba(10, 14, 22, 0)');
+        hazeGrad.addColorStop(1, 'rgba(10, 14, 22, 0.22)');
+        actx.fillStyle = hazeGrad;
+        actx.fillRect(0, 0, ambientCanvas.width, ambientCanvas.height);
 
-        // Render Ribbon 2: Lichen Green (Backing layer)
-        drawAuroralRibbon(
-            actx,
-            referenceWidth,
-            referenceHeight,
-            wavePhase + Math.PI,
-            'rgba(115, 140, 102, 0.022)', // Slightly increased moss green aura
-            referenceHeight * 0.80,
-            80
-        );
-
-        // Render Volumetric Light Shaft (Breathing top-left spotlight beam cone overlay)
+        // Volumetric white light cone from top-left (the defining PS5 element)
         drawVolumetricLight(actx, referenceWidth, referenceHeight, wavePhase);
 
+        // Draw all ambient particles
         for (let i = 0; i < ambientParticles.length; i++) {
-            const p = ambientParticles[i];
-            
-            // Completely unaffected by the cursor, as requested, to maintain a pure PS5 home screen atmosphere
-            p.update();
-            p.draw();
+            ambientParticles[i].update();
+            ambientParticles[i].draw();
         }
 
         requestAnimationFrame(animateAmbientSpores);
