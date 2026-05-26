@@ -197,10 +197,10 @@ document.addEventListener('DOMContentLoaded', () => {
             this.angle = Math.random() * Math.PI * 2;
             this.angleSpeed = Math.random() * 0.008 + 0.003;
             
-            // Gentle slow vertical bobbing to simulate PS5 background wave float
+            // Gentle slow vertical bobbing to simulate deep ocean drag
             this.bobPhase = Math.random() * Math.PI * 2;
-            this.bobSpeed = Math.random() * 0.005 + 0.002; // Extremely slow and hypnotic
-            this.bobAmplitude = (Math.random() * 0.4 + 0.2) * this.z; // Subtle vertical bobbing
+            this.bobSpeed = Math.random() * 0.003 + 0.001; // Extremely slow and hypnotic
+            this.bobAmplitude = (Math.random() * 12.0 + 4.0) * this.z; // Significant vertical bobbing for ocean feel
 
             // Curved filaments rotation
             this.rot = Math.random() * Math.PI * 2;
@@ -214,23 +214,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
         update() {
             // Calculate continuous organic fluid turbulence currents
-            const time = wavePhase * 8;
-            const noiseX = Math.sin(this.y * 0.006 + time * 0.15) * Math.cos(this.x * 0.004 - time * 0.08) * 0.25;
-            const noiseY = Math.cos(this.x * 0.005 + time * 0.12) * Math.sin(this.y * 0.003 - time * 0.05) * 0.35;
+            const time = wavePhase * 5; // Slower time scaling for deep fluid feel
+            const noiseX = Math.sin(this.y * 0.004 + time * 0.15) * Math.cos(this.x * 0.003 - time * 0.08) * 0.45;
+            const noiseY = Math.cos(this.x * 0.003 + time * 0.12) * Math.sin(this.y * 0.002 - time * 0.05) * 0.65;
 
             // Apply turbulence + sweeping vector
             this.x += this.speedX + noiseX;
             
-            // Ride their assigned ribbon wave in perfect sync with the PS5 ribbon's phase undulations
+            // Ride their assigned ribbon wave with deep ocean swell physics
             let curveBaseY = 0;
             if (this.ribbonType === 1) {
-                curveBaseY = (referenceHeight * 0.73) + Math.sin(this.x * 0.0015 + wavePhase) * 100 + Math.cos(this.x * 0.003 - wavePhase * 0.5) * 30;
+                curveBaseY = (referenceHeight * 0.70) + Math.sin(this.x * 0.0008 + wavePhase) * 160 + Math.cos(this.x * 0.0015 - wavePhase * 0.5) * 60;
             } else {
-                curveBaseY = (referenceHeight * 0.80) + Math.sin(this.x * 0.0015 + wavePhase + Math.PI) * 80 + Math.cos(this.x * 0.003 - (wavePhase + Math.PI) * 0.5) * 24;
+                curveBaseY = (referenceHeight * 0.82) + Math.sin(this.x * 0.0008 + wavePhase + Math.PI) * 140 + Math.cos(this.x * 0.0015 - (wavePhase + Math.PI) * 0.5) * 45;
             }
             
             this.bobPhase += this.bobSpeed;
-            this.y = curveBaseY + this.offsetY + Math.sin(this.bobPhase) * this.bobAmplitude;
+            // Add vertical bobbing AND fluid noiseY swirl to break the rigid wave path
+            this.y = curveBaseY + this.offsetY + Math.sin(this.bobPhase) * this.bobAmplitude + noiseY * 4.0;
 
             // Slowly rotate filaments
             if (this.isFilament) {
