@@ -149,16 +149,17 @@ document.addEventListener('DOMContentLoaded', () => {
             // Create a dense cluster around the curve with Gaussian-like spread
             const spreadFactor = (Math.random() + Math.random() + Math.random() - 1.5); 
             const spreadAmplitude = window.innerHeight * 0.45;
-            this.y = curveBaseY + spreadFactor * spreadAmplitude;
+            this.offsetY = spreadFactor * spreadAmplitude;
+            this.y = curveBaseY + this.offsetY;
                 
             this.z = Math.random() * 0.84 + 0.16; // 3D Depth Layer factor
             
             // Build three highly focused depth-of-field layers for the wave
             if (this.z < 0.38) {
                 // Background Spores: Small, slow, distant spores
-                this.isBokeh = false;
+                this.isBokeh = Math.random() > 0.5; // 50% are beautiful soft background bokeh
                 this.isFilament = false;
-                this.size = (Math.random() * 2.5 + 1.0) * this.z; // Distant background particles
+                this.size = (Math.random() * 4.0 + 2.0) * this.z; // Distant background particles
                 this.baseSpeedX = (Math.random() * 0.06 + 0.02); // Drift right lazily
             } else if (this.z > 0.76) {
                 // Foreground Embers: Tiny, bright, sharp specs of gold
@@ -168,10 +169,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 this.size = (Math.random() * 1.5 + 0.8) * this.z;
                 this.baseSpeedX = (Math.random() * 0.3 + 0.15); // Faster foreground sweep
             } else {
-                // Midground: Classic spores and slowly rotating curved filaments
-                this.isBokeh = false;
-                this.isFilament = Math.random() < 0.08;
-                this.size = (Math.random() * 5.0 + 2.0) * this.z;
+                // Midground: Classic spores, rotating curved filaments, and floating out-of-focus bokeh orbs
+                this.isBokeh = Math.random() < 0.20; // 20% are gorgeous out-of-focus bokeh orbs
+                this.isFilament = !this.isBokeh && Math.random() < 0.08;
+                this.size = this.isBokeh 
+                    ? (Math.random() * 14.0 + 8.0) * this.z // Larger size for premium large bokeh orbs
+                    : (Math.random() * 5.0 + 2.0) * this.z;
                 this.baseSpeedX = (Math.random() * 0.15 + 0.08); // Steady midground sweep
             }
 
@@ -202,16 +205,15 @@ document.addEventListener('DOMContentLoaded', () => {
             const noiseX = Math.sin(this.y * 0.006 + time * 0.15) * Math.cos(this.x * 0.004 - time * 0.08) * 0.25;
             const noiseY = Math.cos(this.x * 0.005 + time * 0.12) * Math.sin(this.y * 0.003 - time * 0.05) * 0.35;
 
-            // Apply turbulence + sweeping vector + slow bobbing motion
-            this.bobPhase += this.bobSpeed;
+            // Apply turbulence + sweeping vector
             this.x += this.speedX + noiseX;
-            this.y += this.speedY + noiseY + Math.sin(this.bobPhase) * this.bobAmplitude;
-
-            // Gently pull particles back towards the flowing wave over time
+            
+            // Ride the moving wave in perfect sync with the PS5 ribbon's phase undulations
             const normX = this.x / ambientCanvas.width;
             const curveBaseY = ambientCanvas.height * 0.82 - Math.sin(normX * Math.PI * 1.2 - wavePhase * 1.5) * (ambientCanvas.height * 0.25);
-            const distFromCurve = curveBaseY - this.y;
-            this.y += distFromCurve * 0.0015; // Soft gravity toward wave center
+            
+            this.bobPhase += this.bobSpeed;
+            this.y = curveBaseY + this.offsetY + Math.sin(this.bobPhase) * this.bobAmplitude;
 
             // Slowly rotate filaments
             if (this.isFilament) {
