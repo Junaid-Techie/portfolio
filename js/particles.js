@@ -186,10 +186,14 @@
             
             // Ride their assigned ribbon wave with deep ocean swell physics
             let curveBaseY = 0;
+            // Slope so the wave starts very low (offscreen bottom-left) and rises into the lower-right quadrant
+            const slopeRise = (this.x / referenceWidth) * (referenceHeight * 0.45); 
+            
             if (this.ribbonType === 1) {
-                curveBaseY = (referenceHeight * 0.70) + Math.sin(this.x * 0.0008 + wavePhase) * 160 + Math.cos(this.x * 0.0015 - wavePhase * 0.5) * 60;
+                // Starts at 125% height (off bottom edge) on left, rises to ~80% on right
+                curveBaseY = (referenceHeight * 1.25) - slopeRise + Math.sin(this.x * 0.0012 + wavePhase) * 120 + Math.cos(this.x * 0.0015 - wavePhase * 0.5) * 60;
             } else {
-                curveBaseY = (referenceHeight * 0.82) + Math.sin(this.x * 0.0008 + wavePhase + Math.PI) * 140 + Math.cos(this.x * 0.0015 - (wavePhase + Math.PI) * 0.5) * 45;
+                curveBaseY = (referenceHeight * 1.35) - slopeRise + Math.sin(this.x * 0.001 + wavePhase + Math.PI) * 100 + Math.cos(this.x * 0.0015 - (wavePhase + Math.PI) * 0.5) * 45;
             }
             
             this.bobPhase += this.bobSpeed;
@@ -390,38 +394,39 @@
     function drawVolumetricLight(ctx, width, height, phase) {
         ctx.save();
         
-        // Base angle for the sunlight
-        const baseAngle = 0.65;
+        // Base angle for the sunlight piercing directly from extreme top-left
+        const baseAngle = 0.78; // roughly 45 degrees downward
         const beamLen = Math.max(width, height) * 1.8; 
         
-        ctx.filter = 'blur(45px)'; // Reduced blur to make individual rays visible
+        // High fidelity sharp rays (much lower blur for realism)
+        ctx.filter = 'blur(12px)'; 
         
-        // Draw 6 distinct overlapping rays
-        const numRays = 6;
+        // Draw 8 distinct, highly detailed overlapping rays
+        const numRays = 8;
         for (let i = 0; i < numRays; i++) {
             // Offset phase for each ray so they sway and pulse independently
-            const rayPhase = phase + (i * 1.5);
+            const rayPhase = phase + (i * 2.1);
             
             // Individual ray properties
-            const angleOffset = Math.sin(rayPhase * 0.12) * 0.08 + (i - numRays/2) * 0.07;
+            const angleOffset = Math.sin(rayPhase * 0.15) * 0.05 + (i - numRays/2) * 0.06;
             const beamAngle = baseAngle + angleOffset;
             
             const endX = Math.cos(beamAngle) * beamLen;
             const endY = Math.sin(beamAngle) * beamLen;
             
-            // Varying widths for the rays
-            const spread = width * (0.15 + Math.sin(rayPhase * 0.2) * 0.05);
+            // Sharp, distinct widths for the rays
+            const spread = width * (0.02 + Math.abs(Math.sin(rayPhase * 0.3)) * 0.06);
             
             const gradient = ctx.createLinearGradient(0, 0, endX, endY);
             
-            // Individual pulsing opacity
-            const rayOpacity = 0.05 + Math.sin(rayPhase * 0.35) * 0.04;
+            // Individual pulsing opacity, peaking slightly higher for high-fidelity look
+            const rayOpacity = 0.08 + Math.sin(rayPhase * 0.4) * 0.06;
             
-            // Add gradient stops
-            gradient.addColorStop(0, `rgba(207, 171, 58, ${rayOpacity * 3.5})`);
-            gradient.addColorStop(0.3, `rgba(207, 171, 58, ${rayOpacity * 1.8})`);
-            gradient.addColorStop(0.7, `rgba(207, 171, 58, ${rayOpacity * 0.3})`);
-            gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
+            // Add gradient stops with a tiny bit of white-hot core at the origin
+            gradient.addColorStop(0, `rgba(255, 230, 150, ${rayOpacity * 4.0})`); // Hot core
+            gradient.addColorStop(0.15, `rgba(207, 171, 58, ${rayOpacity * 2.5})`);
+            gradient.addColorStop(0.4, `rgba(207, 171, 58, ${rayOpacity * 0.8})`);
+            gradient.addColorStop(0.8, 'rgba(0, 0, 0, 0)');
             
             ctx.fillStyle = gradient;
             
@@ -439,17 +444,17 @@
             ctx.fill();
         }
         
-        // Draw one massive soft background glow to tie the rays together
-        ctx.filter = 'blur(90px)';
-        const bgAngle = baseAngle + Math.sin(phase * 0.1) * 0.04;
+        // Draw one massive, incredibly soft ambient glow to simulate light scattering in water
+        ctx.filter = 'blur(120px)';
+        const bgAngle = baseAngle + Math.sin(phase * 0.08) * 0.02;
         const bgEndX = Math.cos(bgAngle) * beamLen;
         const bgEndY = Math.sin(bgAngle) * beamLen;
-        const bgSpread = width * 0.85;
+        const bgSpread = width * 0.95;
         
         const bgGradient = ctx.createLinearGradient(0, 0, bgEndX, bgEndY);
-        const bgOpacity = 0.10 + Math.sin(phase * 0.4) * 0.02;
-        bgGradient.addColorStop(0, `rgba(207, 171, 58, ${bgOpacity * 2.5})`);
-        bgGradient.addColorStop(0.5, `rgba(207, 171, 58, ${bgOpacity * 0.8})`);
+        const bgOpacity = 0.12 + Math.sin(phase * 0.2) * 0.02;
+        bgGradient.addColorStop(0, `rgba(207, 171, 58, ${bgOpacity * 2.2})`);
+        bgGradient.addColorStop(0.4, `rgba(207, 171, 58, ${bgOpacity * 0.6})`);
         bgGradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
         
         ctx.fillStyle = bgGradient;
