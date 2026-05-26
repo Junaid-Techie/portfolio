@@ -1,0 +1,22 @@
+:root {
+    /* Color Palette — The Last of Us Survival/Tactical Theme */
+    --bg-color: #05080f;        /* Deep midnight PS5 charcoal */
+    --text-main: #f0f3ed;       /* Survival weathered off-white */
+    --text-muted: #83927b;      /* Overgrown forest sage green */
+    
+    --primary: #cfab3a;         /* Signature Firefly Mustard Gold / Ochre Yellow */
+    --primary-glow: rgba(207, 171, 58, 0.45);
+    --secondary: #4a5a41;       /* Post-apocalyptic Overgrown Moss Green */
+    --accent: #d97706;          /* Tactical Flare Orange */
+    
+    --glass-bg: rgba(5, 8, 15, 0.92); /* Deep midnight glass for PS5 theme */
+    --glass-border: rgba(207, 171, 58, 0.15); /* Weathered brass outline */
+    --glass-hover: rgba(207, 171, 58, 0.28);
+    
+    /* Typography */
+    --font-heading: 'Outfit', sans-serif;
+    --font-body: 'Space Grotesk', sans-serif;
+    
+    /* Transitions */
+    --transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}

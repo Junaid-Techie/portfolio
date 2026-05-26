@@ -1,3 +1,15 @@
+// Scroll Progress Indicator Logic (GPU-Accelerated scaleX)
+    const scrollProgress = document.getElementById('scrollProgress');
+    if (scrollProgress) {
+        window.addEventListener('scroll', () => {
+            const scrollPx = window.scrollY || document.documentElement.scrollTop;
+            const winHeightPx = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrollLen = winHeightPx > 0 ? (scrollPx / winHeightPx) : 0;
+            scrollProgress.style.transform = `scaleX(${scrollLen})`;
+        }, { passive: true });
+    }
+
+    
 document.addEventListener('DOMContentLoaded', () => {
     // Navigation Scroll Effect
     const navbar = document.querySelector('.navbar');
@@ -1248,99 +1260,3 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
     } // end if (filterBtns.length > 0 && projectCards.length > 0)
-
-    // Retro Terminal Logging Simulation
-    const terminalFeed = document.getElementById('terminalFeed');
-    if (terminalFeed) {
-        const logTemplates = [
-            "[SPARK_ENG] Running Z-Ordering on catalog.sales_reconciliation... SUCCESS",
-            "[SPARK_ENG] Broadcast join optimized for williams_sonoma.store_inventory [shaved 40m]",
-            "[SNOWFLAKE] Running SCD Type 2 merge into core.dim_customer... SUCCESS",
-            "[SNOWFLAKE] Offloaded stored procedure execution to warehouse 'XS_AUTO_SUSPEND'",
-            "[KAFKA] Consumer group 'order_ingest_v2' offsets synchronized. Lag: 0.",
-            "[AIRFLOW] DAG 'netsuite_to_delta' task 'aggregate_reconciliation' status: SUCCESS",
-            "[VECTOR_DB] Upserted 1,240 documents into JobMatch AI pgvector collection.",
-            "[VECTOR_DB] Querying semantic matching index for 'data platform architect'... 140ms",
-            "[QLoRA] Epoch 3/5 complete. Loss: 0.142. Validation accuracy: 94.2%",
-            "[SYS_MONITOR] Pipeline health: 100% | SLA Target: OPTIMAL | Throughput: 14.8 MB/s",
-            "[SURVIVOR] QZ Perimeter check complete. Infection vectors: 0% | Status: UNINFECTED",
-            "[SYS_SYNC] Syncing local survival repository nodes with Remote Git... SUCCESS",
-            "[SNOWFLAKE] Extracted NetSuite billing streams. Transferred 42,000 records. Integrity checks OK."
-        ];
-        
-        let logIndex = 0;
-        
-        function appendTerminalLine() {
-            const prompt = terminalFeed.querySelector('.term-prompt');
-            
-            // Create new line element
-            const newLine = document.createElement('div');
-            newLine.className = 'term-line';
-            newLine.textContent = logTemplates[logIndex];
-            
-            // Insert line before the prompt
-            if (prompt) {
-                terminalFeed.insertBefore(newLine, prompt);
-            } else {
-                terminalFeed.appendChild(newLine);
-            }
-            
-            // Scroll to bottom
-            terminalFeed.scrollTop = terminalFeed.scrollHeight;
-            
-            // Advance index
-            logIndex = (logIndex + 1) % logTemplates.length;
-            
-            // Schedule next log line at random intervals between 2s and 4.5s
-            const delay = 2000 + Math.random() * 2500;
-            setTimeout(appendTerminalLine, delay);
-        }
-        
-        // Start the loop after a 3s initial delay
-        setTimeout(appendTerminalLine, 3000);
-    } // End of retro terminal
-
-    // ----------------------------------------------------
-    // Phase 9: Professional TLOU Enhancements
-    // ----------------------------------------------------
-
-    // 1. Interactive "Flashlight" Hover on Cards
-    const glassCards = document.querySelectorAll('.glass-card');
-    glassCards.forEach(card => {
-        card.addEventListener('mousemove', (e) => {
-            const rect = card.getBoundingClientRect();
-            // Calculate mouse position relative to the card, as a percentage
-            const x = ((e.clientX - rect.left) / rect.width) * 100;
-            const y = ((e.clientY - rect.top) / rect.height) * 100;
-            
-            card.style.setProperty('--mouse-x', `${x}%`);
-            card.style.setProperty('--mouse-y', `${y}%`);
-        }, { passive: true });
-    });
-
-    // 2. (FEDRA Boot Sequence Removed per user request)
-
-    // 3. Spore Burst Micro-Interaction on Buttons
-    const primaryBtns = document.querySelectorAll('.btn-primary');
-    primaryBtns.forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            // Ensure spawnSpore is available (it should be since we are in the same scope)
-            if (typeof spawnSpore === 'function' && typeof requestAnimationFrame === 'function') {
-                const burstCount = 12;
-                for (let i = 0; i < burstCount; i++) {
-                    // Slight randomization around the click coordinate
-                    const offsetX = (Math.random() - 0.5) * 20;
-                    const offsetY = (Math.random() - 0.5) * 20;
-                    spawnSpore(e.clientX + offsetX, e.clientY + offsetY);
-                }
-                
-                // Wake up animation loop if it was asleep
-                if (typeof isAnimating !== 'undefined' && !isAnimating) {
-                    isAnimating = true;
-                    requestAnimationFrame(animatePixels); // Requires animatePixels to be in scope
-                }
-            }
-        });
-    });
-
-});
