@@ -141,6 +141,51 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     createBokehTemplates();
 
+    // High-performance offscreen templates for standard spores (removes 850+ radial gradient creations per frame)
+    const sporeTemplates = {};
+    function createSporeTemplates() {
+        const colors = [
+            { name: 'gold', r: 207, g: 171, b: 58, baseAlpha: 1.0 },
+            { name: 'green', r: 115, g: 140, b: 102, baseAlpha: 0.65 }
+        ];
+        
+        colors.forEach(c => {
+            // Pre-render small, medium, and large spore gradients
+            const sizes = [
+                { name: 'large', sizeFactor: 4.5 },
+                { name: 'medium', sizeFactor: 3.0 },
+                { name: 'small', sizeFactor: 1.5 }
+            ];
+            
+            sizes.forEach(s => {
+                const radius = s.sizeFactor * 2.5; // Matches this.size * 2.5
+                const pad = radius * 2 + 4;
+                const half = pad / 2;
+                
+                const offscreen = document.createElement('canvas');
+                offscreen.width = pad;
+                offscreen.height = pad;
+                const octx = offscreen.getContext('2d');
+                
+                const gradient = octx.createRadialGradient(half, half, 0, half, half, radius);
+                gradient.addColorStop(0, `rgba(${c.r}, ${c.g}, ${c.b}, ${c.baseAlpha})`);
+                gradient.addColorStop(0.35, `rgba(${c.r}, ${c.g}, ${c.b}, ${c.baseAlpha})`);
+                gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
+                
+                octx.fillStyle = gradient;
+                octx.beginPath();
+                octx.arc(half, half, radius, 0, Math.PI * 2);
+                octx.fill();
+                
+                sporeTemplates[`${c.name}_${s.name}`] = {
+                    canvas: offscreen,
+                    halfSize: half
+                };
+            });
+        });
+    }
+    createSporeTemplates();
+
     class AmbientParticle {
         constructor(isInit = false) {
             // Distribute across the sweeping wave
@@ -327,19 +372,31 @@ document.addEventListener('DOMContentLoaded', () => {
                 actx.quadraticCurveTo(cx, cy, x2, y2);
                 actx.stroke();
             } else {
-                // Glowing radial bokeh spore circles
-                const gradient = actx.createRadialGradient(
-                    this.x, this.y, 0,
-                    this.x, this.y, this.size * 2.5
-                );
-                gradient.addColorStop(0, color);
-                gradient.addColorStop(0.35, color);
-                gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
-
-                actx.fillStyle = gradient;
-                actx.beginPath();
-                actx.arc(this.x, this.y, this.size * 2.5, 0, Math.PI * 2);
-                actx.fill();
+                // Use pre-rendered offscreen templates instead of expensive per-frame radial gradients
+                const colorType = this.z > 0.55 ? 'gold' : 'green';
+                let sizeType = 'small';
+                if (this.size > 3.5) sizeType = 'large';
+                else if (this.size > 2.0) sizeType = 'medium';
+                
+                const template = sporeTemplates[`${colorType}_${sizeType}`];
+                if (template) {
+                    actx.save();
+                    // Draw the template scaled to the exact particle size
+                    actx.globalAlpha = renderOpacity;
+                    
+                    // We dynamically scale the template to match the exact mathematical size
+                    // Since templates are pre-rendered at standard sizes, we use drawImage with scaling
+                    const targetRadius = this.size * 2.5;
+                    actx.translate(this.x, this.y);
+                    actx.drawImage(
+                        template.canvas, 
+                        -targetRadius, 
+                        -targetRadius, 
+                        targetRadius * 2, 
+                        targetRadius * 2
+                    );
+                    actx.restore();
+                }
                 
                 // Pure white hot core for shiny particles
                 if (this.isShiny) {
