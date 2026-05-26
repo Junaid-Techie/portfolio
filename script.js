@@ -96,7 +96,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const actx = ambientCanvas.getContext('2d');
     let ambientParticles = [];
-    const maxAmbientParticles = 550; // Massively raised density for a rich, immersive PS5 wave
+    const maxAmbientParticles = 850; // Massively raised density so particles alone form the wave
     let wavePhase = 0; // Wave timing index for ambient auroral ribbons and god rays
 
     // Stable viewport dimensions to prevent layout jumping on mobile scroll (e.g. from address bar hiding/showing)
@@ -163,7 +163,7 @@ document.addEventListener('DOMContentLoaded', () => {
             
             // Create a dense cluster around the curve with Gaussian-like spread
             const spreadFactor = (Math.random() + Math.random() + Math.random() - 1.5); 
-            const spreadAmplitude = referenceHeight * 0.28; // Tighter cluster for highly defined ribbon shape
+            const spreadAmplitude = referenceHeight * 0.12; // Tightened cluster so particles form the visible wave
             this.offsetY = spreadFactor * spreadAmplitude;
             this.y = curveBaseY + this.offsetY;
             
@@ -409,24 +409,6 @@ document.addEventListener('DOMContentLoaded', () => {
         mouseY = null;
     }, { passive: true });
 
-    // Helper: Draw faint, wavy, slow-moving auroral ribbon light bands
-    function drawAuroralRibbon(ctx, width, height, phase, color, baseY, amplitude) {
-        ctx.beginPath();
-        ctx.strokeStyle = color;
-        ctx.lineWidth = 140; // Wide and soft
-        ctx.lineCap = 'round';
-        ctx.lineJoin = 'round';
-        
-        for (let x = 0; x <= width; x += 30) {
-            const y = baseY + Math.sin(x * 0.0015 + phase) * amplitude + Math.cos(x * 0.003 - phase * 0.5) * (amplitude * 0.3);
-            if (x === 0) {
-                ctx.moveTo(x, y);
-            } else {
-                ctx.lineTo(x, y);
-            }
-        }
-        ctx.stroke();
-    }
 
     // Helper: Draw volumetric spotlight beam fanning from top-left diagonally down-right
     function drawVolumetricLight(ctx, width, height, phase) {
@@ -473,31 +455,8 @@ document.addEventListener('DOMContentLoaded', () => {
     function animateAmbientSpores() {
         actx.clearRect(0, 0, ambientCanvas.width, ambientCanvas.height);
 
-        // Increment wave phase for slow auroral ribbon breathing motion and particle flow
+        // Increment wave phase for slow particle flow
         wavePhase += 0.0015;
-
-        // Render Ribbon 1: Amber Gold (Backing layer)
-        // Positioned along the particle wave path
-        drawAuroralRibbon(
-            actx,
-            referenceWidth,
-            referenceHeight,
-            wavePhase,
-            'rgba(207, 171, 58, 0.018)', // Slightly increased aura opacity for high-fidelity shape
-            referenceHeight * 0.73, // Lowered to support the particle wave
-            100 // Aligned amplitude
-        );
-
-        // Render Ribbon 2: Lichen Green (Backing layer)
-        drawAuroralRibbon(
-            actx,
-            referenceWidth,
-            referenceHeight,
-            wavePhase + Math.PI,
-            'rgba(115, 140, 102, 0.022)', // Slightly increased moss green aura
-            referenceHeight * 0.80,
-            80
-        );
 
         // Render Volumetric Light Shaft (Breathing top-left spotlight beam cone overlay)
         drawVolumetricLight(actx, referenceWidth, referenceHeight, wavePhase);
