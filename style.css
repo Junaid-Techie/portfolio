@@ -48,6 +48,8 @@ body::after {
     box-shadow: inset 0 0 100px rgba(0, 0, 0, 0.55);
     pointer-events: none;
     z-index: 50; /* Lowered from 9999 to stay below modals and nav mobile menus */
+    will-change: transform;
+    transform: translate3d(0, 0, 0); /* Force GPU rasterization of the overlay to prevent scroll paint slowdown */
 }
 
 /* Custom Weathered Scrollbar */

@@ -90,6 +90,8 @@ document.addEventListener('DOMContentLoaded', () => {
     ambientCanvas.style.height = '100vh';
     ambientCanvas.style.pointerEvents = 'none';
     ambientCanvas.style.zIndex = '-1'; // Behind everything
+    ambientCanvas.style.transform = 'translate3d(0, 0, 0)'; // Force GPU compositing layer to prevent scroll repaint lag
+    ambientCanvas.style.willChange = 'transform';
     document.body.appendChild(ambientCanvas);
 
     const actx = ambientCanvas.getContext('2d');
@@ -146,17 +148,24 @@ document.addEventListener('DOMContentLoaded', () => {
                 ? Math.random() * referenceWidth 
                 : -40 - Math.random() * 100; // Spawn slightly off-screen left when recycled
                 
-            // Core wave curves elegantly across the bottom half (reduced amplitude for subtle movement)
-            const normX = this.x / referenceWidth;
-            const curveBaseY = referenceHeight * 0.82 - Math.sin(normX * Math.PI * 1.2) * (referenceHeight * 0.12);
+            this.z = Math.random() * 0.84 + 0.16; // 3D Depth Layer factor
+            
+            // Choose ribbon assignment based on depth (z) to match color rendering
+            this.ribbonType = this.z > 0.55 ? 1 : 2; 
+
+            // Calculate base curve position based on ribbon assignment (exact PS5 homescreen overlapping shape)
+            let curveBaseY = 0;
+            if (this.ribbonType === 1) {
+                curveBaseY = (referenceHeight * 0.73) + Math.sin(this.x * 0.0015 + wavePhase) * 100 + Math.cos(this.x * 0.003 - wavePhase * 0.5) * 30;
+            } else {
+                curveBaseY = (referenceHeight * 0.80) + Math.sin(this.x * 0.0015 + wavePhase + Math.PI) * 80 + Math.cos(this.x * 0.003 - (wavePhase + Math.PI) * 0.5) * 24;
+            }
             
             // Create a dense cluster around the curve with Gaussian-like spread
             const spreadFactor = (Math.random() + Math.random() + Math.random() - 1.5); 
-            const spreadAmplitude = referenceHeight * 0.45;
+            const spreadAmplitude = referenceHeight * 0.28; // Tighter cluster for highly defined ribbon shape
             this.offsetY = spreadFactor * spreadAmplitude;
             this.y = curveBaseY + this.offsetY;
-                
-            this.z = Math.random() * 0.84 + 0.16; // 3D Depth Layer factor
             
             // Build three highly focused depth-of-field layers for the wave
             if (this.z < 0.38) {
@@ -212,9 +221,13 @@ document.addEventListener('DOMContentLoaded', () => {
             // Apply turbulence + sweeping vector
             this.x += this.speedX + noiseX;
             
-            // Ride the moving wave in perfect sync with the PS5 ribbon's phase undulations (reduced amplitude for subtle flow)
-            const normX = this.x / referenceWidth;
-            const curveBaseY = referenceHeight * 0.82 - Math.sin(normX * Math.PI * 1.2 - wavePhase * 1.5) * (referenceHeight * 0.12);
+            // Ride their assigned ribbon wave in perfect sync with the PS5 ribbon's phase undulations
+            let curveBaseY = 0;
+            if (this.ribbonType === 1) {
+                curveBaseY = (referenceHeight * 0.73) + Math.sin(this.x * 0.0015 + wavePhase) * 100 + Math.cos(this.x * 0.003 - wavePhase * 0.5) * 30;
+            } else {
+                curveBaseY = (referenceHeight * 0.80) + Math.sin(this.x * 0.0015 + wavePhase + Math.PI) * 80 + Math.cos(this.x * 0.003 - (wavePhase + Math.PI) * 0.5) * 24;
+            }
             
             this.bobPhase += this.bobSpeed;
             this.y = curveBaseY + this.offsetY + Math.sin(this.bobPhase) * this.bobAmplitude;
@@ -470,9 +483,9 @@ document.addEventListener('DOMContentLoaded', () => {
             referenceWidth,
             referenceHeight,
             wavePhase,
-            'rgba(207, 171, 58, 0.015)', // Faint amber aura
-            referenceHeight * 0.75, // Lowered to support the particle wave
-            120 // Larger amplitude
+            'rgba(207, 171, 58, 0.018)', // Slightly increased aura opacity for high-fidelity shape
+            referenceHeight * 0.73, // Lowered to support the particle wave
+            100 // Aligned amplitude
         );
 
         // Render Ribbon 2: Lichen Green (Backing layer)
@@ -481,9 +494,9 @@ document.addEventListener('DOMContentLoaded', () => {
             referenceWidth,
             referenceHeight,
             wavePhase + Math.PI,
-            'rgba(115, 140, 102, 0.018)', // Muted lichen green aura
-            referenceHeight * 0.82,
-            90
+            'rgba(115, 140, 102, 0.022)', // Slightly increased moss green aura
+            referenceHeight * 0.80,
+            80
         );
 
         // Render Volumetric Light Shaft (Breathing top-left spotlight beam cone overlay)
@@ -511,6 +524,8 @@ document.addEventListener('DOMContentLoaded', () => {
     canvas.style.height = '100vh';
     canvas.style.pointerEvents = 'none';
     canvas.style.zIndex = '100000'; // Elevated to sit cleanly over layout layers but below popup modals
+    canvas.style.transform = 'translate3d(0, 0, 0)'; // Force GPU compositing layer to prevent scroll paint lag
+    canvas.style.willChange = 'transform';
     document.body.appendChild(canvas);
 
     const ctx = canvas.getContext('2d');
