@@ -80,11 +80,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }, 100);
 
-    // =============================================================
-    // UNDERWATER PS5-WAVE AMBIENT BACKGROUND
-    // Particles rain from the top, collect onto undulating sine-wave
-    // bands (PS5-style), with underwater caustic light and sparkles.
-    // =============================================================
+    // --- Ambient Spore Canvas Builder (PS5 Home Screen Background Spores in TLOU Theme) ---
     const ambientCanvas = document.createElement('canvas');
     ambientCanvas.id = 'ambient-spore-canvas';
     ambientCanvas.style.position = 'fixed';
@@ -93,359 +89,430 @@ document.addEventListener('DOMContentLoaded', () => {
     ambientCanvas.style.width = '100vw';
     ambientCanvas.style.height = '100vh';
     ambientCanvas.style.pointerEvents = 'none';
-    ambientCanvas.style.zIndex = '-1';
-    ambientCanvas.style.transform = 'translate3d(0, 0, 0)'; // GPU layer — scroll-stable
+    ambientCanvas.style.zIndex = '-1'; // Behind everything
+    ambientCanvas.style.transform = 'translate3d(0, 0, 0)'; // Force GPU compositing layer to prevent scroll repaint lag
     ambientCanvas.style.willChange = 'transform';
     document.body.appendChild(ambientCanvas);
 
-    // HiDPI / Retina support — render at device pixel ratio for sharp edges
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
     const actx = ambientCanvas.getContext('2d');
     let ambientParticles = [];
-    const maxAmbientParticles = 460;
-    let wavePhase = 0;
+    const maxAmbientParticles = 550; // Massively raised density for a rich, immersive PS5 wave
+    let wavePhase = 0; // Wave timing index for ambient auroral ribbons and god rays
 
-    // Stable viewport reference — only updated on true orientation/resize, not mobile scroll
-    let referenceWidth  = window.innerWidth;
+    // Stable viewport dimensions to prevent layout jumping on mobile scroll (e.g. from address bar hiding/showing)
+    let referenceWidth = window.innerWidth;
     let referenceHeight = window.innerHeight;
 
-    // ── Pre-render sparkle (4-point star) templates ──────────────
-    const sparkleTemplates = {};
-    function createSparkleTemplates() {
-        [
-            { key: 'sm', r: 2.5, streak: 9  },
-            { key: 'md', r: 4.0, streak: 15 },
-        ].forEach(({ key, r, streak }) => {
-            const size  = (streak + r + 4) * 2;
-            const half  = size / 2;
-            const off   = document.createElement('canvas');
-            off.width   = size;
-            off.height  = size;
-            const oc    = off.getContext('2d');
-
-            // Soft radial glow core
-            const glow = oc.createRadialGradient(half, half, 0, half, half, r * 3);
-            glow.addColorStop(0,   'rgba(210, 245, 255, 0.95)');
-            glow.addColorStop(0.4, 'rgba(100, 210, 255, 0.55)');
-            glow.addColorStop(1,   'rgba(0,0,0,0)');
-            oc.fillStyle = glow;
-            oc.beginPath();
-            oc.arc(half, half, r * 3, 0, Math.PI * 2);
-            oc.fill();
-
-            // 4-point cross streaks
-            oc.strokeStyle = 'rgba(180, 235, 255, 0.70)';
-            oc.lineWidth   = 1.2;
-            oc.lineCap     = 'round';
-            oc.beginPath();
-            oc.moveTo(half - streak, half); oc.lineTo(half + streak, half);
-            oc.moveTo(half, half - streak); oc.lineTo(half, half + streak);
-            oc.stroke();
-
-            // Diagonal softer streaks (×-shape)
-            const d = streak * 0.55;
-            oc.strokeStyle = 'rgba(150, 220, 255, 0.35)';
-            oc.lineWidth   = 0.8;
-            oc.beginPath();
-            oc.moveTo(half - d, half - d); oc.lineTo(half + d, half + d);
-            oc.moveTo(half + d, half - d); oc.lineTo(half - d, half + d);
-            oc.stroke();
-
-            sparkleTemplates[key] = { canvas: off, half };
+    // High-performance offscreen bokeh templates to avoid heavy canvas blur filtering on every frame
+    const bokehTemplates = {};
+    function createBokehTemplates() {
+        const colors = [
+            { name: 'gold', color: 'rgba(207, 171, 58, 0.42)' },
+            { name: 'green', color: 'rgba(115, 140, 102, 0.32)' }
+        ];
+        
+        colors.forEach(c => {
+            // We'll create small, medium, and large pre-blurred bokeh canvases
+            const sizes = [
+                { name: 'large', radius: 24, blur: 18 },
+                { name: 'medium', radius: 12, blur: 10 },
+                { name: 'small', radius: 6, blur: 6 }
+            ];
+            
+            sizes.forEach(s => {
+                const offscreen = document.createElement('canvas');
+                const pad = (s.radius + s.blur) * 2 + 10;
+                offscreen.width = pad;
+                offscreen.height = pad;
+                const octx = offscreen.getContext('2d');
+                
+                octx.filter = `blur(${s.blur}px)`;
+                octx.fillStyle = c.color;
+                octx.beginPath();
+                octx.arc(pad / 2, pad / 2, s.radius, 0, Math.PI * 2);
+                octx.fill();
+                
+                bokehTemplates[`${c.name}_${s.name}`] = {
+                    canvas: offscreen,
+                    halfSize: pad / 2
+                };
+            });
         });
     }
-    createSparkleTemplates();
+    createBokehTemplates();
 
-    // ── Wave definitions — two overlapping PS5-style sine bands ──
-    // Particles collect onto these bands after falling from the top.
-    const WAVES = [
-        { yRatio: 0.54, amp: 58, freq: 0.00130, speed:  1.00, phase: 0.00         },
-        { yRatio: 0.62, amp: 42, freq: 0.00190, speed: -0.70, phase: Math.PI * 0.7 },
-    ];
-
-    function getWaveY(wIdx, x, t) {
-        const w = WAVES[wIdx];
-        const base = referenceHeight * w.yRatio;
-        return base
-            + Math.sin(x * w.freq + t * w.speed + w.phase) * w.amp
-            + Math.cos(x * w.freq * 1.65 - t * w.speed * 0.45 + w.phase) * (w.amp * 0.28);
-    }
-
-    // ── AmbientParticle class ─────────────────────────────────────
     class AmbientParticle {
         constructor(isInit = false) {
-            this.waveIdx = Math.floor(Math.random() * WAVES.length);
-            this.x = Math.random() * referenceWidth;
+            // Distribute across the sweeping wave
+            this.x = isInit 
+                ? Math.random() * referenceWidth 
+                : -40 - Math.random() * 100; // Spawn slightly off-screen left when recycled
+                
+            this.z = Math.random() * 0.84 + 0.16; // 3D Depth Layer factor
+            
+            // Choose ribbon assignment based on depth (z) to match color rendering
+            this.ribbonType = this.z > 0.55 ? 1 : 2; 
 
-            if (isInit) {
-                // Pre-populate: mix of wave-riders and mid-fall particles
-                if (Math.random() < 0.65) {
-                    this.state = 'wave';
-                    this.y = getWaveY(this.waveIdx, this.x, wavePhase)
-                           + (Math.random() - 0.5) * 38;
-                    this.opacity = Math.random() * 0.55 + 0.05;
-                } else {
-                    this.state = 'falling';
-                    this.y = Math.random() * referenceHeight * 0.55;
-                    this.opacity = 0;
-                }
+            // Calculate base curve position based on ribbon assignment (exact PS5 homescreen overlapping shape)
+            let curveBaseY = 0;
+            if (this.ribbonType === 1) {
+                curveBaseY = (referenceHeight * 0.73) + Math.sin(this.x * 0.0015 + wavePhase) * 100 + Math.cos(this.x * 0.003 - wavePhase * 0.5) * 30;
             } else {
-                // Respawn from the top edge
-                this.y = -8 - Math.random() * 50;
-                this.state = 'falling';
-                this.opacity = 0;
+                curveBaseY = (referenceHeight * 0.80) + Math.sin(this.x * 0.0015 + wavePhase + Math.PI) * 80 + Math.cos(this.x * 0.003 - (wavePhase + Math.PI) * 0.5) * 24;
+            }
+            
+            // Create a dense cluster around the curve with Gaussian-like spread
+            const spreadFactor = (Math.random() + Math.random() + Math.random() - 1.5); 
+            const spreadAmplitude = referenceHeight * 0.28; // Tighter cluster for highly defined ribbon shape
+            this.offsetY = spreadFactor * spreadAmplitude;
+            this.y = curveBaseY + this.offsetY;
+            
+            // Build three highly focused depth-of-field layers for the wave
+            if (this.z < 0.38) {
+                // Background Spores: Small, slow, distant spores
+                this.isBokeh = Math.random() > 0.5; // 50% are beautiful soft background bokeh
+                this.isFilament = false;
+                this.size = (Math.random() * 4.0 + 2.0) * this.z; // Distant background particles
+                this.baseSpeedX = (Math.random() * 0.06 + 0.02); // Drift right lazily
+            } else if (this.z > 0.76) {
+                // Foreground Embers: Tiny, bright, sharp specs of gold
+                this.isBokeh = false;
+                this.isFilament = false;
+                this.isShiny = Math.random() > 0.3; // 70% of foreground are intensely shiny
+                this.size = (Math.random() * 1.5 + 0.8) * this.z;
+                this.baseSpeedX = (Math.random() * 0.3 + 0.15); // Faster foreground sweep
+            } else {
+                // Midground: Classic spores, rotating curved filaments, and floating out-of-focus bokeh orbs
+                this.isBokeh = Math.random() < 0.20; // 20% are gorgeous out-of-focus bokeh orbs
+                this.isFilament = !this.isBokeh && Math.random() < 0.08;
+                this.size = this.isBokeh 
+                    ? (Math.random() * 14.0 + 8.0) * this.z // Larger size for premium large bokeh orbs
+                    : (Math.random() * 5.0 + 2.0) * this.z;
+                this.baseSpeedX = (Math.random() * 0.15 + 0.08); // Steady midground sweep
             }
 
-            // Particle type
-            const roll = Math.random();
-            if (roll < 0.07) {
-                // Sparkle — twinkling star
-                this.type        = 'sparkle';
-                this.size        = 1.8 + Math.random() * 2.0;
-                this.sparklePeriod = 90  + Math.random() * 140;
-                this.sparkTimer  = Math.random() * this.sparklePeriod;
-                this.sparkBright = 0;
-            } else if (roll < 0.55) {
-                // Wave-rider glow dot
-                this.type = 'wave';
-                this.size = 1.0 + Math.random() * 2.2;
-            } else {
-                // Falling rain particle
-                this.type = 'rain';
-                this.size = 0.5 + Math.random() * 1.4;
-            }
+            this.speedX = this.baseSpeedX * this.z;
+            this.speedY = (Math.random() - 0.5) * 0.04; 
+            
+            this.angle = Math.random() * Math.PI * 2;
+            this.angleSpeed = Math.random() * 0.008 + 0.003;
+            
+            // Gentle slow vertical bobbing to simulate PS5 background wave float
+            this.bobPhase = Math.random() * Math.PI * 2;
+            this.bobSpeed = Math.random() * 0.005 + 0.002; // Extremely slow and hypnotic
+            this.bobAmplitude = (Math.random() * 0.4 + 0.2) * this.z; // Subtle vertical bobbing
 
-            // Fall speed (downward)
-            this.fallSpeed = 0.35 + Math.random() * 0.85;
+            // Curved filaments rotation
+            this.rot = Math.random() * Math.PI * 2;
+            this.rotSpeed = (Math.random() - 0.5) * 0.012;
 
-            // Slow horizontal drift along the wave after landing
-            this.driftX = (0.08 + Math.random() * 0.22) * (Math.random() < 0.5 ? 1 : -1);
-
-            // Vertical spread offset around the wave centre
-            this.offsetY = (Math.random() - 0.5) * 32;
-
-            // Opacity
-            let maxOp = this.type === 'sparkle' ? (0.08 + Math.random() * 0.20)
-                      : this.type === 'wave'    ? (0.18 + Math.random() * 0.55)
-                                                : (0.12 + Math.random() * 0.40);
-            this.maxOpacity   = maxOp;
-            this.renderOpacity = this.opacity;
-
-            // Breathing pulse
+            this.baseOpacity = (Math.random() * 0.25 + 0.12) * this.z;
+            this.opacity = 0; // Fade in gently
             this.pulsePhase = Math.random() * Math.PI * 2;
-            this.pulseSpeed = 0.008 + Math.random() * 0.016;
+            this.pulseSpeed = Math.random() * 0.006 + 0.002; 
         }
 
         update() {
-            const targetY = getWaveY(this.waveIdx, this.x, wavePhase) + this.offsetY;
+            // Calculate continuous organic fluid turbulence currents
+            const time = wavePhase * 8;
+            const noiseX = Math.sin(this.y * 0.006 + time * 0.15) * Math.cos(this.x * 0.004 - time * 0.08) * 0.25;
+            const noiseY = Math.cos(this.x * 0.005 + time * 0.12) * Math.sin(this.y * 0.003 - time * 0.05) * 0.35;
 
-            if (this.state === 'falling') {
-                this.y += this.fallSpeed;
-                this.opacity = Math.min(this.maxOpacity * 0.75, this.opacity + 0.004);
-                if (this.y >= targetY - 4) this.state = 'wave';
+            // Apply turbulence + sweeping vector
+            this.x += this.speedX + noiseX;
+            
+            // Ride their assigned ribbon wave in perfect sync with the PS5 ribbon's phase undulations
+            let curveBaseY = 0;
+            if (this.ribbonType === 1) {
+                curveBaseY = (referenceHeight * 0.73) + Math.sin(this.x * 0.0015 + wavePhase) * 100 + Math.cos(this.x * 0.003 - wavePhase * 0.5) * 30;
             } else {
-                // Smoothly ride the wave
-                this.y += (targetY - this.y) * 0.06;
-                this.x += this.driftX;
-                this.opacity = Math.min(this.maxOpacity, this.opacity + 0.006);
+                curveBaseY = (referenceHeight * 0.80) + Math.sin(this.x * 0.0015 + wavePhase + Math.PI) * 80 + Math.cos(this.x * 0.003 - (wavePhase + Math.PI) * 0.5) * 24;
+            }
+            
+            this.bobPhase += this.bobSpeed;
+            this.y = curveBaseY + this.offsetY + Math.sin(this.bobPhase) * this.bobAmplitude;
+
+            // Slowly rotate filaments
+            if (this.isFilament) {
+                this.rot += this.rotSpeed;
             }
 
-            // Sparkle flicker
-            if (this.type === 'sparkle') {
-                this.sparkTimer = (this.sparkTimer + 1) % this.sparklePeriod;
-                this.sparkBright = Math.max(0, Math.sin((this.sparkTimer / this.sparklePeriod) * Math.PI));
-            }
-
-            // Breathing pulse
+            // Muted organic breathing pulse + firefly shimmering twinkles
             this.pulsePhase += this.pulseSpeed;
-            const pulse = Math.sin(this.pulsePhase)
-                        * (this.type === 'sparkle' ? 0.06 : 0.10);
-            this.renderOpacity = Math.max(0, this.opacity + pulse);
+            let pulseFactor = (Math.sin(this.pulsePhase) + 1) / 2; // 0 to 1
+            let shimmer = Math.sin(this.pulsePhase * 3.6) * 0.18; // Twitch sparkle
+            
+            if (this.isShiny) {
+                // Intense chaotic twinkling for shiny PS5 particles
+                pulseFactor = (Math.sin(this.pulsePhase * 8.0) + 1) / 2;
+                shimmer = Math.sin(this.pulsePhase * 15.0) * 0.5;
+            }
+            
+            this.opacity = Math.max(0, this.baseOpacity * (0.65 + pulseFactor * 0.35) + shimmer);
 
-            // Recycle when particle exits viewport
-            if (this.x > referenceWidth + 40 || this.x < -40 || this.y > referenceHeight + 40) {
-                const idx = ambientParticles.indexOf(this);
-                if (idx > -1) ambientParticles[idx] = new AmbientParticle(false);
+            // Recycle if particle drifts far outside bounds (off right side, or too far up/down)
+            if (this.x > referenceWidth + 120 || this.y < -100 || this.y > referenceHeight + 100) {
+                const index = ambientParticles.indexOf(this);
+                if (index > -1) {
+                    ambientParticles[index] = new AmbientParticle(false);
+                }
             }
         }
 
         draw() {
-            // Edge fading — left, right, top
-            let ef = 1.0;
-            const fd = 90;
-            if (this.x < fd)                    ef *= Math.max(0, this.x / fd);
-            if (this.x > referenceWidth - fd)   ef *= Math.max(0, (referenceWidth - this.x) / fd);
-            if (this.y < fd)                    ef *= Math.max(0, this.y / fd);
+            // Soft fading at all borders (top, bottom, left, right) so particles blend seamlessly in the atmosphere
+            let edgeFade = 1.0;
+            const topFadeDist = 120;
+            const bottomFadeDist = 120;
+            const sideFadeDist = 80;
 
-            const alpha = this.renderOpacity * ef;
-            if (alpha <= 0.005) return;
+            if (this.y < topFadeDist) {
+                edgeFade *= Math.max(0, this.y / topFadeDist);
+            } else if (this.y > referenceHeight - bottomFadeDist) {
+                edgeFade *= Math.max(0, (referenceHeight - this.y) / bottomFadeDist);
+            }
 
-            if (this.type === 'sparkle') {
-                const bright = this.sparkBright;
-                if (bright > 0.08) {
-                    const tpl = sparkleTemplates[this.size > 2.8 ? 'md' : 'sm'];
-                    if (tpl) {
-                        actx.save();
-                        actx.globalAlpha = bright * ef * 0.92;
-                        actx.drawImage(tpl.canvas, this.x - tpl.half, this.y - tpl.half);
-                        actx.restore();
-                    }
-                } else {
-                    // Dim: tiny dot between flashes
-                    actx.fillStyle = `rgba(160, 230, 255, ${alpha * 0.35})`;
+            if (this.x < sideFadeDist) {
+                edgeFade *= Math.max(0, this.x / sideFadeDist);
+            } else if (this.x > referenceWidth - sideFadeDist) {
+                edgeFade *= Math.max(0, (referenceWidth - this.x) / sideFadeDist);
+            }
+            
+            const renderOpacity = this.opacity * edgeFade;
+            if (renderOpacity <= 0.01) return; // Skip drawing if faded out
+
+            // Curated forest-lichen moss green (#738c66) and warm amber fireflies gold (#cfab3a)
+            const color = this.z > 0.55
+                ? `rgba(207, 171, 58, ${renderOpacity})` // Gold spores
+                : `rgba(115, 140, 102, ${renderOpacity * 0.65})`; // Lichen Green spores
+
+            if (this.isBokeh) {
+                // TRUE Photographic Lens Bokeh using high-performance offscreen templates
+                const colorType = this.z > 0.28 ? 'gold' : 'green';
+                let sizeType = 'small';
+                if (this.size > 14) {
+                    sizeType = 'large';
+                } else if (this.size > 10) {
+                    sizeType = 'medium';
+                }
+                
+                const template = bokehTemplates[`${colorType}_${sizeType}`];
+                if (template) {
+                    actx.save();
+                    actx.globalAlpha = renderOpacity;
+                    actx.drawImage(
+                        template.canvas, 
+                        this.x - template.halfSize, 
+                        this.y - template.halfSize
+                    );
+                    actx.restore();
+                }
+            } else if (this.isFilament) {
+                // High-fidelity drifting curved line filaments
+                actx.beginPath();
+                actx.strokeStyle = color;
+                actx.lineWidth = Math.max(0.6, this.size * 0.22);
+                actx.lineCap = 'round';
+                
+                const length = this.size * 2.2;
+                const x1 = this.x - length * Math.cos(this.rot);
+                const y1 = this.y - length * Math.sin(this.rot);
+                const x2 = this.x + length * Math.cos(this.rot);
+                const y2 = this.y + length * Math.sin(this.rot);
+                const cx = this.x + length * 0.4 * Math.sin(this.rot);
+                const cy = this.y - length * 0.4 * Math.cos(this.rot);
+                
+                actx.moveTo(x1, y1);
+                actx.quadraticCurveTo(cx, cy, x2, y2);
+                actx.stroke();
+            } else {
+                // Glowing radial bokeh spore circles
+                const gradient = actx.createRadialGradient(
+                    this.x, this.y, 0,
+                    this.x, this.y, this.size * 2.5
+                );
+                gradient.addColorStop(0, color);
+                gradient.addColorStop(0.35, color);
+                gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
+
+                actx.fillStyle = gradient;
+                actx.beginPath();
+                actx.arc(this.x, this.y, this.size * 2.5, 0, Math.PI * 2);
+                actx.fill();
+                
+                // Pure white hot core for shiny particles
+                if (this.isShiny) {
+                    actx.fillStyle = `rgba(255, 255, 255, ${renderOpacity * 1.5})`;
                     actx.beginPath();
-                    actx.arc(this.x, this.y, this.size * 0.55, 0, Math.PI * 2);
+                    actx.arc(this.x, this.y, this.size * 0.8, 0, Math.PI * 2);
                     actx.fill();
                 }
-            } else if (this.type === 'wave') {
-                // Glowing wave-rider: teal core + soft halo
-                const r = this.size * 2.8;
-                const g = actx.createRadialGradient(this.x, this.y, 0, this.x, this.y, r);
-                g.addColorStop(0,    `rgba(190, 240, 255, ${alpha})`);
-                g.addColorStop(0.30, `rgba(80,  195, 240, ${alpha * 0.70})`);
-                g.addColorStop(0.70, `rgba(40,  140, 200, ${alpha * 0.25})`);
-                g.addColorStop(1,    'rgba(0,0,0,0)');
-                actx.fillStyle = g;
-                actx.beginPath();
-                actx.arc(this.x, this.y, r, 0, Math.PI * 2);
-                actx.fill();
-            } else {
-                // Falling rain: crisp small cyan dot
-                actx.fillStyle = `rgba(130, 210, 255, ${alpha * 0.80})`;
-                actx.beginPath();
-                actx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                actx.fill();
+
+                // AAA Premium Menu Detail: Render soft golden cross-hair lens flares on the brightest foreground specifications when they peak
+                if ((this.isShiny || this.z > 0.8) && renderOpacity > 0.5) {
+                    actx.beginPath();
+                    actx.strokeStyle = `rgba(255, 255, 255, ${(renderOpacity - 0.5) * 1.5})`;
+                    actx.lineWidth = 0.5;
+                    
+                    // Horizontal flare line
+                    actx.moveTo(this.x - this.size * 2.2, this.y);
+                    actx.lineTo(this.x + this.size * 2.2, this.y);
+                    
+                    // Vertical flare line
+                    actx.moveTo(this.x, this.y - this.size * 2.2);
+                    actx.lineTo(this.x, this.y + this.size * 2.2);
+                    
+                    actx.stroke();
+                }
             }
         }
     }
 
-    // ── Underwater caustic light shafts from the top ──────────────
-    // Simulates sunlight refracting through ocean surface ripples.
-    function drawUnderwaterLight(ctx, width, height, t) {
-        ctx.save();
-
-        // Surface shimmer band at the very top
-        ctx.filter = 'blur(55px)';
-        const surfShimmer = 0.08 + Math.sin(t * 0.55) * 0.015;
-        const surf = ctx.createLinearGradient(0, 0, 0, height * 0.28);
-        surf.addColorStop(0,   `rgba(50, 140, 210, ${surfShimmer})`);
-        surf.addColorStop(0.5, `rgba(20,  90, 170, ${surfShimmer * 0.4})`);
-        surf.addColorStop(1,   'rgba(0,0,0,0)');
-        ctx.fillStyle = surf;
-        ctx.fillRect(0, 0, width, height * 0.28);
-
-        // 5 animated narrow caustic shafts
-        ctx.filter = 'blur(28px)';
-        const shaftCount = 5;
-        for (let i = 0; i < shaftCount; i++) {
-            const ti     = t * (0.28 + i * 0.055);
-            const centX  = width * (0.08 + (i / (shaftCount - 1)) * 0.84)
-                         + Math.sin(ti + i * 1.3) * width * 0.055;
-            const lean   = Math.sin(ti * 0.65 + i * 0.9) * 0.08; // subtle diagonal
-            const endX   = centX + lean * height;
-            const bright = 0.028 + Math.sin(ti * 1.5 + i * 0.7) * 0.010;
-            const hw     = width * (0.028 + Math.sin(ti * 0.4 + i) * 0.008);
-
-            const sg = ctx.createLinearGradient(centX, 0, endX, height * 0.75);
-            sg.addColorStop(0,    `rgba(90,  180, 240, ${bright * 4.5})`);
-            sg.addColorStop(0.25, `rgba(50,  140, 210, ${bright * 2.5})`);
-            sg.addColorStop(0.60, `rgba(20,   90, 175, ${bright * 0.9})`);
-            sg.addColorStop(1,    'rgba(0,0,0,0)');
-
-            ctx.fillStyle = sg;
-            ctx.beginPath();
-            ctx.moveTo(centX - hw,        0);
-            ctx.lineTo(centX + hw,        0);
-            ctx.lineTo(endX  + hw * 2.6,  height * 0.75);
-            ctx.lineTo(endX  - hw * 2.6,  height * 0.75);
-            ctx.closePath();
-            ctx.fill();
-        }
-
-        ctx.restore();
-    }
-
-    // ── Wave glow ribbons (PS5-style background bands) ────────────
-    // Soft glowing ribbon drawn along each wave path so the wave
-    // itself is faintly visible even between particles.
-    function drawWaveRibbons(ctx, width, height, t) {
-        WAVES.forEach((w, idx) => {
-            ctx.save();
-            ctx.filter = 'blur(22px)';
-            ctx.beginPath();
-            const op = 0.022 + idx * 0.006;
-            ctx.strokeStyle = `rgba(60, 170, 225, ${op})`;
-            ctx.lineWidth   = 70 - idx * 12;
-            ctx.lineCap     = 'round';
-            ctx.lineJoin    = 'round';
-            for (let x = 0; x <= width; x += 20) {
-                const y = getWaveY(idx, x, t);
-                x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
-            }
-            ctx.stroke();
-            ctx.restore();
-        });
-    }
-
-    // ── Canvas resize — HiDPI aware, scroll-safe ──────────────────
     function resizeAmbientCanvas() {
-        const w = window.innerWidth;
-        const h = window.innerHeight;
-        ambientCanvas.width  = Math.round(w * dpr);
-        ambientCanvas.height = Math.round(h * dpr);
-        actx.setTransform(dpr, 0, 0, dpr, 0, 0); // re-apply DPR scale after resize
-        // Only shift the reference dimensions on actual orientation changes (>100px width diff)
-        // so that mobile address-bar toggling doesn't jolt the wave positions.
-        if (Math.abs(w - referenceWidth) > 100) {
-            referenceWidth  = w;
-            referenceHeight = h;
+        ambientCanvas.width = window.innerWidth;
+        ambientCanvas.height = window.innerHeight;
+        
+        // Only trigger viewport reference shifts if width changes by >100px (e.g. orientation changes)
+        // This prevents particles from jumping during mobile scroll events when the URL address bar toggles.
+        if (Math.abs(window.innerWidth - referenceWidth) > 100) {
+            referenceWidth = window.innerWidth;
+            referenceHeight = window.innerHeight;
         }
     }
     window.addEventListener('resize', resizeAmbientCanvas);
     resizeAmbientCanvas();
 
-    // Populate initial particles
+    // Populate starting ambient spores
     for (let i = 0; i < maxAmbientParticles; i++) {
         ambientParticles.push(new AmbientParticle(true));
     }
 
-    // ── Main animation loop ───────────────────────────────────────
+    // Cursor wind current tracking
+    let mouseX = null;
+    let mouseY = null;
+    window.addEventListener('mousemove', (e) => {
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+    });
+    window.addEventListener('touchmove', (e) => {
+        if (e.touches && e.touches.length > 0) {
+            mouseX = e.touches[0].clientX;
+            mouseY = e.touches[0].clientY;
+        }
+    }, { passive: true });
+    window.addEventListener('mouseout', () => {
+        mouseX = null;
+        mouseY = null;
+    });
+    window.addEventListener('touchend', () => {
+        mouseX = null;
+        mouseY = null;
+    }, { passive: true });
+
+    // Helper: Draw faint, wavy, slow-moving auroral ribbon light bands
+    function drawAuroralRibbon(ctx, width, height, phase, color, baseY, amplitude) {
+        ctx.beginPath();
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 140; // Wide and soft
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        
+        for (let x = 0; x <= width; x += 30) {
+            const y = baseY + Math.sin(x * 0.0015 + phase) * amplitude + Math.cos(x * 0.003 - phase * 0.5) * (amplitude * 0.3);
+            if (x === 0) {
+                ctx.moveTo(x, y);
+            } else {
+                ctx.lineTo(x, y);
+            }
+        }
+        ctx.stroke();
+    }
+
+    // Helper: Draw volumetric spotlight beam fanning from top-left diagonally down-right
+    function drawVolumetricLight(ctx, width, height, phase) {
+        ctx.save();
+        
+        // Project diagonal beam originating from (0, 0)
+        const beamAngle = Math.sin(phase * 0.1) * 0.04 + 0.65; // Slow, elegant angular sway
+        const endX = Math.cos(beamAngle) * width * 1.8; // Extended reach
+        const endY = Math.sin(beamAngle) * height * 1.8;
+        
+        // Slightly reduced blur for a sharper, more prominent PS5-style god ray beam
+        ctx.filter = 'blur(65px)';
+        
+        const gradient = ctx.createLinearGradient(0, 0, endX, endY);
+        
+        // Massive volumetric light gradient stops (gold spotlight beam fading diagonally)
+        // Significantly brighter base opacity to match the intense PS5 top-left glow
+        const baseOpacity = 0.15 + Math.sin(phase * 0.4) * 0.03; 
+        gradient.addColorStop(0, `rgba(207, 171, 58, ${baseOpacity * 3.5})`);
+        gradient.addColorStop(0.3, `rgba(207, 171, 58, ${baseOpacity * 1.8})`);
+        gradient.addColorStop(0.7, `rgba(207, 171, 58, ${baseOpacity * 0.3})`);
+        gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
+        
+        ctx.fillStyle = gradient;
+        
+        // Volumetric beam cone path fanning outward
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        // Wider spread for a more enveloping god ray
+        const spread = width * 0.85;
+        const p1x = endX - spread * Math.sin(beamAngle);
+        const p1y = endY + spread * Math.cos(beamAngle);
+        const p2x = endX + spread * Math.sin(beamAngle);
+        const p2y = endY - spread * Math.cos(beamAngle);
+        
+        ctx.lineTo(p1x, p1y);
+        ctx.lineTo(p2x, p2y);
+        ctx.closePath();
+        ctx.fill();
+        
+        ctx.restore();
+    }
+
     function animateAmbientSpores() {
-        // Clear at logical (pre-DPR) size — transform handles the rest
-        actx.clearRect(0, 0, referenceWidth, referenceHeight);
+        actx.clearRect(0, 0, ambientCanvas.width, ambientCanvas.height);
 
-        // ① Deep ocean background fill
-        const bgGrad = actx.createLinearGradient(0, 0, 0, referenceHeight);
-        bgGrad.addColorStop(0,    'rgba(2,  10, 26, 0.97)');
-        bgGrad.addColorStop(0.45, 'rgba(4,  14, 34, 0.97)');
-        bgGrad.addColorStop(1,    'rgba(1,   6, 16, 0.98)');
-        actx.fillStyle = bgGrad;
-        actx.fillRect(0, 0, referenceWidth, referenceHeight);
+        // Increment wave phase for slow auroral ribbon breathing motion and particle flow
+        wavePhase += 0.0015;
 
-        // Advance global time — slow and meditative
-        wavePhase += 0.0011;
+        // Render Ribbon 1: Amber Gold (Backing layer)
+        // Positioned along the particle wave path
+        drawAuroralRibbon(
+            actx,
+            referenceWidth,
+            referenceHeight,
+            wavePhase,
+            'rgba(207, 171, 58, 0.018)', // Slightly increased aura opacity for high-fidelity shape
+            referenceHeight * 0.73, // Lowered to support the particle wave
+            100 // Aligned amplitude
+        );
 
-        // ② Underwater caustic light shafts
-        drawUnderwaterLight(actx, referenceWidth, referenceHeight, wavePhase);
+        // Render Ribbon 2: Lichen Green (Backing layer)
+        drawAuroralRibbon(
+            actx,
+            referenceWidth,
+            referenceHeight,
+            wavePhase + Math.PI,
+            'rgba(115, 140, 102, 0.022)', // Slightly increased moss green aura
+            referenceHeight * 0.80,
+            80
+        );
 
-        // ③ Faint wave-glow ribbons (PS5 wave band backing)
-        drawWaveRibbons(actx, referenceWidth, referenceHeight, wavePhase);
+        // Render Volumetric Light Shaft (Breathing top-left spotlight beam cone overlay)
+        drawVolumetricLight(actx, referenceWidth, referenceHeight, wavePhase);
 
-        // ④ Particles (fall → wave → drift)
         for (let i = 0; i < ambientParticles.length; i++) {
-            ambientParticles[i].update();
-            ambientParticles[i].draw();
+            const p = ambientParticles[i];
+            
+            // Completely unaffected by the cursor, as requested, to maintain a pure PS5 home screen atmosphere
+            p.update();
+            p.draw();
         }
 
         requestAnimationFrame(animateAmbientSpores);
     }
     animateAmbientSpores();
-
-    // Remove stale mouse-tracking references (no longer needed for ambient layer)
-    let mouseX = null, mouseY = null;
-
-
-
 
     // --- Cursor Grid Trace Effect ---
     const canvas = document.createElement('canvas');
