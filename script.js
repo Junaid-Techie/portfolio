@@ -468,42 +468,77 @@ document.addEventListener('DOMContentLoaded', () => {
     }, { passive: true });
 
 
-    // Helper: Draw volumetric spotlight beam fanning from top-left diagonally down-right
+    // Helper: Draw volumetric spotlight beam fanning from top-left diagonally down-right (Underwater Sun Rays)
     function drawVolumetricLight(ctx, width, height, phase) {
         ctx.save();
         
-        // Project diagonal beam originating from (0, 0)
-        const beamAngle = Math.sin(phase * 0.1) * 0.04 + 0.65; // Slow, elegant angular sway
-        const endX = Math.cos(beamAngle) * width * 1.8; // Extended reach
-        const endY = Math.sin(beamAngle) * height * 1.8;
+        // Base angle for the sunlight
+        const baseAngle = 0.65;
+        const beamLen = Math.max(width, height) * 1.8; 
         
-        // Slightly reduced blur for a sharper, more prominent PS5-style god ray beam
-        ctx.filter = 'blur(65px)';
+        ctx.filter = 'blur(45px)'; // Reduced blur to make individual rays visible
         
-        const gradient = ctx.createLinearGradient(0, 0, endX, endY);
+        // Draw 6 distinct overlapping rays
+        const numRays = 6;
+        for (let i = 0; i < numRays; i++) {
+            // Offset phase for each ray so they sway and pulse independently
+            const rayPhase = phase + (i * 1.5);
+            
+            // Individual ray properties
+            const angleOffset = Math.sin(rayPhase * 0.12) * 0.08 + (i - numRays/2) * 0.07;
+            const beamAngle = baseAngle + angleOffset;
+            
+            const endX = Math.cos(beamAngle) * beamLen;
+            const endY = Math.sin(beamAngle) * beamLen;
+            
+            // Varying widths for the rays
+            const spread = width * (0.15 + Math.sin(rayPhase * 0.2) * 0.05);
+            
+            const gradient = ctx.createLinearGradient(0, 0, endX, endY);
+            
+            // Individual pulsing opacity
+            const rayOpacity = 0.05 + Math.sin(rayPhase * 0.35) * 0.04;
+            
+            // Add gradient stops
+            gradient.addColorStop(0, `rgba(207, 171, 58, ${rayOpacity * 3.5})`);
+            gradient.addColorStop(0.3, `rgba(207, 171, 58, ${rayOpacity * 1.8})`);
+            gradient.addColorStop(0.7, `rgba(207, 171, 58, ${rayOpacity * 0.3})`);
+            gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
+            
+            ctx.fillStyle = gradient;
+            
+            // Draw the ray cone
+            ctx.beginPath();
+            ctx.moveTo(0, 0);
+            const p1x = endX - spread * Math.sin(beamAngle);
+            const p1y = endY + spread * Math.cos(beamAngle);
+            const p2x = endX + spread * Math.sin(beamAngle);
+            const p2y = endY - spread * Math.cos(beamAngle);
+            
+            ctx.lineTo(p1x, p1y);
+            ctx.lineTo(p2x, p2y);
+            ctx.closePath();
+            ctx.fill();
+        }
         
-        // Massive volumetric light gradient stops (gold spotlight beam fading diagonally)
-        // Significantly brighter base opacity to match the intense PS5 top-left glow
-        const baseOpacity = 0.15 + Math.sin(phase * 0.4) * 0.03; 
-        gradient.addColorStop(0, `rgba(207, 171, 58, ${baseOpacity * 3.5})`);
-        gradient.addColorStop(0.3, `rgba(207, 171, 58, ${baseOpacity * 1.8})`);
-        gradient.addColorStop(0.7, `rgba(207, 171, 58, ${baseOpacity * 0.3})`);
-        gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
+        // Draw one massive soft background glow to tie the rays together
+        ctx.filter = 'blur(90px)';
+        const bgAngle = baseAngle + Math.sin(phase * 0.1) * 0.04;
+        const bgEndX = Math.cos(bgAngle) * beamLen;
+        const bgEndY = Math.sin(bgAngle) * beamLen;
+        const bgSpread = width * 0.85;
         
-        ctx.fillStyle = gradient;
+        const bgGradient = ctx.createLinearGradient(0, 0, bgEndX, bgEndY);
+        const bgOpacity = 0.10 + Math.sin(phase * 0.4) * 0.02;
+        bgGradient.addColorStop(0, `rgba(207, 171, 58, ${bgOpacity * 2.5})`);
+        bgGradient.addColorStop(0.5, `rgba(207, 171, 58, ${bgOpacity * 0.8})`);
+        bgGradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
         
-        // Volumetric beam cone path fanning outward
+        ctx.fillStyle = bgGradient;
         ctx.beginPath();
         ctx.moveTo(0, 0);
-        // Wider spread for a more enveloping god ray
-        const spread = width * 0.85;
-        const p1x = endX - spread * Math.sin(beamAngle);
-        const p1y = endY + spread * Math.cos(beamAngle);
-        const p2x = endX + spread * Math.sin(beamAngle);
-        const p2y = endY - spread * Math.cos(beamAngle);
-        
-        ctx.lineTo(p1x, p1y);
-        ctx.lineTo(p2x, p2y);
+        ctx.lineTo(bgEndX - bgSpread * Math.sin(bgAngle), bgEndY + bgSpread * Math.cos(bgAngle));
+        ctx.lineTo(bgEndX + bgSpread * Math.sin(bgAngle), bgEndY - bgSpread * Math.cos(bgAngle));
         ctx.closePath();
         ctx.fill();
         
