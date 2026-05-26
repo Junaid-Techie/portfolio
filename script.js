@@ -1,19 +1,23 @@
 document.addEventListener('DOMContentLoaded', () => {
     // Navigation Scroll Effect
     const navbar = document.querySelector('.navbar');
-    let scrolled = false;
 
-    window.addEventListener('scroll', () => {
-        const isScrolled = window.scrollY > 50;
-        if (isScrolled !== scrolled) {
-            scrolled = isScrolled;
-            if (scrolled) {
-                navbar.classList.add('scrolled');
-            } else {
-                navbar.classList.remove('scrolled');
-            }
+    function checkScroll() {
+        if (window.scrollY > 20) {
+            navbar.classList.add('scrolled');
+        } else {
+            navbar.classList.remove('scrolled');
         }
-    }, { passive: true });
+    }
+
+    // Run checkScroll immediately to handle page reloads on later parts of the page
+    checkScroll();
+
+    // Run on full page load to catch any asynchronous browser scroll restoration
+    window.addEventListener('load', checkScroll);
+
+    // Bind scroll listener with passive flag for performance
+    window.addEventListener('scroll', checkScroll, { passive: true });
 
     // Mobile Menu Toggle
     const hamburger = document.querySelector('.hamburger');

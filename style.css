@@ -365,15 +365,27 @@ ul {
     width: 100%;
     z-index: 100;
     padding: 1.5rem 0;
-    transition: var(--transition);
-    background: transparent;
+    background: rgba(5, 8, 15, 0); /* Explicitly match deep midnight color with 0 alpha */
+    backdrop-filter: blur(0px);
+    -webkit-backdrop-filter: blur(0px);
+    border-bottom: 1px solid rgba(207, 171, 58, 0); /* Explicitly match brass border with 0 alpha */
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0);
+    transition: 
+        background 0.4s cubic-bezier(0.16, 1, 0.3, 1), 
+        padding 0.4s cubic-bezier(0.16, 1, 0.3, 1), 
+        backdrop-filter 0.4s cubic-bezier(0.16, 1, 0.3, 1), 
+        -webkit-backdrop-filter 0.4s cubic-bezier(0.16, 1, 0.3, 1), 
+        border-color 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+        box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .navbar.scrolled {
-    background: rgba(10, 10, 15, 0.85);
+    background: rgba(5, 8, 15, 0.85); /* Smoothly transition to deep midnight glass */
     backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
     padding: 1rem 0;
     border-bottom: 1px solid var(--glass-border);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
 }
 
 .nav-container {
