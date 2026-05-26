@@ -181,9 +181,10 @@ document.addEventListener('DOMContentLoaded', () => {
             this.angle = Math.random() * Math.PI * 2;
             this.angleSpeed = Math.random() * 0.008 + 0.003;
             
-            // Physical wind velocity vectors for smooth cursor trailing inertia
-            this.vx = 0;
-            this.vy = 0;
+            // Gentle slow vertical bobbing to simulate PS5 background wave float
+            this.bobPhase = Math.random() * Math.PI * 2;
+            this.bobSpeed = Math.random() * 0.005 + 0.002; // Extremely slow and hypnotic
+            this.bobAmplitude = (Math.random() * 0.4 + 0.2) * this.z; // Subtle vertical bobbing
 
             // Curved filaments rotation
             this.rot = Math.random() * Math.PI * 2;
@@ -201,19 +202,16 @@ document.addEventListener('DOMContentLoaded', () => {
             const noiseX = Math.sin(this.y * 0.006 + time * 0.15) * Math.cos(this.x * 0.004 - time * 0.08) * 0.25;
             const noiseY = Math.cos(this.x * 0.005 + time * 0.12) * Math.sin(this.y * 0.003 - time * 0.05) * 0.35;
 
-            // Apply turbulence + sweeping vector + physical cursor wind velocity
-            this.x += this.speedX + noiseX + this.vx;
-            this.y += this.speedY + noiseY + this.vy;
+            // Apply turbulence + sweeping vector + slow bobbing motion
+            this.bobPhase += this.bobSpeed;
+            this.x += this.speedX + noiseX;
+            this.y += this.speedY + noiseY + Math.sin(this.bobPhase) * this.bobAmplitude;
 
             // Gently pull particles back towards the flowing wave over time
             const normX = this.x / ambientCanvas.width;
             const curveBaseY = ambientCanvas.height * 0.82 - Math.sin(normX * Math.PI * 1.2 - wavePhase * 1.5) * (ambientCanvas.height * 0.25);
             const distFromCurve = curveBaseY - this.y;
             this.y += distFromCurve * 0.0015; // Soft gravity toward wave center
-
-            // Apply friction/drag to cursor wind velocity
-            this.vx *= 0.93;
-            this.vy *= 0.93;
 
             // Slowly rotate filaments
             if (this.isFilament) {
@@ -481,22 +479,7 @@ document.addEventListener('DOMContentLoaded', () => {
         for (let i = 0; i < ambientParticles.length; i++) {
             const p = ambientParticles[i];
             
-            // Cursor physical wind acceleration (spores accelerate away and slow down organically)
-            if (mouseX !== null && mouseY !== null) {
-                const dx = p.x - mouseX;
-                const dy = p.y - mouseY;
-                const dist = Math.sqrt(dx * dx + dy * dy);
-                const pushRadius = 220; // Soft radius of physical influence
-                
-                if (dist < pushRadius) {
-                    const force = (pushRadius - dist) / pushRadius; // 0 to 1
-                    const angle = Math.atan2(dy, dx);
-                    // Apply physical velocity offsets scaled by 3D depth layer
-                    p.vx += Math.cos(angle) * force * 0.45 * p.z;
-                    p.vy += Math.sin(angle) * force * 0.25 * p.z;
-                }
-            }
-
+            // Completely unaffected by the cursor, as requested, to maintain a pure PS5 home screen atmosphere
             p.update();
             p.draw();
         }
