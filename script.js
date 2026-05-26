@@ -97,6 +97,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const maxAmbientParticles = 550; // Massively raised density for a rich, immersive PS5 wave
     let wavePhase = 0; // Wave timing index for ambient auroral ribbons and god rays
 
+    // Stable viewport dimensions to prevent layout jumping on mobile scroll (e.g. from address bar hiding/showing)
+    let referenceWidth = window.innerWidth;
+    let referenceHeight = window.innerHeight;
+
     // High-performance offscreen bokeh templates to avoid heavy canvas blur filtering on every frame
     const bokehTemplates = {};
     function createBokehTemplates() {
@@ -139,16 +143,16 @@ document.addEventListener('DOMContentLoaded', () => {
         constructor(isInit = false) {
             // Distribute across the sweeping wave
             this.x = isInit 
-                ? Math.random() * ambientCanvas.width 
+                ? Math.random() * referenceWidth 
                 : -40 - Math.random() * 100; // Spawn slightly off-screen left when recycled
                 
-            // Core wave curves elegantly across the bottom half
-            const normX = this.x / window.innerWidth;
-            const curveBaseY = window.innerHeight * 0.82 - Math.sin(normX * Math.PI * 1.2) * (window.innerHeight * 0.25);
+            // Core wave curves elegantly across the bottom half (reduced amplitude for subtle movement)
+            const normX = this.x / referenceWidth;
+            const curveBaseY = referenceHeight * 0.82 - Math.sin(normX * Math.PI * 1.2) * (referenceHeight * 0.12);
             
             // Create a dense cluster around the curve with Gaussian-like spread
             const spreadFactor = (Math.random() + Math.random() + Math.random() - 1.5); 
-            const spreadAmplitude = window.innerHeight * 0.45;
+            const spreadAmplitude = referenceHeight * 0.45;
             this.offsetY = spreadFactor * spreadAmplitude;
             this.y = curveBaseY + this.offsetY;
                 
@@ -208,9 +212,9 @@ document.addEventListener('DOMContentLoaded', () => {
             // Apply turbulence + sweeping vector
             this.x += this.speedX + noiseX;
             
-            // Ride the moving wave in perfect sync with the PS5 ribbon's phase undulations
-            const normX = this.x / ambientCanvas.width;
-            const curveBaseY = ambientCanvas.height * 0.82 - Math.sin(normX * Math.PI * 1.2 - wavePhase * 1.5) * (ambientCanvas.height * 0.25);
+            // Ride the moving wave in perfect sync with the PS5 ribbon's phase undulations (reduced amplitude for subtle flow)
+            const normX = this.x / referenceWidth;
+            const curveBaseY = referenceHeight * 0.82 - Math.sin(normX * Math.PI * 1.2 - wavePhase * 1.5) * (referenceHeight * 0.12);
             
             this.bobPhase += this.bobSpeed;
             this.y = curveBaseY + this.offsetY + Math.sin(this.bobPhase) * this.bobAmplitude;
@@ -234,7 +238,7 @@ document.addEventListener('DOMContentLoaded', () => {
             this.opacity = Math.max(0, this.baseOpacity * (0.65 + pulseFactor * 0.35) + shimmer);
 
             // Recycle if particle drifts far outside bounds (off right side, or too far up/down)
-            if (this.x > ambientCanvas.width + 120 || this.y < -100 || this.y > ambientCanvas.height + 100) {
+            if (this.x > referenceWidth + 120 || this.y < -100 || this.y > referenceHeight + 100) {
                 const index = ambientParticles.indexOf(this);
                 if (index > -1) {
                     ambientParticles[index] = new AmbientParticle(false);
@@ -251,14 +255,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (this.y < topFadeDist) {
                 edgeFade *= Math.max(0, this.y / topFadeDist);
-            } else if (this.y > ambientCanvas.height - bottomFadeDist) {
-                edgeFade *= Math.max(0, (ambientCanvas.height - this.y) / bottomFadeDist);
+            } else if (this.y > referenceHeight - bottomFadeDist) {
+                edgeFade *= Math.max(0, (referenceHeight - this.y) / bottomFadeDist);
             }
 
             if (this.x < sideFadeDist) {
                 edgeFade *= Math.max(0, this.x / sideFadeDist);
-            } else if (this.x > ambientCanvas.width - sideFadeDist) {
-                edgeFade *= Math.max(0, (ambientCanvas.width - this.x) / sideFadeDist);
+            } else if (this.x > referenceWidth - sideFadeDist) {
+                edgeFade *= Math.max(0, (referenceWidth - this.x) / sideFadeDist);
             }
             
             const renderOpacity = this.opacity * edgeFade;
@@ -354,6 +358,13 @@ document.addEventListener('DOMContentLoaded', () => {
     function resizeAmbientCanvas() {
         ambientCanvas.width = window.innerWidth;
         ambientCanvas.height = window.innerHeight;
+        
+        // Only trigger viewport reference shifts if width changes by >100px (e.g. orientation changes)
+        // This prevents particles from jumping during mobile scroll events when the URL address bar toggles.
+        if (Math.abs(window.innerWidth - referenceWidth) > 100) {
+            referenceWidth = window.innerWidth;
+            referenceHeight = window.innerHeight;
+        }
     }
     window.addEventListener('resize', resizeAmbientCanvas);
     resizeAmbientCanvas();
@@ -456,27 +467,27 @@ document.addEventListener('DOMContentLoaded', () => {
         // Positioned along the particle wave path
         drawAuroralRibbon(
             actx,
-            ambientCanvas.width,
-            ambientCanvas.height,
+            referenceWidth,
+            referenceHeight,
             wavePhase,
             'rgba(207, 171, 58, 0.015)', // Faint amber aura
-            ambientCanvas.height * 0.75, // Lowered to support the particle wave
+            referenceHeight * 0.75, // Lowered to support the particle wave
             120 // Larger amplitude
         );
 
         // Render Ribbon 2: Lichen Green (Backing layer)
         drawAuroralRibbon(
             actx,
-            ambientCanvas.width,
-            ambientCanvas.height,
+            referenceWidth,
+            referenceHeight,
             wavePhase + Math.PI,
             'rgba(115, 140, 102, 0.018)', // Muted lichen green aura
-            ambientCanvas.height * 0.82,
+            referenceHeight * 0.82,
             90
         );
 
         // Render Volumetric Light Shaft (Breathing top-left spotlight beam cone overlay)
-        drawVolumetricLight(actx, ambientCanvas.width, ambientCanvas.height, wavePhase);
+        drawVolumetricLight(actx, referenceWidth, referenceHeight, wavePhase);
 
         for (let i = 0; i < ambientParticles.length; i++) {
             const p = ambientParticles[i];
