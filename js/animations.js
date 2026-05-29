@@ -480,7 +480,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }, { passive: true });
 
 
-    // Helper: Draw volumetric spotlight beam fanning from top-left diagonally down-right (Underwater Sun Rays)
+    // Helper: Draw volumetric spotlight beam fanning from top-left diagonally down-right (Underwater Ocean Crepuscular Rays)
     function drawVolumetricLight(ctx, width, height, phase) {
         ctx.save();
         
@@ -488,33 +488,34 @@ document.addEventListener('DOMContentLoaded', () => {
         const baseAngle = 0.65;
         const beamLen = Math.max(width, height) * 1.8; 
         
-        ctx.filter = 'blur(45px)'; // Reduced blur to make individual rays visible
+        // AAA Premium Volumetric Glow: Heavy blur to blend individual rays seamlessly
+        ctx.filter = 'blur(100px)'; 
         
-        // Draw 6 distinct overlapping rays
+        // Draw 6 distinct overlapping organic rays
         const numRays = 6;
         for (let i = 0; i < numRays; i++) {
             // Offset phase for each ray so they sway and pulse independently
-            const rayPhase = phase + (i * 1.5);
+            const rayPhase = phase + (i * 1.8);
             
-            // Individual ray properties
-            const angleOffset = Math.sin(rayPhase * 0.12) * 0.08 + (i - numRays/2) * 0.07;
+            // Individual ray properties sways slowly like underwater currents
+            const angleOffset = Math.sin(rayPhase * 0.08) * 0.06 + (i - numRays/2) * 0.08;
             const beamAngle = baseAngle + angleOffset;
             
             const endX = Math.cos(beamAngle) * beamLen;
             const endY = Math.sin(beamAngle) * beamLen;
             
             // Varying widths for the rays
-            const spread = width * (0.15 + Math.sin(rayPhase * 0.2) * 0.05);
+            const spread = width * (0.22 + Math.sin(rayPhase * 0.15) * 0.06);
             
             const gradient = ctx.createLinearGradient(0, 0, endX, endY);
             
-            // Individual pulsing opacity
-            const rayOpacity = 0.05 + Math.sin(rayPhase * 0.35) * 0.04;
+            // Sub-pixel organic pulsing opacity to keep it extremely subtle and never overpower text
+            const rayOpacity = (0.012 + Math.sin(rayPhase * 0.2) * 0.006) * 0.5;
             
-            // Add gradient stops
-            gradient.addColorStop(0, `rgba(207, 171, 58, ${rayOpacity * 3.5})`);
-            gradient.addColorStop(0.3, `rgba(207, 171, 58, ${rayOpacity * 1.8})`);
-            gradient.addColorStop(0.7, `rgba(207, 171, 58, ${rayOpacity * 0.3})`);
+            // Premium Ocean Aqua Teal Color Scheme
+            gradient.addColorStop(0, `rgba(24, 154, 180, ${rayOpacity * 3.0})`);
+            gradient.addColorStop(0.3, `rgba(24, 154, 180, ${rayOpacity * 1.5})`);
+            gradient.addColorStop(0.7, `rgba(16, 110, 130, ${rayOpacity * 0.4})`);
             gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
             
             ctx.fillStyle = gradient;
@@ -533,17 +534,18 @@ document.addEventListener('DOMContentLoaded', () => {
             ctx.fill();
         }
         
-        // Draw one massive soft background glow to tie the rays together
-        ctx.filter = 'blur(90px)';
-        const bgAngle = baseAngle + Math.sin(phase * 0.1) * 0.04;
+        // Draw one massive soft background underwater cyan-navy glow to tie the atmosphere together
+        ctx.filter = 'blur(160px)';
+        const bgAngle = baseAngle + Math.sin(phase * 0.06) * 0.03;
         const bgEndX = Math.cos(bgAngle) * beamLen;
         const bgEndY = Math.sin(bgAngle) * beamLen;
-        const bgSpread = width * 0.85;
+        const bgSpread = width * 1.1;
         
         const bgGradient = ctx.createLinearGradient(0, 0, bgEndX, bgEndY);
-        const bgOpacity = 0.10 + Math.sin(phase * 0.4) * 0.02;
-        bgGradient.addColorStop(0, `rgba(207, 171, 58, ${bgOpacity * 2.5})`);
-        bgGradient.addColorStop(0.5, `rgba(207, 171, 58, ${bgOpacity * 0.8})`);
+        const bgOpacity = 0.05 + Math.sin(phase * 0.25) * 0.015;
+        
+        bgGradient.addColorStop(0, `rgba(15, 95, 120, ${bgOpacity * 0.6})`);
+        bgGradient.addColorStop(0.5, `rgba(8, 60, 80, ${bgOpacity * 0.2})`);
         bgGradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
         
         ctx.fillStyle = bgGradient;
