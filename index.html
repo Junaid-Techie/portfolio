@@ -31,13 +31,13 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Modular CSS -->
-    <link rel="stylesheet" href="css/theme.css">
-    <link rel="stylesheet" href="css/base.css">
-    <link rel="stylesheet" href="css/layout.css">
-    <link rel="stylesheet" href="css/components.css">
-    <link rel="stylesheet" href="css/sections.css">
-    <link rel="stylesheet" href="css/animations.css">
+    <!-- Modular CSS (with Dynamic Jekyll Cache Busting) -->
+    <link rel="stylesheet" href="css/theme.css?v={{ site.time | date: '%s' }}">
+    <link rel="stylesheet" href="css/base.css?v={{ site.time | date: '%s' }}">
+    <link rel="stylesheet" href="css/layout.css?v={{ site.time | date: '%s' }}">
+    <link rel="stylesheet" href="css/components.css?v={{ site.time | date: '%s' }}">
+    <link rel="stylesheet" href="css/sections.css?v={{ site.time | date: '%s' }}">
+    <link rel="stylesheet" href="css/animations.css?v={{ site.time | date: '%s' }}">
 </head>
 <body>
     <!-- Scroll Progress Indicator -->
@@ -1048,11 +1048,11 @@
             }
         });
     </script>
-    <!-- Modular JavaScript -->
-    <script defer src="js/particles.js"></script>
-    <script defer src="js/cursor.js"></script>
-    <script defer src="js/forms.js"></script>
-    <script defer src="js/animations.js"></script>
-    <script defer src="js/navigation.js"></script>
+    <!-- Modular JavaScript (with Dynamic Jekyll Cache Busting) -->
+    <script defer src="js/particles.js?v={{ site.time | date: '%s' }}"></script>
+    <script defer src="js/cursor.js?v={{ site.time | date: '%s' }}"></script>
+    <script defer src="js/forms.js?v={{ site.time | date: '%s' }}"></script>
+    <script defer src="js/animations.js?v={{ site.time | date: '%s' }}"></script>
+    <script defer src="js/navigation.js?v={{ site.time | date: '%s' }}"></script>
 </body>
 </html>
