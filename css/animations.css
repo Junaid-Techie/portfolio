@@ -440,9 +440,33 @@ ul {
     background: rgba(5, 8, 15, 0.85); /* Smoothly transition to deep midnight glass */
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
-    padding: 1rem 0;
+    padding: 0.4rem 0; /* Extremely narrow, sleek and compact vertical height */
     border-bottom: 1px solid var(--glass-border);
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+}
+
+.navbar.scrolled .logo {
+    font-size: 1.45rem; /* Scale down logo typography */
+}
+
+.navbar.scrolled .tlou-moth {
+    width: 28px; /* Scale down moth icon */
+    height: 14px;
+}
+
+.navbar.scrolled .firefly-logo {
+    width: 24px; /* Scale down firefly icon */
+    height: 18px;
+}
+
+.navbar.scrolled .tlou-wolf {
+    width: 24px; /* Scale down WLF wolf icon */
+    height: 24px;
+    margin-left: 0.8rem; /* Maintain proportional spacing */
+}
+
+.navbar.scrolled .nav-links a {
+    font-size: 0.88rem; /* Make navigation links compact */
 }
 
 .nav-container {
