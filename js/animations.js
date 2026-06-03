@@ -1262,3 +1262,4 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
     } // end if (filterBtns.length > 0 && projectCards.length > 0)
+});
