@@ -184,7 +184,7 @@
     left: 0;
     width: 100%;
     z-index: 1000; /* Raised z-index to stay above page content */
-    padding: 1.5rem 0;
+    padding: 1.1rem 0; /* Compact stable padding */
     background: rgba(5, 8, 15, 0); /* Transparent at starting page */
     backdrop-filter: blur(0px);
     -webkit-backdrop-filter: blur(0px);
@@ -192,7 +192,6 @@
     box-shadow: 0 4px 30px rgba(0, 0, 0, 0);
     transition: 
         background 0.4s cubic-bezier(0.16, 1, 0.3, 1), 
-        padding 0.4s cubic-bezier(0.16, 1, 0.3, 1), 
         backdrop-filter 0.4s cubic-bezier(0.16, 1, 0.3, 1), 
         -webkit-backdrop-filter 0.4s cubic-bezier(0.16, 1, 0.3, 1), 
         border-color 0.4s cubic-bezier(0.16, 1, 0.3, 1),
@@ -203,33 +202,9 @@
     background: rgba(5, 8, 15, 0.85); /* Smoothly transition to deep midnight glass */
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
-    padding: 0.4rem 0; /* Extremely narrow, sleek and compact vertical height */
+    padding: 1.1rem 0; /* Stable, no vertical resizing */
     border-bottom: 1px solid var(--glass-border);
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
-}
-
-.navbar.scrolled .logo {
-    font-size: 1.45rem; /* Scale down logo typography */
-}
-
-.navbar.scrolled .tlou-moth {
-    width: 28px; /* Scale down moth icon */
-    height: 14px;
-}
-
-.navbar.scrolled .firefly-logo {
-    width: 24px; /* Scale down firefly icon */
-    height: 18px;
-}
-
-.navbar.scrolled .tlou-wolf {
-    width: 24px; /* Scale down WLF wolf icon */
-    height: 24px;
-    margin-left: 0.8rem; /* Maintain proportional spacing */
-}
-
-.navbar.scrolled .nav-links a {
-    font-size: 0.88rem; /* Make navigation links compact */
 }
 
 .nav-container {
@@ -242,7 +217,6 @@
 }
 
 .logo {
-    transition: var(--transition);
     font-size: 1.8rem;
     font-weight: 800;
     font-family: var(--font-heading);
@@ -254,7 +228,6 @@
 }
 
 .tlou-moth {
-    transition: var(--transition);
     width: 38px;
     height: 19px;
     color: var(--text-muted);
@@ -269,7 +242,6 @@
 }
 
 .firefly-logo {
-    transition: var(--transition);
     width: 32px;
     height: 24px;
     color: #eab308 !important; /* Yellow/Gold */
@@ -285,7 +257,6 @@
 }
 
 .tlou-wolf {
-    transition: var(--transition);
     width: 32px;
     height: 32px;
     color: #74876b !important; /* Premium tactical WLF military moss green */
