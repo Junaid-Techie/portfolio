@@ -90,6 +90,7 @@
 }
 
 .logo {
+    transition: var(--transition);
     font-size: 1.8rem;
     font-weight: 800;
     font-family: var(--font-heading);
@@ -101,6 +102,7 @@
 }
 
 .tlou-moth {
+    transition: var(--transition);
     width: 38px;
     height: 19px;
     color: var(--text-muted);
@@ -115,6 +117,7 @@
 }
 
 .firefly-logo {
+    transition: var(--transition);
     width: 32px;
     height: 24px;
     color: #eab308 !important; /* Yellow/Gold */
@@ -130,6 +133,7 @@
 }
 
 .tlou-wolf {
+    transition: var(--transition);
     width: 32px;
     height: 32px;
     color: #74876b !important; /* Premium tactical WLF military moss green */
@@ -594,6 +598,7 @@ ul {
 }
 
 .logo {
+    transition: var(--transition);
     font-size: 1.8rem;
     font-weight: 800;
     font-family: var(--font-heading);
@@ -605,6 +610,7 @@ ul {
 }
 
 .tlou-moth {
+    transition: var(--transition);
     width: 38px;
     height: 19px;
     color: var(--text-muted);
@@ -619,6 +625,7 @@ ul {
 }
 
 .firefly-logo {
+    transition: var(--transition);
     width: 32px;
     height: 24px;
     color: #eab308 !important; /* Yellow/Gold */
@@ -634,6 +641,7 @@ ul {
 }
 
 .tlou-wolf {
+    transition: var(--transition);
     width: 32px;
     height: 32px;
     color: #74876b !important; /* Premium tactical WLF military moss green */
